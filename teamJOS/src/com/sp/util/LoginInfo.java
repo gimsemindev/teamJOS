@@ -1,6 +1,6 @@
 package com.sp.util;
 
-import db.user.MemberDTO;
+import com.sp.model.MemberDTO;
 
 public class LoginInfo {
 	private MemberDTO loginMember = null;
