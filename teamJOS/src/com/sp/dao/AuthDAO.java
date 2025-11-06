@@ -1,5 +1,7 @@
 package com.sp.dao;
 
+import java.sql.SQLException;
+
 import com.sp.model.AdminDTO;
 
 /**
@@ -21,12 +23,12 @@ import com.sp.model.AdminDTO;
 public interface AuthDAO {
 
     /** AUTH_INS_001 */
-    int insertAdmin(AdminDTO admin);
+    int insertAdmin(AdminDTO admin) throws SQLException;
 
     /** AUTH_UPD_002 */
-    int updateAdmin(AdminDTO admin);
+    int updateAdmin(AdminDTO admin) throws SQLException;
 
     /** AUTH_DEL_003 */
-    int deleteAdmin(String adminId);
+    int deleteAdmin(String adminId) throws SQLException;
 
 }

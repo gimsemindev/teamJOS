@@ -1,5 +1,6 @@
 package com.sp.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.sp.model.CareerDTO;
@@ -31,25 +32,25 @@ import com.sp.model.RewardDTO;
 public interface EmpDAO {
 	
 	 /** EMP_INS_001 : 사원정보등록 */
-    int insertEmployee(EmployeeDTO emp);
+    int insertEmployee(EmployeeDTO emp) throws SQLException;
 
     /** EMP_UPD_002 : 사원정보수정 */
-    int updateEmployee(EmployeeDTO emp);
+    int updateEmployee(EmployeeDTO emp) throws SQLException;
 
     /** EMP_UPD_003 : 부서이동 */
-    int updateDeptMove(DeptMoveDTO move);
+    int updateDeptMove(DeptMoveDTO move) throws SQLException;
 
     /** EMP_UPD_004 : 진급관리 */
-    int updatePromotion(PromotionDTO promotion);
+    int updatePromotion(PromotionDTO promotion) throws SQLException;
 
     /** EMP_UPD_008 : 퇴직신청결재 */
-    int updateRetireApproval(int empNo);
+    int updateRetireApproval(int empNo) throws SQLException;
 
     /** EMP_INS_009 : 경력등록 */
-    int insertCareer(CareerDTO career);
+    int insertCareer(CareerDTO career) throws SQLException;
 
     /** EMP_INS_010 : 자격증 및 포상등록 */
-    int insertLicense(RewardDTO reward);
+    int insertLicense(RewardDTO reward) throws SQLException;
 
     /** EMP_SEL_005 : 사번조회 */
     EmployeeDTO selectByEmpNo(int empNo);

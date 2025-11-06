@@ -1,5 +1,6 @@
 package com.sp.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 import com.sp.model.DeptDTO;
 
@@ -22,13 +23,13 @@ import com.sp.model.DeptDTO;
 public interface DeptDAO {
 
     /** DEPT_INS_001 */
-    int insertDept(DeptDTO dept);
+    int insertDept(DeptDTO dept) throws SQLException;
 
     /** DEPT_UPD_002 */
-    int updateDept(DeptDTO dept);
+    int updateDept(DeptDTO dept) throws SQLException;
 
     /** DEPT_DEL_003 */
-    int deleteDept(int deptNo);
+    int deleteDept(int deptNo) throws SQLException;
 
     /** DEPT_SEL_004 */
     DeptDTO selectDeptByNo(int deptNo);

@@ -1,5 +1,7 @@
 package com.sp.dao;
 
+import java.sql.SQLException;
+
 import com.sp.model.BoardDTO;
 
 /**
@@ -21,12 +23,12 @@ import com.sp.model.BoardDTO;
 public interface BoardDAO {
 
     /** BOARD_INS_001 */
-    int insertPost(BoardDTO board);
+    int insertPost(BoardDTO board) throws SQLException;
 
     /** BOARD_UPD_002 */
-    int updatePost(BoardDTO board);
+    int updatePost(BoardDTO board) throws SQLException;
 
     /** BOARD_DEL_003 */
-    int deletePost(int postNo);
+    int deletePost(int postNo) throws SQLException;
 
 }

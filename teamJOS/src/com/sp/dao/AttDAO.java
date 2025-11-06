@@ -1,5 +1,6 @@
 package com.sp.dao;
 
+import java.sql.SQLException;
 import java.util.List;
 import com.sp.model.AttendanceDTO;
 import com.sp.model.VacationDTO;
@@ -24,22 +25,22 @@ import com.sp.model.VacationDTO;
 public interface AttDAO {
 
     /** ATT_INS_001 */
-    int insertAttendanceIn(AttendanceDTO att);
+    int insertAttendanceIn(AttendanceDTO att) throws SQLException;
 
     /** ATT_INS_002 */
-    int insertAttendanceOut(AttendanceDTO att);
+    int insertAttendanceOut(AttendanceDTO att) throws SQLException;
 
     /** ATT_INS_008 */
-    int insertVacation(VacationDTO vacation);
+    int insertVacation(VacationDTO vacation) throws SQLException;
 
     /** ATT_UPD_003 */
-    int updateVacationApprove(VacationDTO vacation);
+    int updateVacationApprove(VacationDTO vacation) throws SQLException;
 
     /** ATT_UPD_009 */
-    int updateVacation(VacationDTO vacation);
+    int updateVacation(VacationDTO vacation) throws SQLException;
 
     /** ATT_UPD_010 */
-    int updateAttendance(AttendanceDTO att);
+    int updateAttendance(AttendanceDTO att) throws SQLException;
 
     /** ATT_SEL_004 */
     List<AttendanceDTO> selectAllWorkTime();
