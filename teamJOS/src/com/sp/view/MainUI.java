@@ -4,17 +4,17 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import com.sp.model.MemberDTO;
+import com.sp.view.AdminUI;
 import com.sp.util.DBConn;
-//import com.sp.util.LoginInfo;
+import com.sp.util.LoginInfo;
 
 
 public class MainUI {
 	private BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	
-//	private LoginInfo login = new LoginInfo();
-//	private AdminUI guestUI = new AdminUI(login);
-//	private EmployeeUI memberUI = new EmployeeUI(login);
+	private LoginInfo login = new LoginInfo();
+	private AdminUI AdminUI = new AdminUI();
+	//private EmployeeUI EmployeeUI = new EmployeeUI(login);
 	
 	public void start() {
 //        while (true) {
