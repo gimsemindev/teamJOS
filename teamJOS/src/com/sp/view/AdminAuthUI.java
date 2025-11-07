@@ -23,14 +23,26 @@ public class AdminAuthUI {
             } while(ch < 1 || ch > 4);
             
             switch(ch) {
-            case 1: authDao.updateAdmin(null); break; // AUTH_UPD_002
-            case 2: authDao.insertAdmin(null); break; // AUTH_INS_001
-            case 3: authDao.deleteAdmin(null); break; // AUTH_DEL_003
+            case 1: updateAdminProcess(); break; // AUTH_UPD_002
+            case 2: insertAdminProcess(); break; // AUTH_INS_001
+            case 3: deleteAdminProcess(); break; // AUTH_DEL_003
             case 4: return; // 4.메뉴화면으로
             }
             
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    private void updateAdminProcess() {
+    	
+    }
+    
+    private void insertAdminProcess() {
+    	
+    }
+    
+    private void deleteAdminProcess() {
+    	
     }
 }
