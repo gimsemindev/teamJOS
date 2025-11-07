@@ -25,7 +25,7 @@ public class AdminEmpUI {
 
             switch (ch) {
             case 1: insertEmployeeInfo(); break;
-            case 2: empDao.updateEmployee(null); break; // EMP_UPD_002
+            //case 2: empDao.updateEmployee(null); break; // EMP_UPD_002
             //case 3: updateDeptMoveInfo(); break; // EMP_UPD_003
             //case 4: updatePromotionInfo(); break; // EMP_UPD_004
             case 5: manageEmployeeSearch(); break; // 5.정보조회 (하위 메뉴로 위임)
@@ -163,4 +163,36 @@ public class AdminEmpUI {
             e.printStackTrace();
         }
     }
+    
+    // 사원 정보 수정 UI
+    protected void updateEmployeeinfo() {
+    	int ch;
+    	String empNo, col="", con;
+		try {
+			do {
+				System.out.print("수정을 원하는 사원의 사원번호를 입력하세요. => ");
+				empNo = br.readLine();
+				System.out.println("수정을 원하는 컬럼을 입력하세요.");
+                System.out.print("1.이름 2.주소 3.이메일 4.비밀번호 5.권한레벨코드 6.메뉴로돌아가기 => ");
+                ch = Integer.parseInt(br.readLine());
+                System.out.println("변경 내용을 입력하세요. => ");
+                con = br.readLine();
+                
+            } while(ch < 1 || ch > 6);
+			
+			switch (ch) {
+			case 1: col="EMP_NM"; break;
+			case 2: col="EMP_ADDR"; break;
+			case 3: col="EMP_EMAIL"; break;
+			case 4: col="EMP_PWD"; break;
+			case 5: col="LEVEL_CODE"; break;
+			}
+			
+			empDao.updateEmployee(empNo, col, con);
+			
+		} catch (Exception e) {
+			
+		}
+	}
+
 }

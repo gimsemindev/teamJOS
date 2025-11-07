@@ -25,7 +25,7 @@ public class EmployeeEmpUI {
 
             switch (ch) {
             case 1: empDao.insertEmployee(null); break; // EMP_INS_001 
-            case 2: empDao.updateEmployee(null); break; // EMP_UPD_002 
+            //case 2: empDao.updateEmployee(null); break; // EMP_UPD_002 
             case 3: empDao.selectByEmpNo(0); break; // EMP_SEL_005 
             case 4: empDao.selectDeptMove(0); break; // EMP_SEL_012 
             case 5: empDao.selectHistory(0); break; // EMP_SEL_011 

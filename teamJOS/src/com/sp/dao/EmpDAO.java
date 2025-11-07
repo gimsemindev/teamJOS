@@ -35,7 +35,7 @@ public interface EmpDAO {
     int insertEmployee(EmployeeDTO emp) throws SQLException;
 
     /** EMP_UPD_002 : 사원정보수정 */
-    int updateEmployee(EmployeeDTO emp) throws SQLException;
+    int updateEmployee(String empNo, String col, String con) throws SQLException;
 
     /** EMP_UPD_003 : 부서이동 */
     int updateDeptMove(DeptMoveDTO move) throws SQLException;
