@@ -3,6 +3,9 @@ package com.sp.view;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import com.sp.dao.AuthDAO;
+import com.sp.model.AdminDTO;
+
+
 
 public class AdminAuthUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -35,7 +38,13 @@ public class AdminAuthUI {
     }
     
     public void updateAdmin() {
-    	
+    	AdminDTO dto = new AdminDTO();
+    	try {
+    		authDao.updateAdmin(dto);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
     }
     
     public void insertAdmin() {
