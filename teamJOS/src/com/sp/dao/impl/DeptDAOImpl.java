@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.sp.dao.DeptDAO;
 import com.sp.model.DeptDTO;
+import com.sp.model.DeptMemberCountDTO;
 
 public class DeptDAOImpl implements DeptDAO{
 
@@ -33,7 +34,7 @@ public class DeptDAOImpl implements DeptDAO{
 	}
 
 	@Override
-	public List<DeptDTO> selectAllDepts() {
+	public List<DeptMemberCountDTO> selectDeptMemberCount() {
 		// TODO Auto-generated method stub
 		return null;
 	}

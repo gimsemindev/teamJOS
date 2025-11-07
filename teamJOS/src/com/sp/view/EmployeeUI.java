@@ -1,7 +1,9 @@
 package com.sp.view;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+
 import com.sp.dao.AttDAO;
-import com.sp.dao.AuthDAO;
 import com.sp.dao.BoardDAO;
 import com.sp.dao.DeptDAO;
 import com.sp.dao.EmpDAO;
@@ -12,6 +14,7 @@ import com.sp.dao.impl.EmpDAOImpl;
 import com.sp.util.LoginInfo;
 
 public class EmployeeUI {
+	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	private LoginInfo loginInfo = null;
 	private EmpDAO empDao = new EmpDAOImpl();
 	private DeptDAO deptDao = new DeptDAOImpl();
@@ -27,19 +30,79 @@ public class EmployeeUI {
 	}
 	
 	public void manageEmployee() {
-		
+		int ch;
+		System.out.println("\n[사원관리]");
+		try {
+			
+			do {
+				System.out.print("1.정보등록 2.정보수정 3.정보조회 4.부서이동이력조회 5.이력조회  6.메뉴로돌아가기 => ");
+				ch = Integer.parseInt(br.readLine());
+			} while(ch < 1 || ch > 6);
+
+			switch (ch) {
+			case 1: empDao.insertEmployee(null); break;
+			case 2: empDao.updateEmployee(null); break;
+			case 3: empDao.selectByEmpNo(0); break;
+			case 4: empDao.selectDeptMove(0); break;
+			case 5: empDao.selectHistory(0); break;
+			case 6: return;
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
+
 	
 	public void manageDepartment() {
+		int ch;
+		System.out.println("\n[부서관리]");
 		
+		try {
+			
+			do {
+				System.out.print("1.부서조회 2.부서인원현황 3.메뉴로돌아가기 => ");
+				ch = Integer.parseInt(br.readLine());
+			} while(ch < 1 || ch > 3);
+			
+			switch(ch) {
+			case 1: deptDao.selectDeptByNo(0); break;
+			case 2: deptDao.selectDeptMemberCount(); break;
+			case 3: return;
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void manageAttendance() {
+		int ch;
+		System.out.println("\n[근태관리]");
 		
+		try {
+			
+			do {
+				System.out.print("1.정보등록 2.정보수정 3.정보조회 4.부서이동이력조회 5.이력조회  6.메뉴로돌아가기 => ");
+				ch = Integer.parseInt(br.readLine());
+			} while(ch < 1 || ch > 6);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void manageBoard() {
+		int ch;
+		System.out.println("\n[게시판관리]");
 		
+		try {
+			do {
+				System.out.print("1.정보등록 2.정보수정 3.정보조회 4.부서이동이력조회 5.이력조회  6.메뉴로돌아가기 => ");
+				ch = Integer.parseInt(br.readLine());
+			} while(ch < 1 || ch > 6);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

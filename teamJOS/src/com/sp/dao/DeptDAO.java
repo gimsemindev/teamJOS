@@ -2,7 +2,9 @@ package com.sp.dao;
 
 import java.sql.SQLException;
 import java.util.List;
+
 import com.sp.model.DeptDTO;
+import com.sp.model.DeptMemberCountDTO;
 
 /**
  * <h2>DeptDAO (부서 관리 데이터 접근 인터페이스)</h2>
@@ -35,5 +37,5 @@ public interface DeptDAO {
     DeptDTO selectDeptByNo(int deptNo);
 
     /** DEPT_SEL_005 */
-    List<DeptDTO> selectAllDepts();
+    List<DeptMemberCountDTO> selectDeptMemberCount();
 }
