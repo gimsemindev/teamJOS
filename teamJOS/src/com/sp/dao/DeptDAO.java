@@ -34,7 +34,7 @@ public interface DeptDAO {
     int deleteDept(int deptNo) throws SQLException;
 
     /** DEPT_SEL_003 */
-    DeptDTO selectDeptByNo(int deptNo);
+    List<DeptDTO> selectAllDept();
 
     /** DEPT_SEL_005 */
     List<DeptMemberCountDTO> selectDeptMemberCount();

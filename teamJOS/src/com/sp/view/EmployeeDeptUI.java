@@ -25,7 +25,7 @@ public class EmployeeDeptUI {
             } while(ch < 1 || ch > 3);
             
             switch(ch) {
-            case 1: deptDao.selectDeptByNo(0); break; // DEPT_SEL_003  (기존 코드의 selectDeptByNo(0)은 selectAllDept로 수정)
+            case 1: deptDao.selectAllDept(); break; // DEPT_SEL_003  (기존 코드의 selectDeptByNo(0)은 selectAllDept로 수정)
             case 2: deptDao.selectDeptMemberCount(); break; // DEPT_SEL_005 
             case 3: return; // 3. 메뉴화면으로 
             }

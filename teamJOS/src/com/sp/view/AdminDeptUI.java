@@ -26,7 +26,7 @@ public class AdminDeptUI {
             switch(ch) {
             case 1: deptDao.insertDept(null); break; // DEPT_INS_001
             case 2: deptDao.updateDept(null); break; // DEPT_UPD_002
-            case 3: deptDao.selectDeptByNo(0); break; // DEPT_SEL_003
+            case 3: deptDao.selectAllDept(); break; // DEPT_SEL_003
             case 4: deptDao.deleteDept(0); break; // DEPT_DEL_004
             case 5: deptDao.selectDeptMemberCount(); break; // DEPT_SEL_005
             case 6: return; // 6.메뉴화면으로
