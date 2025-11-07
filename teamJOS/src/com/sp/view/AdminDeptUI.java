@@ -6,11 +6,13 @@ import java.util.List;
 
 import com.sp.dao.DeptDAO;
 import com.sp.model.DeptDTO;
-import com.sp.model.EmployeeDTO;
+import com.sp.util.PrintUtil;
+import com.sp.view.common.DeptCommonUI;
 
 public class AdminDeptUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private DeptDAO deptDao;
+    private DeptCommonUI deptCommonUI = new DeptCommonUI();
     
     public AdminDeptUI(DeptDAO deptDao) {
         this.deptDao = deptDao;
@@ -30,7 +32,7 @@ public class AdminDeptUI {
             switch(ch) {
             case 1: deptDao.insertDept(null); break; // DEPT_INS_001
             case 2: deptDao.updateDept(null); break; // DEPT_UPD_002
-            case 3: selectAllDept(); break; // DEPT_SEL_003
+            case 3: deptCommonUI.selectAllDept(); break; // DEPT_SEL_003  (기존 코드의 selectDeptByNo(0)은 selectAllDept로 수정)
             case 4: deptDao.deleteDept(0); break; // DEPT_DEL_004
             case 5: deptDao.selectDeptMemberCount(); break; // DEPT_SEL_005
             case 6: return; // 6.메뉴화면으로
@@ -40,22 +42,5 @@ public class AdminDeptUI {
             e.printStackTrace();
         }
     }
-    
-	public void selectAllDept() {
-		System.out.println("\n전체 부서 리스트...");
 
-        List<DeptDTO> list = deptDao.selectAllDept();
-
-        System.out.println("전체 부서수 : " + list.size());
-        System.out.println("==================================");
-        System.out.println("🏢부서코드 | 부서명");
-        System.out.println("==================================");
-        
-        for(DeptDTO dto : list) {
-            System.out.print(dto.getDeptCd() + "\t");
-            System.out.print("|");
-            System.out.println(dto.getDeptNm() + "\t");
-        }
-        System.out.println("----------------------------------");
-	}
 }

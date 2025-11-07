@@ -47,9 +47,10 @@ public class DeptDAOImpl implements DeptDAO{
 			sql = " SELECT /* DEPT_SEL_003 */ "
 					+ "      DEPT_CD "
 					+ "    , CASE WHEN CONNECT_BY_ISLEAF = 1 THEN "
-					+ "            LPAD(' ', (LEVEL-1)*4, ' ') || '└─ ' || DEPT_CD || ' ' || DEPT_NM "
-					+ "            ELSE LPAD(' ', (LEVEL-1)*4, ' ') || '├─ ' || DEPT_CD || ' ' || DEPT_NM "
+					+ "            LPAD(' ', (LEVEL-1)*4, ' ') || '└─ ' || DEPT_NM "
+					+ "            ELSE LPAD(' ', (LEVEL-1)*4, ' ') || '├─ ' || DEPT_NM "
 					+ "       END AS DEPT_NM "
+					+ "    , EXT_NO "
 					+ " FROM TB_DEPT "
 					+ " START WITH SUPER_DEPT_CD IS NULL "
 					+ "CONNECT BY PRIOR DEPT_CD = SUPER_DEPT_CD "
@@ -64,6 +65,7 @@ public class DeptDAOImpl implements DeptDAO{
 
 				dto.setDeptCd(rs.getString("DEPT_CD"));
 				dto.setDeptNm(rs.getString("DEPT_NM"));
+				dto.setExtNo(rs.getString("EXT_NO"));
 				list.add(dto);
 			}
 		} catch (SQLException e) {

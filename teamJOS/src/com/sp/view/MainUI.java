@@ -20,6 +20,12 @@ import com.sp.util.LoginInfo;
 
 
 public class MainUI {
+    final String RESET  = "\u001B[0m";
+    final String CYAN   = "\u001B[36m";
+    final String GREEN  = "\u001B[32m";
+    final String YELLOW = "\u001B[33m";
+    final String GRAY   = "\u001B[90m";
+	
 	private BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 
     private LoginInfo login = new LoginInfo();
@@ -60,11 +66,21 @@ public class MainUI {
 
         do {
             try {
-                System.out.println("\n==============================");
-                System.out.println("   [teamJOS 인사관리 시스템]");
-                System.out.println("==============================");
-                System.out.print("1. 로그인  2. 종료 => ");
+                System.out.println();
+                System.out.println(CYAN + "╔════════════════════════════════════════╗" + RESET);
+                System.out.println(CYAN + "║                                        ║" + RESET);
+                System.out.println(CYAN + "║   🏢  " + YELLOW + " teamJOS 인사관리 시스템" + CYAN + "            ║" + RESET);
+                System.out.println(CYAN + "║                                        ║" + RESET);
+                System.out.println(CYAN + "╚════════════════════════════════════════╝" + RESET);
+
+                System.out.println(GRAY + "──────────────────────────────────────────" + RESET);
+                System.out.println(YELLOW + "   ① 로그인" + RESET);
+                System.out.println(YELLOW + "   ② 종료" + RESET);
+                System.out.println(GRAY + "──────────────────────────────────────────" + RESET);
+                System.out.print(GREEN + "👉 메뉴 선택 : " + RESET);
+
                 ch = Integer.parseInt(br.readLine());
+
             } catch (Exception e) {
                 ch = 0;
             }
@@ -76,7 +92,9 @@ public class MainUI {
                 break;
             case 2:
                 DBConn.close();
-                System.out.println("프로그램을 종료합니다.");
+                System.out.println();
+                System.out.println(GRAY + "시스템 자원을 정리 중입니다..." + RESET);
+                System.out.println(GREEN + "✅ 프로그램을 종료합니다." + RESET);
                 System.exit(0);
         }
     }
