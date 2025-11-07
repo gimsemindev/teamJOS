@@ -46,7 +46,7 @@ public class MainUI {
                 menuGuest(); 
             } else if ("admin".equalsIgnoreCase(member.getRole())) {  // 관리자
                 menuAdmin();
-            } else {                        
+            } else {                        // 일반 사원
                 menuEmployee();
             }
         }
@@ -134,6 +134,7 @@ public class MainUI {
                     break; 
                 case 4:
                 	employeeUI.manageBoard();
+                	break;
                 case 5:	
                     login.logout();
                     System.out.println("로그아웃 되었습니다.\n");
