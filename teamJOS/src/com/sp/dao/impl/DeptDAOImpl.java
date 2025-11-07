@@ -10,7 +10,8 @@ import java.util.List;
 import com.sp.dao.DeptDAO;
 import com.sp.model.DeptDTO;
 import com.sp.model.DeptMemberCountDTO;
-import com.sp.util.DBConn;
+import com.sp.util.*;
+
 
 public class DeptDAOImpl implements DeptDAO{
 	private Connection conn = DBConn.getConnection();
@@ -43,9 +44,16 @@ public class DeptDAOImpl implements DeptDAO{
 		// member1과 member2를 id를 기준으로 LEFT OUTER JOIN 하여 전체 레코드 반환
 		
 		try {
-			sql = "SELECT m1.id, pwd, name, birth, email, tel "
-					+ " FROM member1 m1 "
-					+ " LEFT OUTER JOIN member2 m2 ON m1.id = m2.id";
+			sql = " SELECT /* DEPT_SEL_003 */ "
+					+ "      DEPT_CD "
+					+ "    , CASE WHEN CONNECT_BY_ISLEAF = 1 THEN "
+					+ "            LPAD(' ', (LEVEL-1)*4, ' ') || '└─ ' || DEPT_CD || ' ' || DEPT_NM "
+					+ "            ELSE LPAD(' ', (LEVEL-1)*4, ' ') || '├─ ' || DEPT_CD || ' ' || DEPT_NM "
+					+ "       END AS DEPT_NM "
+					+ " FROM TB_DEPT "
+					+ " START WITH SUPER_DEPT_CD IS NULL "
+					+ "CONNECT BY PRIOR DEPT_CD = SUPER_DEPT_CD "
+					+ "ORDER SIBLINGS BY DEPT_CD ";
 
 			pstmt = conn.prepareStatement(sql);
 
@@ -54,20 +62,15 @@ public class DeptDAOImpl implements DeptDAO{
 			while (rs.next()) {
 				DeptDTO dto = new DeptDTO();
 
-				//dto.setId(rs.getString("id"));
-				//dto.setPwd(rs.getString("pwd"));
-				//dto.setName(rs.getString("name"));
-				//dto.setBirth(rs.getDate("birth") == null ? "" : rs.getDate("birth").toString());
-				//dto.setEmail(rs.getString("email"));
-				//dto.setTel(rs.getString("tel"));
-
+				dto.setDeptCd(rs.getString("DEPT_CD"));
+				dto.setDeptNm(rs.getString("DEPT_NM"));
 				list.add(dto);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
-			//DBUtil.close(rs);
-			//DBUtil.close(pstmt);
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
 		}
 
 		return list;
