@@ -11,18 +11,16 @@ import com.sp.dao.impl.AttDAOImpl;
 import com.sp.dao.impl.BoardDAOImpl;
 import com.sp.dao.impl.DeptDAOImpl;
 import com.sp.dao.impl.EmpDAOImpl;
-import com.sp.util.LoginInfo;
+
 
 public class EmployeeUI {
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	private LoginInfo loginInfo = null;
 	private EmpDAO empDao = new EmpDAOImpl();
 	private DeptDAO deptDao = new DeptDAOImpl();
 	private AttDAO attDao = new AttDAOImpl();
 	private BoardDAO boardDao = new BoardDAOImpl();
 	
-	public  EmployeeUI(LoginInfo loginInfo,EmpDAO empDao,DeptDAO deptDao,AttDAO attDao,BoardDAO boardDao) {
-		this.loginInfo = loginInfo;
+	public  EmployeeUI(EmpDAO empDao,DeptDAO deptDao,AttDAO attDao,BoardDAO boardDao) {
 		this.empDao = empDao;
 		this.deptDao = deptDao;
 		this.attDao = attDao;
@@ -83,9 +81,20 @@ public class EmployeeUI {
 		try {
 			
 			do {
-				System.out.print("1.정보등록 2.정보수정 3.정보조회 4.부서이동이력조회 5.이력조회  6.메뉴로돌아가기 => ");
+				System.out.print("1.출근등록 2.퇴근등록 3.휴가신청 4.휴가수정 5.연차조회 6.근무시간조회 7.메뉴로돌아가기 => ");
 				ch = Integer.parseInt(br.readLine());
-			} while(ch < 1 || ch > 6);
+			} while(ch < 1 || ch > 7);
+			
+			switch(ch) {
+			case 1: attDao.insertAttendanceIn(null); break;
+			case 2: attDao.insertAttendanceOut(null); break;
+			case 3: attDao.insertVacation(null); break;
+			case 4: attDao.updateVacation(null); break;
+			case 5: attDao.selectVacationByEmp(0); break;
+			case 6: attDao.selectWorkTimeByEmp(0); break;
+			case 7: return;
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -97,9 +106,17 @@ public class EmployeeUI {
 		
 		try {
 			do {
-				System.out.print("1.정보등록 2.정보수정 3.정보조회 4.부서이동이력조회 5.이력조회  6.메뉴로돌아가기 => ");
+				System.out.print("1.게시글등록 2.게시글수정 3.게시글삭제 4.메뉴로돌아가기 => ");
 				ch = Integer.parseInt(br.readLine());
-			} while(ch < 1 || ch > 6);
+			} while(ch < 1 || ch > 4);
+			
+			switch(ch) {
+			case 1: boardDao.insertPost(null); break;
+			case 2: boardDao.updatePost(null); break;
+			case 3: boardDao.deletePost(0); break;
+			case 4: return;
+			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

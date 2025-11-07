@@ -32,8 +32,8 @@ public class MainUI {
     private BoardDAO boardDao = new BoardDAOImpl();
 
     // UI 초기화
-    public AdminUI adminUI = new AdminUI(login, empDao, deptDao, attDao, authDao,boardDao);
-    public EmployeeUI employeeUI = new EmployeeUI(login, empDao, deptDao, attDao, boardDao);
+    public AdminUI adminUI = new AdminUI(empDao, deptDao, attDao, authDao,boardDao);
+    public EmployeeUI employeeUI = new EmployeeUI(empDao, deptDao, attDao, boardDao);
 
     /**
      * 프로그램 시작점
@@ -42,11 +42,11 @@ public class MainUI {
         while (true) {
             MemberDTO member = login.loginMember();
 
-            if (member == null) {           // 게스트 (비로그인)
-                menuGuest(); // ⚙️ 게스트 메뉴(MainUI 내부 구현)
+            if (member == null) {           
+                menuGuest(); 
             } else if ("admin".equalsIgnoreCase(member.getRole())) {  // 관리자
                 menuAdmin();
-            } else {                        // 일반 사원
+            } else {                        
                 menuEmployee();
             }
         }
