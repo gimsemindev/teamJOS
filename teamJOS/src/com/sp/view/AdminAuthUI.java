@@ -23,9 +23,9 @@ public class AdminAuthUI {
             } while(ch < 1 || ch > 4);
             
             switch(ch) {
-            case 1: updateAdminProcess(); break; // AUTH_UPD_002
-            case 2: insertAdminProcess(); break; // AUTH_INS_001
-            case 3: deleteAdminProcess(); break; // AUTH_DEL_003
+            case 1: updateAdmin(); break; // AUTH_UPD_002
+            case 2: insertAdmin(); break; // AUTH_INS_001
+            case 3: deleteAdmin(); break; // AUTH_DEL_003
             case 4: return; // 4.메뉴화면으로
             }
             
@@ -34,15 +34,15 @@ public class AdminAuthUI {
         }
     }
     
-    private void updateAdminProcess() {
+    public void updateAdmin() {
     	
     }
     
-    private void insertAdminProcess() {
+    public void insertAdmin() {
     	
     }
     
-    private void deleteAdminProcess() {
+    public void deleteAdmin() {
     	
     }
 }
