@@ -39,6 +39,7 @@ public interface EmpDAO {
 
     /** EMP_UPD_003 : 부서이동 */
     int updateDeptMove(DeptMoveDTO move) throws SQLException;
+    
 
     /** EMP_UPD_004 : 진급관리 */
     int updatePromotion(PromotionDTO promotion) throws SQLException;
