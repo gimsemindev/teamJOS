@@ -30,10 +30,10 @@ public interface DeptDAO {
     /** DEPT_UPD_002 */
     int updateDept(DeptDTO dept) throws SQLException;
 
-    /** DEPT_DEL_003 */
+    /** DEPT_DEL_004 */
     int deleteDept(int deptNo) throws SQLException;
 
-    /** DEPT_SEL_004 */
+    /** DEPT_SEL_003 */
     DeptDTO selectDeptByNo(int deptNo);
 
     /** DEPT_SEL_005 */
