@@ -22,28 +22,29 @@ public class AdminEmpUI {
                 System.out.print("1.정보등록 2.정보수정 3.부서이동 4.진급관리 5.정보조회 6.퇴직신청결재 7.경력등록 8.자격증및포상 9.이력조회 10.메뉴로돌아가기 => ");
                 ch = Integer.parseInt(br.readLine());
             } while(ch < 1 || ch > 10);
+            
+            if(ch==10) return; // 10.메뉴화면으로
 
             switch (ch) {
             case 1: insertEmployeeInfo(); break;
-            //case 2: empDao.updateEmployee(null); break; // EMP_UPD_002
+            case 2: updateEmployeeinfo(); break; // EMP_UPD_002
             //case 3: updateDeptMoveInfo(); break; // EMP_UPD_003
             //case 4: updatePromotionInfo(); break; // EMP_UPD_004
             case 5: manageEmployeeSearch(); break; // 5.정보조회 (하위 메뉴로 위임)
-            case 6: empDao.updateRetireApproval(0); break; // EMP_UPD_008
-            case 7: empDao.insertCareer(null); break; // EMP_INS_009
-            case 8: empDao.insertLicense(null); break; // EMP_INS_010
-            case 9: empDao.selectHistory(0); break; // EMP_SEL_011
-            case 10: return; // 10.메뉴화면으로
+            case 6: updateRetireApprovalInfo(); break; // EMP_UPD_008
+            case 7: insertCareerInfo(); break; // EMP_INS_009
+            case 8: insertLicenseInfo(); break; // EMP_INS_010
+            case 9: selectHistoryInfo(); break; // EMP_SEL_011
             }
             
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
+
 	// 사원 등록
 	public void insertEmployeeInfo() {
-		System.out.println("\n[사원 등록 정보]");
+		System.out.println("\n[관리자 - 사원관리 - 사원 정보 등록]");
 		EmployeeDTO dto = new EmployeeDTO();
 
 		try {
@@ -91,7 +92,7 @@ public class AdminEmpUI {
 	}
 	
 //	private void updateDeptMoveInfo() {
-//	    System.out.println("\n[부서이동 관리]");
+//	    System.out.println("\n[관리자 - 사원관리 - 부서이동 관리]");
 //	    try {
 //	        EmployeeDTO dto = new EmployeeDTO();
 //
@@ -117,7 +118,7 @@ public class AdminEmpUI {
 //	}
 //
 //	private void updatePromotionInfo() {
-//	    System.out.println("\n[진급관리]");
+//	    System.out.println("\n[관리자 - 사원관리 - 진급관리]");
 //	    try {
 //	        EmployeeDTO dto = new EmployeeDTO();
 //
@@ -154,7 +155,7 @@ public class AdminEmpUI {
             } while(ch < 1 || ch > 4);
 
             switch (ch) {
-            case 1: empDao.selectByEmpNo(0); break; // EMP_SEL_005
+            case 1: empDao.selectByEmpNo(null); break; // EMP_SEL_005
             case 2: empDao.selectByName(null); break; // EMP_SEL_006
             case 3: empDao.selectAll(); break; // EMP_SEL_007
             case 4: return;
@@ -166,19 +167,34 @@ public class AdminEmpUI {
     
     // 사원 정보 수정 UI
     protected void updateEmployeeinfo() {
+    	System.out.println("\n[관리자 - 사원관리 - 정보수정]");
     	int ch;
-    	String empNo, col="", con;
+    	String empNo, col=null, con;
+    	
 		try {
+			// 수정하려는 사원의 사원번호 입력
+			System.out.print("수정을 원하는 사원의 사원번호를 입력하세요. => ");
+			empNo = br.readLine();
+			
+			// 사원번호를 제대로 입력했는지 확인
+			if(empNo==null || empNo.trim().isEmpty()) {
+				System.out.println("사원번호를 입력하여 주세요.");
+			} else {
+				// 사원번호 검색 메소드 수정 중
+			}
 			do {
-				System.out.print("수정을 원하는 사원의 사원번호를 입력하세요. => ");
-				empNo = br.readLine();
-				System.out.println("수정을 원하는 컬럼을 입력하세요.");
-                System.out.print("1.이름 2.주소 3.이메일 4.비밀번호 5.권한레벨코드 6.메뉴로돌아가기 => ");
+				// 수정할 개인정보 입력
+				System.out.println("수정을 원하는 번호를 입력하세요.");
+                System.out.print("1.이름 2.주소 3.이메일 4.비밀번호 5.권한레벨코드 6.상위메뉴로돌아가기 => ");
                 ch = Integer.parseInt(br.readLine());
+                
+                // 수정 내용 입력
                 System.out.println("변경 내용을 입력하세요. => ");
                 con = br.readLine();
                 
             } while(ch < 1 || ch > 6);
+			
+			if(ch==6) return;
 			
 			switch (ch) {
 			case 1: col="EMP_NM"; break;
@@ -187,12 +203,28 @@ public class AdminEmpUI {
 			case 4: col="EMP_PWD"; break;
 			case 5: col="LEVEL_CODE"; break;
 			}
-			
+			// update문에 사용될 사원번호, 컬럼 이름, 수정내용을 메소드로 전달
 			empDao.updateEmployee(empNo, col, con);
 			
 		} catch (Exception e) {
 			
 		}
+	}
+    
+    protected void updateRetireApprovalInfo() {
+    	System.out.println("\n[관리자 - 사원관리 - 퇴직신청결재]");
+	}
+    
+    protected void insertCareerInfo() {
+    	System.out.println("\n[관리자 - 사원관리 - 경력등록]");
+	}
+    
+    protected void insertLicenseInfo() {
+    	System.out.println("\n[관리자 - 사원관리 - 자격증및포상]");
+	}
+    
+    protected void selectHistoryInfo() {
+    	System.out.println("\n[관리자 - 사원관리 - 이력조회]");
 	}
 
 }

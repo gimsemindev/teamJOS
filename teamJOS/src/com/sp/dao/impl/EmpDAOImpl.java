@@ -2,6 +2,7 @@ package com.sp.dao.impl;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -82,8 +83,26 @@ public class EmpDAOImpl implements EmpDAO{
 	}
 
 	@Override
-	public EmployeeDTO selectByEmpNo(int empNo) {
-		// TODO Auto-generated method stub
+	public EmployeeDTO selectByEmpNo(String empNo) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		
+		try {
+			// 수정 중
+			String sql = "SELECT COUNT(*) FROM TB_EMP WHERE EMP_NO = ?";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, empNo);
+			
+			rs = pstmt.executeQuery();
+			
+			if(rs.next()) {
+				
+				System.out.println("사원번호 조회 성공 ! ");
+			} 
+		} catch (Exception e) {
+			System.out.println("등록되지 않은 사원번호 입니다.");
+		}
+		
 		return null;
 	}
 

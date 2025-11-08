@@ -23,12 +23,13 @@ public class AdminAttUI {
                 ch = Integer.parseInt(br.readLine());
             } while(ch < 1 || ch > 5);
             
+            if(ch==5) return; // 5.메뉴화면으로
+            
             switch(ch) {
-            case 1: attDao.updateAttendance(null); break; // ATT_UPD_010
-            case 2: attDao.updateVacationApprove(null); break; // ATT_UPD_003
+            case 1: updateAttendanceInfo(); break; // ATT_UPD_010
+            case 2: updateVacationApproveInfo(); break; // ATT_UPD_003
             case 3: manageWorkTimeSearch(); break; // 3.근무시간조회 (하위 메뉴로 위임)
             case 4: manageVacationSearch(); break; // 4.연차조회 (하위 메뉴로 위임)
-            case 5: return; // 5.메뉴화면으로
             }
             
         } catch (Exception e) {
@@ -36,7 +37,44 @@ public class AdminAttUI {
         }
     }
     
-    // WBS의 4레벨 메뉴(3.근무시간조회) 처리를 위한 별도 메서드
+    private void updateAttendanceInfo() {
+    	System.out.println("\n[관리자 - 근태관리 - 근태정보수정]");
+    	int ch;
+    	String str, empNo;
+    	try {
+    		// 수정하려는 사원의 사원번호 입력
+			System.out.print("수정을 원하는 사원의 사원번호를 입력하세요. => ");
+			empNo = br.readLine();
+			
+			// 사원번호를 제대로 입력했는지 확인
+			if(empNo==null || empNo.trim().isEmpty()) {
+				System.out.println("사원번호를 입력하여 주세요.");
+			} else {
+				// 사원번호 검색 메소드 수정 중
+			}
+			
+			do {
+				System.out.println("1.출근일시수정 2.퇴근일시 수정 3.이전메뉴로돌아가기 => ");
+				ch = Integer.parseInt(br.readLine());
+			}while(ch < 1 || ch > 3);
+			
+			if(ch==3) return;
+			
+			System.out.println("수정할 일시 입력 (YYYY-MM-DD 24HH:MI) => ");
+			str = br.readLine();
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+		
+	}
+
+	protected void updateVacationApproveInfo() {
+		System.out.println("\n[관리자 - 근태관리 - 휴가승인]");
+		
+	}
+
+	// WBS의 4레벨 메뉴(3.근무시간조회) 처리를 위한 별도 메서드
     private void manageWorkTimeSearch() {
         int ch;
         System.out.println("\n[관리자 - 근태관리 - 근무시간조회]");

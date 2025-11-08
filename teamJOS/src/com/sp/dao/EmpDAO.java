@@ -54,7 +54,7 @@ public interface EmpDAO {
     int insertLicense(RewardDTO reward) throws SQLException;
 
     /** EMP_SEL_005 : 사번조회 */
-    EmployeeDTO selectByEmpNo(int empNo);
+    EmployeeDTO selectByEmpNo(String empNo);
 
     /** EMP_SEL_006 : 이름조회 */
     List<EmployeeDTO> selectByName(String name);
