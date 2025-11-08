@@ -30,8 +30,22 @@ public class PrintUtil {
 	    return " ".repeat(left) + text + " ".repeat(right);
 	}	
 	
+    // 왼쪽 공백 추가
+    public static String padLeft(String text, int width) {
+        if (text == null) text = "";
+        int textWidth = getDisplayWidth(text);
+        if (textWidth >= width) return text;
+
+        int pad = width - textWidth;
+        StringBuilder sb = new StringBuilder();
+        while (pad-- > 0) {
+            sb.append(" ");
+        }
+        sb.append(text);
+        return sb.toString();
+    }
 	
-    // 오른쪽으로 공백 채워서 일정 폭으로 맞추기
+    // 오른쪽 공백
 	public static String padRight(String text, int width) {
 	    if (text == null) text = "";
 	    int displayWidth = getDisplayWidth(text);

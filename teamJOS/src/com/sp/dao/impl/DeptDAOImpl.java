@@ -16,12 +16,36 @@ import com.sp.util.*;
 public class DeptDAOImpl implements DeptDAO{
 	private Connection conn = DBConn.getConnection();
 	
-	@Override
-	public int insertDept(DeptDTO dept) throws SQLException{
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	@Override	
+    public int insertDept(DeptDTO dept) throws SQLException {
+        int result = 0;
+		PreparedStatement pstmt = null;
+		String sql;
+				
+        try {
+            sql = "INSERT /* DEPT_INS_001 */ INTO TB_DEPT "
+                    + "(DEPT_CD, DEPT_NM, EXT_NO, SUPER_DEPT_CD, USE_YN, REG_DT) "
+                    + "VALUES (?, ?, ?, ?, ?, SYSDATE)";
 
+     		pstmt = conn.prepareStatement(sql);
+        	
+            pstmt.setString(1, dept.getDeptCd());
+            pstmt.setString(2, dept.getDeptNm());
+            pstmt.setString(3, dept.getExtNo());
+            pstmt.setString(4, dept.getSuperDeptCd());
+            pstmt.setString(5, dept.getUseYn());
+
+            result = pstmt.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+			DBUtil.close(pstmt);			
+		}
+        return result;
+    }	
+	
+	
 	@Override
 	public int updateDept(DeptDTO dept) throws SQLException{
 		// TODO Auto-generated method stub
