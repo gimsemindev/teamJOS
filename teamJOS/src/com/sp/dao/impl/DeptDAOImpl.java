@@ -1,5 +1,7 @@
 package com.sp.dao.impl;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,10 +12,13 @@ import java.util.List;
 import com.sp.dao.DeptDAO;
 import com.sp.model.DeptDTO;
 import com.sp.model.DeptMemberCountDTO;
-import com.sp.util.*;
+import com.sp.model.EmployeeDTO;
+import com.sp.util.DBConn;
+import com.sp.util.DBUtil;
 
 
 public class DeptDAOImpl implements DeptDAO{
+	private BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	private Connection conn = DBConn.getConnection();
 	
 	@Override	
@@ -48,8 +53,28 @@ public class DeptDAOImpl implements DeptDAO{
 	
 	@Override
 	public int updateDept(DeptDTO dept) throws SQLException{
-		// TODO Auto-generated method stub
-		return 0;
+        int result = 0;
+        PreparedStatement pstmt = null;
+        String sql;
+
+        // UPDATE 테이블명 SET 컬럼=값, 컬럼=값 WHERE 조건
+        try {                        
+            sql = "  UPDATE employee " 
+            	  +"    SET name = ? , birth = TO_DATE(?, 'YYYY-MM-DD'), tel = ? "	     
+            	  +"		 WHERE sabeon = ? ";
+            pstmt= conn.prepareStatement(sql);
+            
+            pstmt.setString(1, dept.getDeptCd());
+
+
+            result = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw e;
+        } finally {
+            DBUtil.close(pstmt);
+        }
+        
+        return result;
 	}
 
 	@Override
@@ -102,6 +127,47 @@ public class DeptDAOImpl implements DeptDAO{
 		return list;
 	}
 
+	@Override
+	public DeptDTO selectOneByDeptCd(String deptCd) {
+		DeptDTO dto = null;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql;
+       
+        // SELECT 컬럼, 컬럼 FROM 테이블 [WHERE 조건][ORDER BY 컬럼 DESC|ASC]
+        try {
+        	sql = "SELECT DEPT_CD, DEPT_NM, EXT_NO, SUPER_DEPT_CD, NVL(USE_YN,'') AS USE_YN, TO_CHAR(REG_DT, 'YYYY/MM/DD HH24:MI:SS') AS REG_DT "
+        			+ "  FROM TB_DEPT "
+        			+ " WHERE DEPT_CD = ? ";
+
+            pstmt = conn.prepareStatement(sql);           
+            pstmt.setString(1, deptCd);
+            rs = pstmt.executeQuery();
+
+            if(rs.next()) {
+                dto = new DeptDTO();
+                                
+                dto.setDeptCd(rs.getString("DEPT_CD"));
+                dto.setDeptNm(rs.getString("DEPT_NM"));
+                dto.setExtNo(rs.getString("EXT_NO"));
+                dto.setSuperDeptCd(rs.getString("SUPER_DEPT_CD"));
+                dto.setUseYn(rs.getString("USE_YN"));
+                dto.setRegDt(rs.getString("REG_DT"));
+                
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(rs);
+            DBUtil.close(pstmt);
+        }
+             
+        return dto;
+	}
+	
+	
+	
+	
 	@Override
 	public List<DeptMemberCountDTO> selectDeptMemberCount() {
 		// TODO Auto-generated method stub

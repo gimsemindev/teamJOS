@@ -11,8 +11,8 @@ import com.sp.dao.impl.DeptDAOImpl;
 import com.sp.exception.UserQuitException;
 import com.sp.model.DeptDTO;
 import com.sp.util.InputValidator;
+import com.sp.util.PrintUtil;
 import com.sp.view.common.DeptCommonUI;
-
 
 
 public class AdminDeptUI {
@@ -37,7 +37,7 @@ public class AdminDeptUI {
             
             switch(ch) {
             case 1: insertDept(); break; // DEPT_INS_001
-            case 2: deptDao.updateDept(null); break; // DEPT_UPD_002
+            case 2: updateDept(); break; // DEPT_UPD_002
             case 3: deptCommonUI.selectAllDept(); break; // DEPT_SEL_003  (기존 코드의 selectDeptByNo(0)은 selectAllDept로 수정)
             case 4: deptDao.deleteDept(0); break; // DEPT_DEL_004
             case 5: deptDao.selectDeptMemberCount(); break; // DEPT_SEL_005
@@ -139,4 +139,61 @@ public class AdminDeptUI {
         }	
 	}    
     
+	
+	public void updateDept() {
+		System.out.println("\n부서 정보 수정...");
+        String deptCd;
+        
+		DeptDTO dto = new DeptDTO();
+        
+        try {
+            System.out.print("수정할 부서 ? ");
+            deptCd = br.readLine();
+            dto = deptDao.selectOneByDeptCd(deptCd);
+            //EmployeeDTO updateDto = new EmployeeDTO();
+            if(dto == null) {
+            	System.out.println("등록된 부서가 아닙니다.");
+            	return;
+            } else {
+            	
+                System.out.println("==================================================================================================");
+                System.out.printf("%s | %s \t| %s | %s | %s | %s \n",
+                		PrintUtil.padCenter("부서코드", 14),
+                		PrintUtil.padCenter("부서명", 24),
+                		PrintUtil.padCenter("내선번호",6),	
+                		PrintUtil.padCenter("상위부서코드", 12),
+                		PrintUtil.padCenter("사용여부", 10),
+                		PrintUtil.padCenter("등록일시", 30)
+                		);
+                System.out.println("==================================================================================================");
+                        
+                System.out.printf("%s | %s \t | %s | %s | %s | %s  \n",
+                		PrintUtil.padCenter(dto.getDeptCd(), 12),
+                  		PrintUtil.padRight(dto.getDeptNm(), 24),
+                   		PrintUtil.padCenter(dto.getExtNo(), 6),
+                        PrintUtil.padCenter(dto.getSuperDeptCd(), 10),
+                        PrintUtil.padCenter(dto.getUseYn(), 10),
+                        PrintUtil.padCenter(dto.getRegDt(), 10)
+                		);
+
+            	
+            	System.out.println("등록된 아이디 수정이 가능합니다.");
+                //updateDto.setSabeon(dto.getSabeon());
+
+                System.out.print("수정할 이름 ? ");
+                //updateDto.setName(br.readLine());
+                
+                System.out.print("수정할 생년월일 ? ");
+                //updateDto.setBirth(br.readLine());
+
+                System.out.print("수정할 전화번호 ? ");
+                //updateDto.setTel(br.readLine());
+                
+                //dao.updateEmployee(updateDto);
+            }
+        } catch(Exception e) {
+        	e.printStackTrace();
+        }
+		
+	}
 }

@@ -38,4 +38,7 @@ public interface DeptDAO {
 
     /** DEPT_SEL_005 */
     List<DeptMemberCountDTO> selectDeptMemberCount();
+    
+    /** DEPT_SEL_006 */
+    DeptDTO selectOneByDeptCd(String deptCd);
 }
