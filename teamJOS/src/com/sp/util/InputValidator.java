@@ -10,8 +10,13 @@ import com.sp.exception.UserQuitException;
 public class InputValidator {
 	
     public static boolean isValidDeptCode(String deptCd) {
-        System.out.println("부서코드는 'D'로 시작하고 총 6자리여야 합니다. (예: D10000)\n");
-        return deptCd.matches("^D[A-Za-z0-9]{5}$");
+          	
+        if(!deptCd.matches("^D[A-Za-z0-9]{5}$")) {
+        	System.out.println("부서코드는 'D'로 시작하고 총 6자리여야 합니다. (예: D10000)\n");
+        	return false;
+        }
+        
+        return true;
     }
 
     public static boolean isValidEmpNo(String empNo) {
