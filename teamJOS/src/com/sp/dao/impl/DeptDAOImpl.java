@@ -1,7 +1,5 @@
 package com.sp.dao.impl;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,13 +10,12 @@ import java.util.List;
 import com.sp.dao.DeptDAO;
 import com.sp.model.DeptDTO;
 import com.sp.model.DeptMemberCountDTO;
-import com.sp.model.EmployeeDTO;
 import com.sp.util.DBConn;
 import com.sp.util.DBUtil;
 
 
 public class DeptDAOImpl implements DeptDAO{
-	private BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
 	private Connection conn = DBConn.getConnection();
 	
 	@Override	
@@ -59,15 +56,21 @@ public class DeptDAOImpl implements DeptDAO{
 
         // UPDATE 테이블명 SET 컬럼=값, 컬럼=값 WHERE 조건
         try {                        
-            sql = "  UPDATE employee " 
-            	  +"    SET name = ? , birth = TO_DATE(?, 'YYYY-MM-DD'), tel = ? "	     
-            	  +"		 WHERE sabeon = ? ";
+            sql = "  UPDATE /** DEPT_UPD_002 */ TB_DEPT " 
+            	  +"    SET DEPT_NM = ? "
+            	  + "     , EXT_NO = ?"
+            	  + "     , SUPER_DEPT_CD = ? "	
+            	  + "     , USE_YN = ? "
+            	  + "  WHERE DEPT_CD = ? ";
             pstmt= conn.prepareStatement(sql);
             
-            pstmt.setString(1, dept.getDeptCd());
-
-
-            result = pstmt.executeUpdate();
+            pstmt.setString(1, dept.getDeptNm());
+            pstmt.setString(2, dept.getExtNo());
+            pstmt.setString(3, dept.getSuperDeptCd());
+            pstmt.setString(4, dept.getUseYn());
+            pstmt.setString(5, dept.getDeptCd());
+            
+			result = pstmt.executeUpdate();
         } catch (SQLException e) {
             throw e;
         } finally {
@@ -75,12 +78,6 @@ public class DeptDAOImpl implements DeptDAO{
         }
         
         return result;
-	}
-
-	@Override
-	public int deleteDept(int deptNo) throws SQLException{
-		// TODO Auto-generated method stub
-		return 0;
 	}
 
 	@Override
@@ -101,6 +98,7 @@ public class DeptDAOImpl implements DeptDAO{
 					+ "       END AS DEPT_NM "
 					+ "    , EXT_NO "
 					+ " FROM TB_DEPT "
+					+ " WHERE USE_YN = 'Y' "
 					+ " START WITH SUPER_DEPT_CD IS NULL "
 					+ "CONNECT BY PRIOR DEPT_CD = SUPER_DEPT_CD "
 					+ "ORDER SIBLINGS BY DEPT_CD ";
@@ -136,7 +134,7 @@ public class DeptDAOImpl implements DeptDAO{
        
         // SELECT 컬럼, 컬럼 FROM 테이블 [WHERE 조건][ORDER BY 컬럼 DESC|ASC]
         try {
-        	sql = "SELECT DEPT_CD, DEPT_NM, EXT_NO, SUPER_DEPT_CD, NVL(USE_YN,'') AS USE_YN, TO_CHAR(REG_DT, 'YYYY/MM/DD HH24:MI:SS') AS REG_DT "
+        	sql = "SELECT /* DEPT_SEL_006 */ DEPT_CD, DEPT_NM, EXT_NO, SUPER_DEPT_CD, NVL(USE_YN,'') AS USE_YN, TO_CHAR(REG_DT, 'YYYY/MM/DD HH24:MI:SS') AS REG_DT "
         			+ "  FROM TB_DEPT "
         			+ " WHERE DEPT_CD = ? ";
 
@@ -164,14 +162,78 @@ public class DeptDAOImpl implements DeptDAO{
              
         return dto;
 	}
-	
-	
-	
-	
+		
 	@Override
 	public List<DeptMemberCountDTO> selectDeptMemberCount() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
+	public List<DeptDTO> selectDeptWithAllChildren(String deptCd) throws SQLException {
+		List<DeptDTO> list = new ArrayList<>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;
+		
+	    try {
+	    	sql = "SELECT /* DEPT_SEL_007 */ DEPT_CD"
+				+ "    , CASE WHEN CONNECT_BY_ISLEAF = 1 THEN "
+				+ "            LPAD(' ', (LEVEL-1)*4, ' ') || '└─ ' || DEPT_NM "
+				+ "            ELSE LPAD(' ', (LEVEL-1)*4, ' ') || '├─ ' || DEPT_NM "
+				+ "       END AS DEPT_NM "
+	    		+ ", SUPER_DEPT_CD, USE_YN  "
+	    	    + " FROM TB_DEPT " 
+	            + " START WITH DEPT_CD = ? " 
+	            + " CONNECT BY PRIOR DEPT_CD = SUPER_DEPT_CD";
+	    	
+	    	pstmt = conn.prepareStatement(sql);
+		 
+	        pstmt.setString(1, deptCd);
+	        rs = pstmt.executeQuery();
+	        
+	        while (rs.next()) {
+	            DeptDTO dto = new DeptDTO();
+	            dto.setDeptCd(rs.getString("DEPT_CD"));
+	            dto.setDeptNm(rs.getString("DEPT_NM"));
+	            dto.setSuperDeptCd(rs.getString("SUPER_DEPT_CD"));
+	            dto.setUseYn(rs.getString("USE_YN"));
+	            list.add(dto);
+	        }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(rs);
+            DBUtil.close(pstmt);
+        }
+	    
+	    return list;
+	}
+	
+	@Override
+	public int deleteDept(String deptCd) throws SQLException{
+        int result = 0;
+		PreparedStatement pstmt = null;
+		String sql;
+		
+		try {
+			sql = "UPDATE /* DEPT_DEL_004 */ TB_DEPT " 
+                + "SET USE_YN = 'N' " 
+                + "WHERE DEPT_CD IN ( " 
+                + "    SELECT DEPT_CD " 
+                + "    FROM TB_DEPT " 
+                + "    START WITH DEPT_CD = ? " 
+                + "    CONNECT BY PRIOR DEPT_CD = SUPER_DEPT_CD " 
+                + ")";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, deptCd);
+			result = pstmt.executeUpdate();
+			} catch (Exception e) {
+				throw e;
+			} finally {
+				DBUtil.close(pstmt);
+			}
+		return result;
+		}	
 }

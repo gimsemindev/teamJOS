@@ -28,7 +28,8 @@ public class DeptCommonUI {
             		PrintUtil.padCenter(dto.getDeptCd(), 12),
             		PrintUtil.padRight(dto.getDeptNm(), 32),
             		PrintUtil.padCenter(dto.getExtNo(), 8));
-        }      
+        }
+        System.out.println("------------------------------------------------------------");
 	}
 
 }

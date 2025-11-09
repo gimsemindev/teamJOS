@@ -31,7 +31,7 @@ public interface DeptDAO {
     int updateDept(DeptDTO dept) throws SQLException;
 
     /** DEPT_DEL_004 */
-    int deleteDept(int deptNo) throws SQLException;
+    int deleteDept(String deptCd) throws SQLException;
 
     /** DEPT_SEL_003 */
     List<DeptDTO> selectAllDept();
@@ -41,4 +41,8 @@ public interface DeptDAO {
     
     /** DEPT_SEL_006 */
     DeptDTO selectOneByDeptCd(String deptCd);
+    
+    /** DEPT_SEL_007 */
+    List<DeptDTO> selectDeptWithAllChildren(String deptCd) throws SQLException;
+        
 }
