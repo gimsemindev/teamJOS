@@ -41,8 +41,9 @@ public class MainUI {
     private LoginDAO loginDao = new LoginDAOImpl();
 
     // UI 초기화
-    public AdminUI adminUI = new AdminUI(empDao, deptDao, attDao, authDao,boardDao);
-    public EmployeeUI employeeUI = new EmployeeUI(empDao, deptDao, attDao, boardDao);
+    public AdminUI adminUI = new AdminUI(empDao, deptDao, attDao, authDao,boardDao, login);
+    public EmployeeUI employeeUI = new EmployeeUI(empDao, deptDao, attDao, boardDao, login);
+    
     
     // MainUI.java 내부 권한 레벨 상수 
     private static final int AUTH_LEVEL_ADMIN = 3; // 관리자 레벨

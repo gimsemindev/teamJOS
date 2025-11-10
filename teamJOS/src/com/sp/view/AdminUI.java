@@ -8,6 +8,7 @@ import com.sp.dao.AuthDAO;
 import com.sp.dao.BoardDAO;
 import com.sp.dao.DeptDAO;
 import com.sp.dao.EmpDAO;
+import com.sp.util.LoginInfo;
 
 
 public class AdminUI {
@@ -19,14 +20,17 @@ public class AdminUI {
     private AdminAttUI adminAttUI;
     private AdminAuthUI adminAuthUI;
     private AdminBoardUI adminBoardUI;
-
-    public AdminUI(EmpDAO empDao, DeptDAO deptDao, AttDAO attDao, AuthDAO authDao, BoardDAO boardDao) {
+    
+    private LoginInfo loginInfo;
+    
+    public AdminUI(EmpDAO empDao, DeptDAO deptDao, AttDAO attDao, AuthDAO authDao, BoardDAO boardDao, LoginInfo logininfo) {
         // 주입받은 DAO를 사용하여 분할된 UI 클래스 인스턴스 초기화
-        this.adminEmpUI = new AdminEmpUI(empDao);
-        this.adminDeptUI = new AdminDeptUI(deptDao);
-        this.adminAttUI = new AdminAttUI(attDao);
-        this.adminAuthUI = new AdminAuthUI(authDao);
-        this.adminBoardUI = new AdminBoardUI(boardDao);
+        this.adminEmpUI = new AdminEmpUI(empDao, loginInfo);
+        this.adminDeptUI = new AdminDeptUI(deptDao, loginInfo);
+        this.adminAttUI = new AdminAttUI(attDao, loginInfo);
+        this.adminAuthUI = new AdminAuthUI(authDao, loginInfo);
+        this.adminBoardUI = new AdminBoardUI(boardDao, loginInfo);
+        this.loginInfo = loginInfo;
     }
     
     // 각 기능을 분할된 UI 클래스의 menu() 메서드로 위임

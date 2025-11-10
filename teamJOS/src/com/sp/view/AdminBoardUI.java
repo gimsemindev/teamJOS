@@ -3,13 +3,16 @@ package com.sp.view;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import com.sp.dao.BoardDAO;
+import com.sp.util.LoginInfo;
 
 public class AdminBoardUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private BoardDAO boardDao;
+    private LoginInfo loginInfo;
     
-    public AdminBoardUI(BoardDAO boardDao) {
+    public AdminBoardUI(BoardDAO boardDao, LoginInfo loginInfo) {
         this.boardDao = boardDao;
+        this.loginInfo = loginInfo;
     }
     
     public void menu() {

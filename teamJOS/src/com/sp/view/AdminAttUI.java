@@ -3,13 +3,16 @@ package com.sp.view;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import com.sp.dao.AttDAO;
+import com.sp.util.LoginInfo;
 
 public class AdminAttUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private AttDAO attDao;
+    private LoginInfo loginInfo;
     
-    public AdminAttUI(AttDAO attDao) {
+    public AdminAttUI(AttDAO attDao, LoginInfo loginInfo) {
         this.attDao = attDao;
+        this.loginInfo = loginInfo;
     }
     
     public void menu() {

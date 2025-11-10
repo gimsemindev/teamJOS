@@ -20,10 +20,12 @@ public class LoginDAOImpl implements LoginDAO {
         
 
         try {
-        	sql = "SELECT e.EMP_NO, e.EMP_NM, g.GRADE_NM, e.LEVEL_CODE "
-        			+ "FROM TB_EMP e "
-        			+ "LEFT JOIN TB_GRADE g ON e.GRADE_CD = g.GRADE_CD "
-        			+ "WHERE e.EMP_NO = ? AND e.PWD = ? AND e.USE_YN = 'Y'";
+        	sql = """
+        			SELECT e.EMP_NO, e.EMP_NM, g.GRADE_NM, e.LEVEL_CODE, DEPT_CD
+        			FROM TB_EMP e 
+        			LEFT JOIN TB_GRADE g ON e.GRADE_CD = g.GRADE_CD 
+        			WHERE e.EMP_NO = ? AND e.PWD = ?  AND e.USE_YN = 'Y'
+        			""";
         	
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, empNo);
@@ -35,6 +37,7 @@ public class LoginDAOImpl implements LoginDAO {
                     rs.getString("EMP_NO"),
                     rs.getString("EMP_NM"),
                     rs.getString("GRADE_NM"),
+                    rs.getString("DEPT_CD"),
                     rs.getString("LEVEL_CODE")
                 );
             }

@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.sql.SQLException;
 
 import com.sp.dao.AuthDAO;
+import com.sp.util.LoginInfo;
 
 
 
@@ -17,12 +18,14 @@ public class AdminAuthUI {
 	
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private AuthDAO authDao;
+    private LoginInfo loginInfo;
     
     private static final String ADMIN_LEVEL_CODE = "3";
     private static final String EMPLOYEE_LEVEL_CODE = "1";
     
-    public AdminAuthUI(AuthDAO authDao) {
+    public AdminAuthUI(AuthDAO authDao, LoginInfo loginInfo) {
         this.authDao = authDao;
+        this.loginInfo = loginInfo;
     }
     
     public void menu() {

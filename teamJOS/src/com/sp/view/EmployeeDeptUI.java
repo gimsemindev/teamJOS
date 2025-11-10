@@ -4,16 +4,18 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import com.sp.dao.DeptDAO;
+import com.sp.util.LoginInfo;
 import com.sp.view.common.DeptCommonUI;
 
 public class EmployeeDeptUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private DeptDAO deptDao;
     private DeptCommonUI deptCommonUI = new DeptCommonUI();
+    private LoginInfo loginInfo;
     
-    
-    public EmployeeDeptUI(DeptDAO deptDao) {
+    public EmployeeDeptUI(DeptDAO deptDao, LoginInfo loginInfo) {
         this.deptDao = deptDao;
+        this.loginInfo = loginInfo;
     }
     
     // EmployeeUI의 manageDepartment() 기능을 menu()로 변경

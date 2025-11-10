@@ -12,14 +12,18 @@ public class LoginDTO {
     /** 직급명 */
     private String gradeNm;
     
+    /** 부서코드 */
+    private String deptCd;
+    
     // 기본 생성자
     public LoginDTO() {}
 
     // 모든 필드를 받는 생성자
-    public LoginDTO(String memberId, String memberName, String gradeNm, String role) {
+    public LoginDTO(String memberId, String memberName, String gradeNm, String deptCd,String role) {
         this.memberId = memberId;
         this.memberName = memberName;
         this.gradeNm = gradeNm;
+        this.deptCd = deptCd;
         this.role = role;
     }
 
@@ -48,7 +52,15 @@ public class LoginDTO {
         this.gradeNm = gradeNm;
     }
     
-    public String getRole() {
+    public String getDeptCd() {
+		return deptCd;
+	}
+
+	public void setDeptCd(String deptCd) {
+		this.deptCd = deptCd;
+	}
+
+	public String getRole() {
         return role;
     }
 

@@ -3,13 +3,16 @@ package com.sp.view;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import com.sp.dao.BoardDAO;
+import com.sp.util.LoginInfo;
 
 public class EmployeeBoardUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private BoardDAO boardDao;
+    private LoginInfo loginInfo;
     
-    public EmployeeBoardUI(BoardDAO boardDao) {
+    public EmployeeBoardUI(BoardDAO boardDao, LoginInfo loginInfo) {
         this.boardDao = boardDao;
+        this.loginInfo = loginInfo;
     }
     
     // EmployeeUI의 manageBoard() 기능을 menu()로 변경

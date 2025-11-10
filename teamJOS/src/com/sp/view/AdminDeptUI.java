@@ -11,6 +11,7 @@ import com.sp.dao.impl.DeptDAOImpl;
 import com.sp.exception.UserQuitException;
 import com.sp.model.DeptDTO;
 import com.sp.util.InputValidator;
+import com.sp.util.LoginInfo;
 import com.sp.util.PrintUtil;
 import com.sp.view.common.DeptCommonUI;
 
@@ -18,9 +19,12 @@ public class AdminDeptUI {
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	private DeptDAO deptDao = new DeptDAOImpl();
 	private DeptCommonUI deptCommonUI = new DeptCommonUI();
-
-	public AdminDeptUI(DeptDAO deptDao) {
+	private LoginInfo loginInfo;
+	
+	
+	public AdminDeptUI(DeptDAO deptDao, LoginInfo loginInfo) {
 		this.deptDao = deptDao;
+		this.loginInfo = loginInfo;
 	}
 
 	public void menu() {

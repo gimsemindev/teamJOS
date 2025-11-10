@@ -11,15 +11,18 @@ import com.sp.model.DeptMoveDTO;
 import com.sp.model.EmployeeDTO;
 import com.sp.model.PromotionDTO;
 import com.sp.model.RewardDTO;
+import com.sp.util.LoginInfo;
 import com.sp.view.common.DeptCommonUI;
 
 public class AdminEmpUI {
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	private DeptCommonUI deptCommonUI = new DeptCommonUI();
 	private EmpDAO empDao;
+	private LoginInfo loginInfo;
 
-	public AdminEmpUI(EmpDAO empDao) {
+	public AdminEmpUI(EmpDAO empDao, LoginInfo loginInfo) {
 		this.empDao = empDao;
+		this.loginInfo = loginInfo;
 	}
 
 	/** 메인 메뉴 */

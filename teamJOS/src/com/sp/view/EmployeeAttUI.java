@@ -3,13 +3,16 @@ package com.sp.view;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import com.sp.dao.AttDAO;
+import com.sp.util.LoginInfo;
 
 public class EmployeeAttUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private AttDAO attDao;
+    private LoginInfo loginInfo;
     
-    public EmployeeAttUI(AttDAO attDao) {
+    public EmployeeAttUI(AttDAO attDao, LoginInfo loginInfo) {
         this.attDao = attDao;
+        this.loginInfo = loginInfo;
     }
     
     // EmployeeUI의 manageAttendance() 기능을 menu()로 변경

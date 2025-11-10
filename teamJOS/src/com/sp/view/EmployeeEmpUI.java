@@ -3,13 +3,17 @@ package com.sp.view;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import com.sp.dao.EmpDAO;
+import com.sp.util.LoginInfo;
 
 public class EmployeeEmpUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private EmpDAO empDao;
+    private LoginInfo loginInfo;
     
-    public EmployeeEmpUI(EmpDAO empDao) {
+    public EmployeeEmpUI(EmpDAO empDao, LoginInfo loginInfo) {
         this.empDao = empDao;
+        this.loginInfo = loginInfo;
+;
     }
     
     // EmployeeUI의 manageEmployee() 기능을 menu()로 변경

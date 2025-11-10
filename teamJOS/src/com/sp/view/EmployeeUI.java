@@ -7,6 +7,7 @@ import com.sp.dao.AttDAO;
 import com.sp.dao.BoardDAO;
 import com.sp.dao.DeptDAO;
 import com.sp.dao.EmpDAO;
+import com.sp.util.LoginInfo;
 
 
 public class EmployeeUI {
@@ -18,13 +19,16 @@ public class EmployeeUI {
 	private EmployeeAttUI employeeAttUI;
 	private EmployeeBoardUI employeeBoardUI;
 	
-	public  EmployeeUI(EmpDAO empDao,DeptDAO deptDao,AttDAO attDao,BoardDAO boardDao) {
+	private LoginInfo loginInfo; 
+	
+	public  EmployeeUI(EmpDAO empDao,DeptDAO deptDao,AttDAO attDao,BoardDAO boardDao, LoginInfo logininfo) {
 	
 		// 주입받은 DAO를 사용하여 분할된 UI 클래스 인스턴스 초기화
-		this.employeeEmpUI = new EmployeeEmpUI(empDao);
-		this.employeeDeptUI = new EmployeeDeptUI(deptDao);
-		this.employeeAttUI = new EmployeeAttUI(attDao);
-		this.employeeBoardUI = new EmployeeBoardUI(boardDao);
+		this.employeeEmpUI = new EmployeeEmpUI(empDao, loginInfo);
+		this.employeeDeptUI = new EmployeeDeptUI(deptDao, loginInfo);
+		this.employeeAttUI = new EmployeeAttUI(attDao, loginInfo);
+		this.employeeBoardUI = new EmployeeBoardUI(boardDao, loginInfo);
+        this.loginInfo = loginInfo;
 	}
 	
 	public void manageEmployee() {
