@@ -6,12 +6,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import com.sp.dao.DeptDAO;
 import com.sp.model.DeptDTO;
 import com.sp.model.DeptMemberDTO;
 import com.sp.util.DBConn;
 import com.sp.util.DBUtil;
+import com.sp.util.FileDownloadUtil;
 
 
 public class DeptDAOImpl implements DeptDAO{
@@ -352,5 +354,59 @@ public class DeptDAOImpl implements DeptDAO{
 				DBUtil.close(pstmt);
 			}
 		return result;
-		}	
+		}
+
+	@Override	
+	public void makeCSVFile() throws Exception {
+		String sql;
+		sql = """
+			  SELECT D.DEPT_CD
+	               , D.DEPT_NM
+	               , G.GRADE_NM
+	               , C.CONTRACT_TP_NM
+	               , S.EMP_STAT_NM
+	               , E.EMP_NO
+	               , E.EMP_NM
+	               , TO_CHAR(E.HIRE_DT, 'YYYY/MM/DD') AS HIRE_DT
+	               , NVL(P.CONTACT_NO,' ') AS CONTACT_NO, E.EMAIL
+	            FROM TB_EMP E
+	            LEFT JOIN TB_DEPT D 
+	              ON E.DEPT_CD  = D.DEPT_CD 
+	             AND D.USE_YN   = 'Y'
+	            LEFT JOIN TB_GRADE G 
+	              ON E.GRADE_CD = G.GRADE_CD 
+	             AND G.USE_YN= 'Y'
+	            LEFT JOIN TB_EMP_CNTRT_TYPE C 
+	              ON E.CONTRACT_TP_CD = C.CONTRACT_TP_CD 
+	             AND C.USE_YN = 'Y'
+	            LEFT JOIN TB_EMP_STATUS S 
+	              ON E.EMP_STAT_CD = S.EMP_STAT_CD 
+	             AND S.USE_YN = 'Y'
+	            LEFT JOIN TB_EMP_CNTCT P 
+	              ON E.EMP_NO=P.EMP_NO 
+	             AND P.CONTACT_TP_CD = '1' 
+	             AND P.USE_YN = 'Y'
+	           WHERE E.USE_YN = 'Y'
+	           ORDER BY D.DEPT_CD, E.GRADE_CD DESC """;
+		
+        // DB 컬럼명 ↔ DTO 필드명 매핑
+        Map<String, String> columnMapping = Map.of(
+                "deptCd"      , "DEPT_CD",
+                "deptNm"      , "DEPT_NM",
+                "gradeNM"     , "GRADE_NM",
+                "contractTpNM", "CONTRACT_TP_NM",
+                "empStatNM"   , "EMP_STAT_NM",
+                "empNo"       , "EMP_NO",
+                "empNm"       , "EMP_NM",
+                "hireDt"      , "HIRE_DT",
+                "contactNo"   , "CONTACT_NO",
+                "email"       , "EMAIL"
+        );		
+		try {
+			FileDownloadUtil.exportToCsv("부서", conn, DeptMemberDTO.class, columnMapping, sql);
+		} catch (Exception e) {
+			throw e;
+		}
+		
+	}
 }

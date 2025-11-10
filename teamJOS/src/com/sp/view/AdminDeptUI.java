@@ -37,7 +37,7 @@ public class AdminDeptUI {
 			try {
 				
 				do {
-					System.out.print("1.부서등록 2.부서수정 3.부서조회 4.부서삭제 5.부서인원현황 6.메뉴로돌아가기 => ");
+					System.out.print("1.부서등록 2.부서수정 3.부서조회 4.부서삭제 5.부서인원현황 6.부서인원현황 다운로드 7.메뉴로돌아가기 => ");
 					
 					input = br.readLine();
 	                
@@ -66,6 +66,9 @@ public class AdminDeptUI {
 					deptCommonUI.selectDeptMember();
 					break; // DEPT_SEL_005
 				case 6:
+					makeCSVFile();
+					break;
+				case 7:
 					return; // 6.메뉴화면으로
 				}
 				
@@ -187,7 +190,7 @@ public class AdminDeptUI {
 	        updDTO.setDeptCd(dto.getDeptCd());
 
 	        // 기존 부서 정보 출력
-	        System.out.println("==================================================================================================");
+	        PrintUtil.printLine('=', 131);
 	        System.out.printf("%s | %s \t| %s | %s | %s | %s \n",
 	                PrintUtil.padCenter("부서코드", 14),
 	                PrintUtil.padCenter("부서명", 24),
@@ -196,7 +199,7 @@ public class AdminDeptUI {
 	                PrintUtil.padCenter("사용여부", 10),
 	                PrintUtil.padCenter("등록일시", 30)
 	        );
-	        System.out.println("==================================================================================================");
+	        PrintUtil.printLine('=', 131);
 
 	        System.out.printf("%s | %s \t | %s | %s | %s | %s  \n",
 	                PrintUtil.padCenter(dto.getDeptCd(), 12),
@@ -206,7 +209,7 @@ public class AdminDeptUI {
 	                PrintUtil.padCenter(dto.getUseYn(), 10),
 	                PrintUtil.padCenter(dto.getRegDt(), 10)
 	        );
-	        System.out.println("--------------------------------------------------------------------------------------------------");
+	        PrintUtil.printLine('-', 131);
 
 	        while (true) {
 
@@ -311,12 +314,12 @@ public class AdminDeptUI {
 
 	        // 삭제 대상 부서 목록 출력
 	        System.out.println("다음 부서들이 사용 안 함(N) 처리됩니다:");
-	        System.out.println("============================================================");
+	        PrintUtil.printLine('=', 93);
 	        System.out.printf("%s | %s | %s\n",
 	        		PrintUtil.padCenter("부서코드", 14),
 	        		PrintUtil.padCenter("부서명", 34),
 	        		PrintUtil.padCenter("사용여부",10));
-	        System.out.println("============================================================");
+	        PrintUtil.printLine('=', 93);
 	        
 	        for (DeptDTO d : targetDepts) {           
 	            System.out.printf("%s | %s \t | %s\n",
@@ -324,7 +327,7 @@ public class AdminDeptUI {
 	            		PrintUtil.padRight(d.getDeptNm(), 32),
 	            		PrintUtil.padCenter(d.getUseYn(), 8));
 	        }
-	        System.out.println("------------------------------------------------------------");	        
+	        PrintUtil.printLine('-', 93);	        
 	        
 	        // 삭제전 사용자 확인
 	        System.out.print("정말 삭제하시겠습니까? (Y/N): ");
@@ -341,5 +344,13 @@ public class AdminDeptUI {
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
-	}	
+	}
+	
+	public void makeCSVFile() {
+		try {
+			 deptDao.makeCSVFile();
+		 } catch (Exception e) {
+		        e.printStackTrace();
+		    }
+	}
 }

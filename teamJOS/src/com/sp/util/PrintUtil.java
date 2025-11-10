@@ -57,4 +57,8 @@ public class PrintUtil {
 	    return sb.toString();
 	}	
 	
+	// 라인 반복 출력
+    public static void printLine(char ch, int length) {
+        System.out.println(String.valueOf(ch).repeat(length));
+    }
 }

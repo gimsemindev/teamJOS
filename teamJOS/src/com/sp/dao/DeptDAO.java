@@ -47,5 +47,8 @@ public interface DeptDAO {
     
     /** DEPT_SEL_008 */
     int selectDeptMemberCount();
+    
+    /** DEPT_SEL_009 */
+    void makeCSVFile() throws Exception;
         
 }

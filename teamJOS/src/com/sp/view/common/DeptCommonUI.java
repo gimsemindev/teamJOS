@@ -19,12 +19,12 @@ public class DeptCommonUI {
         List<DeptDTO> list = deptDao.selectAllDept();
 
         System.out.println("전체 부서수 : " + list.size());    
-        System.out.println("============================================================");
+        PrintUtil.printLine('=', 60);
         System.out.printf("%s | %s | %s\n",
         		PrintUtil.padCenter("부서코드", 14),
         		PrintUtil.padCenter("부서명", 34),
         		PrintUtil.padCenter("내선번호",10));
-        System.out.println("============================================================");
+        PrintUtil.printLine('=', 60);
         
         for(DeptDTO dto : list) {            
             System.out.printf("%s | %s \t | %s\n",
@@ -32,7 +32,7 @@ public class DeptCommonUI {
             		PrintUtil.padRight(dto.getDeptNm(), 32),
             		PrintUtil.padCenter(dto.getExtNo(), 8));
         }
-        System.out.println("------------------------------------------------------------");
+        PrintUtil.printLine('-', 60);
 	}
 
 	public void selectDeptMember() {
@@ -53,17 +53,17 @@ public class DeptCommonUI {
 
 	        
 	        while (true) {
-	            // ✅ 직접 start / end 계산
+	            
 	            int start = (page - 1) * PAGE_SIZE + 1;
 	            int end   = page * PAGE_SIZE;
 
 	            List<DeptMemberDTO> list = deptDao.selectDeptMember(start, end);
 
-	            // ───────── 레이아웃 출력 ─────────
-	            System.out.println("\n=============================================");
+	            PrintUtil.printLine('=', 84);
 	            System.out.printf("페이지 %d / %d  (총 %d건)   [조회범위: %d ~ %d]\n",
 	                    page, totalPage, totalCnt, start, Math.min(end, totalCnt));	            
-	            System.out.println("=================================================================================================================================================================================");
+	       
+	            PrintUtil.printLine('=', 177);
 	            System.out.printf("%s | %s \t | %s \t | %s \t| %s \t| %s \t| %s \t| %s \t| %s \t| %s \t\n",
 	            		PrintUtil.padCenter("부서코드", 14),
 	            		PrintUtil.padCenter("부서명", 15),
@@ -76,7 +76,7 @@ public class DeptCommonUI {
 	            		PrintUtil.padCenter("연락처", 15),	            		
 	            		PrintUtil.padCenter("이메일", 15)	  
 	            		);
-	            System.out.println("==================================================================================================================================================================================");	            
+	            PrintUtil.printLine('=', 177);	            
 	            
 	            for (DeptMemberDTO dto : list) {
 	            	System.out.printf("%s | %s \t | %s\t | %s \t| %s \t| %s \t| %s \t| %s \t| %s \t| %s\t",
@@ -94,7 +94,7 @@ public class DeptCommonUI {
 	            	System.out.println();
 	            }
 
-	            System.out.println("==================================================================================================================================================================================");
+	            PrintUtil.printLine('-', 177);
 	            System.out.print("[n:다음  p:이전 q:종료] ➤ ");
 
 	            String cmd = sc.nextLine().trim();
@@ -116,7 +116,7 @@ public class DeptCommonUI {
 	                	page++;
 	                }
 	            }        
-	            System.out.println("------------------------------------------------------------");
+	            PrintUtil.printLine('-', 97);
 	        }
 		} catch(Exception e) {
 			e.printStackTrace();
