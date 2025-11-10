@@ -2,7 +2,7 @@ package com.sp.dao;
 
 import java.sql.SQLException;
 
-import com.sp.model.AdminDTO;
+import com.sp.model.AuthDTO;
 
 /**
  * <h2>AuthDAO (권한 관리 데이터 접근 인터페이스)</h2>
@@ -13,7 +13,7 @@ import com.sp.model.AdminDTO;
  *   <li>관리자 계정 등록, 수정, 삭제</li>
  * </ul>
  *
- * <p><b>Service ID 범위:</b> AUTH_INS_001 ~ AUTH_DEL_003</p>
+ * <p><b>Service ID 범위:</b> AUTH_UPD_001 ~ AUTH_DEL_003</p>
  * 
  * <p><b>프로젝트명:</b> teamJOS 인사관리 프로젝트</p>
  * <p><b>작성자:</b> 홍길동</p>
@@ -22,11 +22,11 @@ import com.sp.model.AdminDTO;
  */
 public interface AuthDAO {
 
-    /** AUTH_INS_001 */
-    int insertAdmin(AdminDTO admin) throws SQLException;
+    /** AUTH_UPD_001 */
+    int insertAdmin(String empNo, String levelCode) throws SQLException;
 
     /** AUTH_UPD_002 */
-    int updateAdmin(AdminDTO admin) throws SQLException;
+    int updateAdmin(AuthDTO admin) throws SQLException;
 
     /** AUTH_DEL_003 */
     int deleteAdmin(String adminId) throws SQLException;

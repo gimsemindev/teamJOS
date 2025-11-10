@@ -1,15 +1,24 @@
 package com.sp.view;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
+
 import com.sp.dao.AuthDAO;
-import com.sp.model.AdminDTO;
+
 
 
 
 public class AdminAuthUI {
+	final String RESET  = "\u001B[0m";
+    final String GREEN  = "\u001B[32m";
+    final String YELLOW = "\u001B[33m";
+	
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private AuthDAO authDao;
+    
+    private static final String ADMIN_LEVEL_CODE = "3";
     
     public AdminAuthUI(AuthDAO authDao) {
         this.authDao = authDao;
@@ -50,17 +59,30 @@ public class AdminAuthUI {
     }
     
     public void updateAdmin() {
-    	AdminDTO dto = new AdminDTO();
-    	try {
-    		authDao.updateAdmin(dto);
-			
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
+
     }
     
     public void insertAdmin() {
+    	System.out.println("\n[관리자 계정 등록]");
+    	String empNo = null;
     	
+    	try {
+            System.out.print("등록할 사번 (관리자 ID): ");
+            empNo = br.readLine();
+            
+            int result = authDao.insertAdmin(empNo, ADMIN_LEVEL_CODE);
+            
+            if (result > 0) {
+                System.out.println(GREEN + "✅ 권한 등록 완료! 사번 " + empNo + "이(가) 관리자로 승급되었습니다." + RESET);
+            } else {
+                System.out.println(YELLOW + "❌ 권한 등록 실패: 해당 사번이 존재하지 않거나, 이미 관리자입니다." + RESET);
+            }
+            
+        } catch (IOException e) {
+            System.err.println("입력 중 오류 발생.");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
     
     public void deleteAdmin() {
