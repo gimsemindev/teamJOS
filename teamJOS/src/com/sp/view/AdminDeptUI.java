@@ -5,11 +5,13 @@ import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
+import java.util.Scanner;
 
 import com.sp.dao.DeptDAO;
 import com.sp.dao.impl.DeptDAOImpl;
 import com.sp.exception.UserQuitException;
 import com.sp.model.DeptDTO;
+import com.sp.model.DeptMemberDTO;
 import com.sp.util.InputValidator;
 import com.sp.util.PrintUtil;
 import com.sp.view.common.DeptCommonUI;
@@ -59,7 +61,7 @@ public class AdminDeptUI {
 					deleteDept();
 					break; // DEPT_DEL_004
 				case 5:
-					deptDao.selectDeptMemberCount();
+					deptCommonUI.selectDeptMember();
 					break; // DEPT_SEL_005
 				case 6:
 					return; // 6.메뉴화면으로
@@ -332,11 +334,10 @@ public class AdminDeptUI {
 
 	        // 5️⃣ 하위 부서를 포함한 USE_YN = 'N' 처리
 	        int updatedCount = deptDao.deleteDept(deptCd);
-	        System.out.println(updatedCount + "개의 부서를 사용 안 함(N) 처리했습니다.");
+	        System.out.println(updatedCount + "개의 부서를 사용 처리했습니다.");
 
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
 	}	
-	
 }

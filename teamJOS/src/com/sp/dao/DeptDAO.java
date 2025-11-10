@@ -4,7 +4,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.sp.model.DeptDTO;
-import com.sp.model.DeptMemberCountDTO;
+import com.sp.model.DeptMemberDTO;
 
 /**
  * <h2>DeptDAO (부서 관리 데이터 접근 인터페이스)</h2>
@@ -37,12 +37,15 @@ public interface DeptDAO {
     List<DeptDTO> selectAllDept();
 
     /** DEPT_SEL_005 */
-    List<DeptMemberCountDTO> selectDeptMemberCount();
+    List<DeptMemberDTO> selectDeptMember(int start, int end);
     
     /** DEPT_SEL_006 */
     DeptDTO selectOneByDeptCd(String deptCd);
     
     /** DEPT_SEL_007 */
     List<DeptDTO> selectDeptWithAllChildren(String deptCd) throws SQLException;
+    
+    /** DEPT_SEL_008 */
+    int selectDeptMemberCount();
         
 }
