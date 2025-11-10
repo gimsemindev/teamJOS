@@ -26,7 +26,6 @@ public class AuthDAOImpl implements AuthDAO{
 			pstmt.setString(2, empNo);
 			
 			result = pstmt.executeUpdate();
-			
 		} catch (SQLException e) {
 			throw e;
 		} catch (Exception e) {

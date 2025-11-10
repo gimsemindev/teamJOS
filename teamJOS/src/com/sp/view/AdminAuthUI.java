@@ -20,8 +20,8 @@ public class AdminAuthUI {
     private AuthDAO authDao;
     private LoginInfo loginInfo;
     
-    private static final String ADMIN_LEVEL_CODE = "3";
-    private static final String EMPLOYEE_LEVEL_CODE = "1";
+    private static final String ADMIN_LEVEL_CODE = "03";
+    private static final String EMPLOYEE_LEVEL_CODE = "01";
     
     public AdminAuthUI(AuthDAO authDao, LoginInfo loginInfo) {
         this.authDao = authDao;
