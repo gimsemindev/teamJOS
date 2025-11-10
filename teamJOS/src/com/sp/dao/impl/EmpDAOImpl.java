@@ -206,9 +206,9 @@ public class EmpDAOImpl implements EmpDAO{
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, career.getEmpNo());
 			pstmt.setString(2, career.getCompanyName());
-			//pstmt.setString(3, career.getstartDt());
-			//pstmt.setString(4, career.getendDt());
-			//pstmt.setString(5, career.getdetails());
+			pstmt.setString(3, career.getStartDt());
+			pstmt.setString(4, career.getEndDt());
+			pstmt.setString(5, career.getDetails());
 			
 			pstmt.executeUpdate();
 			

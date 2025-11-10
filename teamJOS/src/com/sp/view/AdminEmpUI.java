@@ -397,13 +397,9 @@ public class AdminEmpUI {
 	        dto.setEndDt(br.readLine());
 	        System.out.print("상세: ");
 	        dto.setDetails(br.readLine());
-//	        dto.setRegDt(java.time.LocalDate.now().toString()); // 현재 날짜를 등록일로
-//	        System.out.print("부서명(해당 근무 부서): ");
-//	        dto.setDeptNm(br.readLine());
-
-	        // ✅ DB 저장
+	        
 	        empDao.insertCareer(dto);
-	        System.out.println("✅ 경력 등록이 완료되었습니다.");
+	        System.out.println("경력 등록이 완료되었습니다.");
 
 			empDao.insertCareer(dto);
 			System.out.println("경력 등록이 완료되었습니다.");
