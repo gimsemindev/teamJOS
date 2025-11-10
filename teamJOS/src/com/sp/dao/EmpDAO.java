@@ -63,9 +63,9 @@ public interface EmpDAO {
     List<EmployeeDTO> selectAll();
 
     /** EMP_SEL_011 : 이력조회 */
-    List<HistoryDTO> selectHistory(int empNo);
+    List<HistoryDTO> selectHistory(String empNo);
 
     /** EMP_SEL_012 : 부서이동이력조회 */
-    List<DeptMoveDTO> selectDeptMove(int empNo);
+    List<DeptMoveDTO> selectDeptMove(String empNo);
 }
 

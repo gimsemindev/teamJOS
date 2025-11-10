@@ -411,7 +411,7 @@ public class EmpDAOImpl implements EmpDAO{
 	}
 
 	@Override
-	public List<HistoryDTO> selectHistory(int empNo) {
+	public List<HistoryDTO> selectHistory(String empNo) {
 		List<EmployeeDTO> list = new ArrayList<EmployeeDTO>();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -432,14 +432,14 @@ public class EmpDAOImpl implements EmpDAO{
 			while(rs.next()) {
 				EmployeeDTO dto = new EmployeeDTO();
 				
-				// dto.setStartDt(rs.getString("VALID_STRT_DT"));
-				// dto.setEmpNo(rs.getString("EMP_NO"));
-				// dto.setEmpNm(rs.getString("EMP_NM"));
-				// dto.setGradeNm(rs.getString("GRADE_NM"));
-				// dto.setEndDt(rs.getString("VALID_END_DT"));
-				// dto.setDetails(rs.getString("DETAILS"));
-				// dto.setRegDt(rs.getString("REG_DT"));
-				// dto.setDeptNm(rs.getString("DEPT_NM"));
+//				 dto.setStartDt(rs.getString("VALID_STRT_DT"));
+//				 dto.setEmpNo(rs.getString("EMP_NO"));
+//				 dto.setEmpNm(rs.getString("EMP_NM"));
+//				 dto.setGradeNm(rs.getString("GRADE_NM"));
+//				 dto.setEndDt(rs.getString("VALID_END_DT"));
+//				 dto.setDetails(rs.getString("DETAILS"));
+//				 dto.setRegDt(rs.getString("REG_DT"));
+//				 dto.setDeptNm(rs.getString("DEPT_NM"));
 
 				list.add(dto);
 			}
@@ -454,7 +454,7 @@ public class EmpDAOImpl implements EmpDAO{
 	}
 
 	@Override
-	public List<DeptMoveDTO> selectDeptMove(int empNo) {
+	public List<DeptMoveDTO> selectDeptMove(String empNo) {
 		
 		return null;
 	}

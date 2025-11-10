@@ -6,8 +6,7 @@ public class CareerDTO {
     private String startDt; // 경력시작일자
     private String endDt; // 경력종료일자
     private String details; // 상세
-    private String period;
-    private String role;
+    
 	public String getEmpNo() {
 		return empNo;
 	}
@@ -20,18 +19,7 @@ public class CareerDTO {
 	public void setCompanyName(String companyName) {
 		this.companyName = companyName;
 	}
-	public String getPeriod() {
-		return period;
-	}
-	public void setPeriod(String period) {
-		this.period = period;
-	}
-	public String getRole() {
-		return role;
-	}
-	public void setRole(String role) {
-		this.role = role;
-	}
+
 	public String getStartDt() {
 		return startDt;
 	}
