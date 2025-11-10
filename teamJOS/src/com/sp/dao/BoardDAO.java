@@ -1,6 +1,7 @@
 package com.sp.dao;
 
 import java.sql.SQLException;
+import java.util.List;
 
 import com.sp.model.BoardDTO;
 
@@ -30,5 +31,13 @@ public interface BoardDAO {
 
     /** BOARD_DEL_003 */
     int deletePost(int postNo) throws SQLException;
+    
+    int deletePost(int boardSeq, String empNo) throws SQLException;
+    
+      BoardDTO getPost(int boardSeq) throws SQLException;
+      List<BoardDTO> listPosts() throws SQLException;
+     
+      
+     void updateBoard() throws Exception;
 
 }

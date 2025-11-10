@@ -2,7 +2,7 @@ package com.sp.model;
 
 public class BoardDTO {
     
-    private String boardNo;         // BOARD_ NUMBER(10)
+    private int boardNo;         // BOARD_ NUMBER(10)
     private String empNo;           // EMP_NO CHAR(5)
     private String title;           // TITLE VARCHAR2(200)
     private String content;         // CONTENT VARCHAR2(600)
@@ -14,7 +14,7 @@ public class BoardDTO {
     }
 
     // 모든 필드를 초기화하는 생성자
-    public BoardDTO(String boardNo, String empNo, String title, String content, String regDtm, String updateDtm) {
+    public BoardDTO(int boardNo, String empNo, String title, String content, String regDtm, String updateDtm) {
         this.boardNo = boardNo;
         this.empNo = empNo;
         this.title = title;
@@ -24,11 +24,11 @@ public class BoardDTO {
     }
 
     // Getter / Setter
-    public String getBoardNo() {
+    public int getBoardNo() {
         return boardNo;
     }
 
-    public void setBoardNo(String boardNo) {
+    public void setBoardNo(int boardNo) {
         this.boardNo = boardNo;
     }
 
