@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.sp.dao.EmpDAO;
@@ -14,14 +15,52 @@ import com.sp.model.HistoryDTO;
 import com.sp.model.PromotionDTO;
 import com.sp.model.RewardDTO;
 import com.sp.util.DBConn;
+import com.sp.util.DBUtil;
 
 public class EmpDAOImpl implements EmpDAO{
 	private Connection conn = DBConn.getConnection();
 
 	@Override
 	public int insertEmployee(EmployeeDTO emp) throws SQLException{
-		// TODO Auto-generated method stub
-		return 0;
+		PreparedStatement pstmt = null;
+		String sql;
+		int result = 0;
+		
+		try {
+			conn.setAutoCommit(false);
+			
+			sql = "INSERT INTO TB_EMP(EMP_NO, EMP_NM, RRN, EMP_ADDR, HIRE_DT, DEPT_CD, GRADE_CD, EMP_STAT_CD, CONTRACT_TP_CD, EMAIL, PWD, USE_YN, LEVEL_CODE) "
+					+ " VALUES(?, ?, ?, ?, TO_DATE(sysdate, 'YYYY-MM-DD'), ?, ?, ?, ?, ?, ?, ?)";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, emp.getEmpNo());
+			pstmt.setString(2, emp.getEmpNm());
+			pstmt.setString(3, emp.getRrn());
+			pstmt.setString(4, emp.getEmpAddr());
+			pstmt.setString(5, emp.getDeptCd());
+			pstmt.setString(6, emp.getGradeCd());
+			pstmt.setString(7, emp.getEmpStatCd());
+			pstmt.setString(8, emp.getContractTpCd());
+			pstmt.setString(9, emp.getEmail());
+			pstmt.setString(10, emp.getPwd());
+			pstmt.setString(11, emp.getLevelCode());
+			
+			result = pstmt.executeUpdate();
+			
+			conn.commit();
+			
+		} catch (SQLException e) {
+			DBUtil.rollback(conn);
+			throw e;
+		} finally {
+			try {
+				conn.setAutoCommit(true);
+			} catch (Exception e2) {
+			}
+			
+			DBUtil.close(pstmt);
+		}
+		return result;
 	}
 
 	@Override
@@ -30,6 +69,8 @@ public class EmpDAOImpl implements EmpDAO{
 		String sql;
 		
 		try {
+			conn.setAutoCommit(false);
+
 			sql = "UPDATE TB_EMP SET " + col + " = ? WHERE EMP_NO = ?";
 		
 			pstmt = conn.prepareStatement(sql);
@@ -38,95 +79,383 @@ public class EmpDAOImpl implements EmpDAO{
 		
 			pstmt.executeUpdate();
 			
-			System.out.println("사원 정보 수정이 완료되었습니다.");
+			conn.commit();
 			
 		} catch (SQLException e) {
-			conn.rollback();
+			DBUtil.rollback(conn);
 			throw e;
 		} finally {
-			pstmt.close();
-			conn.close();
+			try {
+				conn.setAutoCommit(true);
+			} catch (Exception e2) {
+			}
+			DBUtil.close(pstmt);
 		}
-		
 		return 0;
 	}
 
 
 	@Override
 	public int updateDeptMove(DeptMoveDTO move) throws SQLException{
-		// TODO Auto-generated method stub
+		PreparedStatement pstmt = null;
+		String sql;
+		
+		try {
+			conn.setAutoCommit(false);
+
+			sql = " UPDATE TB_EMP SET DEPT_CD " + "= ? WHERE EMP_NO = ? AND DEPT_CD = ?";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, move.getNewDeptCd());
+			pstmt.setString(2, move.getEmpNo());
+			pstmt.setString(3, move.getCurrentDeptCd());
+		
+			pstmt.executeUpdate();
+			
+			conn.commit();
+			
+		} catch (SQLException e) {
+			DBUtil.rollback(conn);
+			throw e;
+		} finally {
+			try {
+				conn.setAutoCommit(true);
+			} catch (Exception e2) {
+			}
+			DBUtil.close(pstmt);
+		}
+		
 		return 0;
 	}
 
 	@Override
 	public int updatePromotion(PromotionDTO promotion) throws SQLException{
-		// TODO Auto-generated method stub
+		PreparedStatement pstmt = null;
+		String sql;
+		
+		try {
+			conn.setAutoCommit(false);
+
+			sql = " UPDATE TB_EMP SET GRADE_CD " + "= ? WHERE EMP_NO = ? AND GRADE_CD = ?";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, promotion.getNewGradeCd());
+			pstmt.setString(2, promotion.getEmpNo());
+			pstmt.setString(3, promotion.getCurrentGradeCd());
+		
+			pstmt.executeUpdate();
+			
+			conn.commit();
+			
+		} catch (SQLException e) {
+			DBUtil.rollback(conn);
+			throw e;
+		} finally {
+			try {
+				conn.setAutoCommit(true);
+			} catch (Exception e2) {
+			}
+			DBUtil.close(pstmt);
+		}
 		return 0;
 	}
-
+	
+	// 퇴직 신청 결재 메소드
+	// 사원이 퇴직 신청하는 메소드가 있어야 할 거 같음
 	@Override
 	public int updateRetireApproval(int empNo) throws SQLException{
-		// TODO Auto-generated method stub
+		PreparedStatement pstmt = null;
+		String sql;
+		
+		try {
+			conn.setAutoCommit(false);
+
+			sql = " UPDATE TB_EMP SET DEPT_CD " + "= ? WHERE EMP_NO = ?";
+			
+			pstmt = conn.prepareStatement(sql);
+			
+		
+			pstmt.executeUpdate();
+			
+			conn.commit();
+			
+		} catch (SQLException e) {
+			DBUtil.rollback(conn);
+			throw e;
+		} finally {
+			try {
+				conn.setAutoCommit(true);
+			} catch (Exception e2) {
+			}
+			DBUtil.close(pstmt);
+		}
 		return 0;
 	}
 
 	@Override
 	public int insertCareer(CareerDTO career) throws SQLException{
-		// TODO Auto-generated method stub
+		PreparedStatement pstmt = null;
+		String sql;
+		
+		try {
+			conn.setAutoCommit(false);
+			
+			sql = "INSERT INTO TB_EMP_CAREER_HIST(CAREER_SEQ, EMP_NO, PREV_COMP_NM, CAREER_STRT_DT, CAREER_END_DT, DETAILS) "
+					+ " VALUES(시퀀스이름, ?, ?, TO_DATE(?, 'YYYY-MM-DD'), TO_DATE(?, 'YYYY-MM-DD'), ?)";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, career.getEmpNo());
+			pstmt.setString(2, career.getCompanyName());
+			//pstmt.setString(3, career.getstartDt());
+			//pstmt.setString(4, career.getendDt());
+			//pstmt.setString(5, career.getdetails());
+			
+			pstmt.executeUpdate();
+			
+			conn.commit();
+			
+		} catch (SQLException e) {
+			DBUtil.rollback(conn);
+			throw e;
+		} finally {
+			try {
+				conn.setAutoCommit(true);
+			} catch (Exception e2) {
+			}
+			
+			DBUtil.close(pstmt);
+		}
 		return 0;
 	}
 
 	@Override
 	public int insertLicense(RewardDTO reward) throws SQLException{
-		// TODO Auto-generated method stub
+		PreparedStatement pstmt = null;
+		String sql;
+		
+		try {
+			conn.setAutoCommit(false);
+			
+			sql = "INSERT INTO TB_EMP_CERT(CERT_SEQ, EMP_NO, CERT_NM, ISSUE_ORG_NM, ISSUE_DT) "
+					+ " VALUES(시퀀스이름, ?, ?, TO_DATE(?, 'YYYY-MM-DD'), ?)";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, reward.getEmpNo());
+			pstmt.setString(2, reward.getRewardName());
+			pstmt.setString(3, reward.getDate());
+			pstmt.setString(4, reward.getIssuer());
+			
+			pstmt.executeUpdate();
+			
+			conn.commit();
+			
+		} catch (SQLException e) {
+			DBUtil.rollback(conn);
+			throw e;
+		} finally {
+			try {
+				conn.setAutoCommit(true);
+			} catch (Exception e2) {
+			}
+			
+			DBUtil.close(pstmt);
+		}
+		
 		return 0;
 	}
 
 	@Override
 	public EmployeeDTO selectByEmpNo(String empNo) {
+		EmployeeDTO dto = null;
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		
 		try {
-			// 수정 중
-			String sql = "SELECT COUNT(*) FROM TB_EMP WHERE EMP_NO = ?";
+			String sql = " SELECT e.EMP_NO, e.EMP_NM, e.RRN, e.EMP_ADDR, TO_CHAR(e.HIRE_DT, 'YYYY-MM-DD') HIRE_DT "
+					+ " d.DEPT_NM, g.GRADE_NM, s.EMP_STAT_NM, c.CONTRACT_TP_NM, "
+					+ " e.EMAIL, e.PWD, TO_CHAR(e.REG_DT, 'YYYY-MM-DD') REG_DT, TO_CHAR(e.RETIRE_DT, 'YYYY-MM-DD') RETIRE_DT, e.USE_YN, r.LEVEL_NM "
+					+ " FROM TB_EMP e "
+					+ " JOIN TB_DEPT d ON e.DEPT_CD = d.DEPT_CD "
+					+ " JOIN TB_GRADE g ON e.GRADE_CD = g.GRADE_CD "
+					+ " JOIN TB_EMP_STATUS s ON e.EMP_STAT_CD = s.EMP_STAT_CD "
+					+ " JOIN TB_EMP_CNTRT_TYPE c ON e.CONTRACT_TP_CD = c.CONTRACT_TP_CD "
+					+ " JOIN TB_ROLE r ON e.LEVEL_CODE = r.LEVEL_CODE "
+					+ " WHERE e.EMP_NO = ?";
+			
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, empNo);
 			
 			rs = pstmt.executeQuery();
 			
 			if(rs.next()) {
+				dto = new EmployeeDTO();
 				
-				System.out.println("사원번호 조회 성공 ! ");
+				dto.setEmpNo(rs.getString("EMP_NO"));
+				dto.setEmpNm(rs.getString("EMP_NM"));
+				dto.setRrn(rs.getString("RRN"));
+				dto.setEmpAddr(rs.getString("EMP_ADDR"));
+				dto.setHireDt(rs.getString("HIRE_DT"));
+				dto.setEmail(rs.getString("EMAIL"));
+				dto.setPwd(rs.getString("pwd"));
+				dto.setRegDt(rs.getString("REG_DT"));;
+				dto.setRetireDt(rs.getString("RETIRE_DT"));
+				dto.setUseYn(rs.getString("USE_YN"));
+				dto.setLevelCode(rs.getString("LEVEL_NM"));
 			} 
-		} catch (Exception e) {
-			System.out.println("등록되지 않은 사원번호 입니다.");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
 		}
 		
-		return null;
+		return dto;
 	}
 
 	@Override
 	public List<EmployeeDTO> selectByName(String name) {
-		// TODO Auto-generated method stub
-		return null;
+		List<EmployeeDTO> list = new ArrayList<EmployeeDTO>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;
+		
+		try {
+			sql = " SELECT e.EMP_NO, e.EMP_NM, e.RRN, e.EMP_ADDR, TO_CHAR(e.HIRE_DT, 'YYYY-MM-DD') HIRE_DT "
+					+ " d.DEPT_NM, g.GRADE_NM, s.EMP_STAT_NM, c.CONTRACT_TP_NM, "
+					+ " e.EMAIL, e.PWD, TO_CHAR(e.REG_DT, 'YYYY-MM-DD') REG_DT, TO_CHAR(e.RETIRE_DT, 'YYYY-MM-DD') RETIRE_DT, e.USE_YN, r.LEVEL_NM "
+					+ " FROM TB_EMP e "
+					+ " JOIN TB_DEPT d ON e.DEPT_CD = d.DEPT_CD "
+					+ " JOIN TB_GRADE g ON e.GRADE_CD = g.GRADE_CD "
+					+ " JOIN TB_EMP_STATUS s ON e.EMP_STAT_CD = s.EMP_STAT_CD "
+					+ " JOIN TB_EMP_CNTRT_TYPE c ON e.CONTRACT_TP_CD = c.CONTRACT_TP_CD "
+					+ " JOIN TB_ROLE r ON e.LEVEL_CODE = r.LEVEL_CODE "
+					+ " WHERE INSTR(e.EMP_NM, ?) >= 1";
+			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, name);
+			
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				EmployeeDTO dto = new EmployeeDTO();
+				
+				dto.setEmpNo(rs.getString("EMP_NO"));
+				dto.setEmpNm(rs.getString("EMP_NM"));
+				dto.setRrn(rs.getString("RRN"));
+				dto.setEmpAddr(rs.getString("EMP_ADDR"));
+				dto.setHireDt(rs.getString("HIRE_DT"));
+				dto.setEmail(rs.getString("EMAIL"));
+				dto.setPwd(rs.getString("pwd"));
+				dto.setRegDt(rs.getString("REG_DT"));;
+				dto.setRetireDt(rs.getString("RETIRE_DT"));
+				dto.setUseYn(rs.getString("USE_YN"));
+				dto.setLevelCode(rs.getString("LEVEL_NM"));
+				
+				list.add(dto);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		return list;
 	}
 
 	@Override
 	public List<EmployeeDTO> selectAll() {
-		// TODO Auto-generated method stub
-		return null;
+		List<EmployeeDTO> list = new ArrayList<EmployeeDTO>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;
+		
+		try {
+			sql = " SELECT e.EMP_NO, e.EMP_NM, e.RRN, e.EMP_ADDR, TO_CHAR(e.HIRE_DT, 'YYYY-MM-DD') HIRE_DT "
+					+ " d.DEPT_NM, g.GRADE_NM, s.EMP_STAT_NM, c.CONTRACT_TP_NM, "
+					+ " e.EMAIL, e.PWD, TO_CHAR(e.REG_DT, 'YYYY-MM-DD') REG_DT, TO_CHAR(e.RETIRE_DT, 'YYYY-MM-DD') RETIRE_DT, e.USE_YN, r.LEVEL_NM "
+					+ " FROM TB_EMP e "
+					+ " JOIN TB_DEPT d ON e.DEPT_CD = d.DEPT_CD "
+					+ " JOIN TB_GRADE g ON e.GRADE_CD = g.GRADE_CD "
+					+ " JOIN TB_EMP_STATUS s ON e.EMP_STAT_CD = s.EMP_STAT_CD "
+					+ " JOIN TB_EMP_CNTRT_TYPE c ON e.CONTRACT_TP_CD = c.CONTRACT_TP_CD "
+					+ " JOIN TB_ROLE r ON e.LEVEL_CODE = r.LEVEL_CODE ";
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				EmployeeDTO dto = new EmployeeDTO();
+				
+				dto.setEmpNo(rs.getString("EMP_NO"));
+				dto.setEmpNm(rs.getString("EMP_NM"));
+				dto.setRrn(rs.getString("RRN"));
+				dto.setEmpAddr(rs.getString("EMP_ADDR"));
+				dto.setHireDt(rs.getString("HIRE_DT"));
+				dto.setEmail(rs.getString("EMAIL"));
+				dto.setPwd(rs.getString("pwd"));
+				dto.setRegDt(rs.getString("REG_DT"));;
+				dto.setRetireDt(rs.getString("RETIRE_DT"));
+				dto.setUseYn(rs.getString("USE_YN"));
+				dto.setLevelCode(rs.getString("LEVEL_NM"));
+				
+				list.add(dto);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		return list;
 	}
 
 	@Override
 	public List<HistoryDTO> selectHistory(int empNo) {
-		// TODO Auto-generated method stub
+		List<EmployeeDTO> list = new ArrayList<EmployeeDTO>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;
+		
+		try {
+			sql = "SELECT TO_CHAR(VALID_STRT_DT, 'YYYY-MM-DD') VALID_STRT_DT, e.EMP_NO, e.EMP_NM, g.GRADE_NM, TO_CHAR(VALID_END_DT, 'YYYY-MM-DD') VALID_END_DT, DETAILS, TO_CHAR(gh.REG_DT, 'YYYY-MM-DD') REG_DT, d.DEPT_NM "
+					+ " FROM TB_EMP_GRADE_HIST gh "
+					+ " LEFT JOIN TB_EMP e ON e.EMP_NO = gh.EMP_NO "
+					+ " LEFT JOIN TB_GRADE g ON g.GRADE_CD = gh.GRADE_CD "
+					+ " LEFT JOIN TB_DEPT d ON gh.DEPT_CD = d.DEPT_CD "
+					+ " WHERE gh.EMP_NO = '00001' ";
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				EmployeeDTO dto = new EmployeeDTO();
+				
+				// dto.setStartDt(rs.getString("VALID_STRT_DT"));
+				// dto.setEmpNo(rs.getString("EMP_NO"));
+				// dto.setEmpNm(rs.getString("EMP_NM"));
+				// dto.setGradeNm(rs.getString("GRADE_NM"));
+				// dto.setEndDt(rs.getString("VALID_END_DT"));
+				// dto.setDetails(rs.getString("DETAILS"));
+				// dto.setRegDt(rs.getString("REG_DT"));
+				// dto.setDeptNm(rs.getString("DEPT_NM"));
+
+				list.add(dto);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+//		return list;
 		return null;
 	}
 
 	@Override
 	public List<DeptMoveDTO> selectDeptMove(int empNo) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 
