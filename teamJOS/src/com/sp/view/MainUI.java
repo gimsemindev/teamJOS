@@ -9,12 +9,14 @@ import com.sp.dao.AuthDAO;
 import com.sp.dao.BoardDAO;
 import com.sp.dao.DeptDAO;
 import com.sp.dao.EmpDAO;
+import com.sp.dao.LoginDAO;
 import com.sp.dao.impl.AttDAOImpl;
 import com.sp.dao.impl.AuthDAOImpl;
 import com.sp.dao.impl.BoardDAOImpl;
 import com.sp.dao.impl.DeptDAOImpl;
 import com.sp.dao.impl.EmpDAOImpl;
-import com.sp.model.MemberDTO;
+import com.sp.dao.impl.LoginDAOImpl;
+import com.sp.model.LoginDTO;
 import com.sp.util.DBConn;
 import com.sp.util.LoginInfo;
 
@@ -36,24 +38,45 @@ public class MainUI {
     private AttDAO attDao = new AttDAOImpl();
     private AuthDAO authDao = new AuthDAOImpl();
     private BoardDAO boardDao = new BoardDAOImpl();
+    private LoginDAO loginDao = new LoginDAOImpl();
 
     // UI 초기화
     public AdminUI adminUI = new AdminUI(empDao, deptDao, attDao, authDao,boardDao);
     public EmployeeUI employeeUI = new EmployeeUI(empDao, deptDao, attDao, boardDao);
-
+    
+    // MainUI.java 내부 권한 레벨 상수 
+    private static final int AUTH_LEVEL_ADMIN = 3; // 관리자 레벨
+    private static final int AUTH_LEVEL_EMPLOYEE = 1; // 일반 사원 레벨
+    
     /**
      * 프로그램 시작점
      */
     public void menu() {
         while (true) {
-            MemberDTO member = login.loginMember();
+            LoginDTO member = login.loginMember();
 
-            if (member == null) {           
+            if (member == null) {
                 menuGuest(); 
-            } else if ("admin".equalsIgnoreCase(member.getRole())) {  // 관리자
+                continue; 
+            }
+            
+            int authLevel; 
+            try {
+
+                authLevel = Integer.parseInt(member.getRole());
+            } catch (NumberFormatException e) {
+                System.out.println(GRAY + "경고: 알 수 없는 권한 정보입니다. 로그아웃 처리합니다." + RESET);
+                login.logout();
+                continue;
+            }
+
+            if (authLevel == AUTH_LEVEL_ADMIN) {  // 관리자 (레벨 3)
                 menuAdmin();
-            } else {                        // 일반 사원
+            } else if (authLevel == AUTH_LEVEL_EMPLOYEE) { // 일반 사원 (레벨 1)
                 menuEmployee();
+            } else { // 정의되지 않은 권한
+                System.out.println(GRAY + "정의되지 않은 권한 레벨(" + member.getRole() + ")입니다. 로그아웃 처리합니다." + RESET);
+                login.logout();
             }
         }
     }
@@ -109,28 +132,28 @@ public class MainUI {
      * 로그인 절차 (MainUI 내부)
      */
     private void loginProcess() {
-        try {
-            System.out.print("아이디: ");
-            String id = br.readLine();
-            System.out.print("비밀번호: ");
-            String pw = br.readLine();
+    	try {
+			System.out.print("사번(아이디): ");
+			String empNo = br.readLine();
+			System.out.print("비밀번호: ");
+			String pw = br.readLine();
 
-            // 단순 로그인 예시 (실제 구현은 authDao를 활용)
-            if (id.equals("admin") && pw.equals("1234")) {
-                login.login(new MemberDTO(id, "관리자", "admin"));
-                System.out.println("✅ 관리자 로그인 성공!\n");
-            } else if (id.equals("user") && pw.equals("1234")) {
-                login.login(new MemberDTO(id, "홍길동", "employee"));
-                System.out.println("✅ 사원 로그인 성공!\n");
-            } else {
-                System.out.println("❌ 로그인 실패: 아이디 또는 비밀번호를 확인하세요.\n");
-            }
+			
+			LoginDTO member = loginDao.login(empNo, pw);
 
-        } catch (IOException e) {
-            System.err.println("입력 오류: " + e.getMessage());
-        }
-    }
+			if (member != null) {
+				login.login(member);
+				System.out.println(GREEN + "✅ 로그인 성공! (" + member.getMemberName() + " " + member.getGradeNm() + ")" + RESET + "\n");
+			} else {
+				System.out.println(YELLOW + "❌ 로그인 실패: 사번 또는 비밀번호를 확인하세요." + RESET + "\n");
+			}
 
+		} catch (IOException e) {
+			System.err.println("입력 오류: " + e.getMessage());
+		} catch (Exception e) {
+			System.err.println("로그인 중 알 수 없는 오류 발생: " + e.getMessage());
+		}
+	}
     /**
      * 일반 사원 메뉴
      */
@@ -141,8 +164,10 @@ public class MainUI {
         while(true) {
         	
         	try {
-        		MemberDTO member = login.loginMember();
-        		System.out.println("\n[" + member.getMemberName() + "] 님 (사원 권한)");
+        		LoginDTO member = login.loginMember();
+
+        		String gradeDisplay = member.getGradeNm() != null ? member.getGradeNm() : "직급미정";
+                System.out.println("\n[" + member.getMemberName() + " " + gradeDisplay + "] 님");
         		
         		do {
         			System.out.print("1.사원관리 2.부서관리 3.근태관리 4.게시판관리 5.로그아웃 => ");

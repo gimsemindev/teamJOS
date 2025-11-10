@@ -1,15 +1,15 @@
 package com.sp.util;
 
-import com.sp.model.MemberDTO;
+import com.sp.model.LoginDTO;
 
 public class LoginInfo {
-	private MemberDTO loginMember = null;
+	private LoginDTO loginMember = null;
 	
-	public MemberDTO loginMember() {
+	public LoginDTO loginMember() {
 		return loginMember;
 	}
 	
-	public void login(MemberDTO loginMember) {
+	public void login(LoginDTO loginMember) {
 		this.loginMember = loginMember;
 	}
 	
