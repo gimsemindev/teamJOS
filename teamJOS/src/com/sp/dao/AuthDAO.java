@@ -2,7 +2,7 @@ package com.sp.dao;
 
 import java.sql.SQLException;
 
-import com.sp.model.AuthDTO;
+//import com.sp.model.AuthDTO;
 
 /**
  * <h2>AuthDAO (권한 관리 데이터 접근 인터페이스)</h2>
@@ -26,9 +26,9 @@ public interface AuthDAO {
     int insertAdmin(String empNo, String levelCode) throws SQLException;
 
     /** AUTH_UPD_002 */
-    int updateAdmin(AuthDTO admin) throws SQLException;
+    int updateAdmin(String empNo, String levelCode) throws SQLException;
 
     /** AUTH_DEL_003 */
-    int deleteAdmin(String adminId) throws SQLException;
+    //int deleteAdmin(String adminId) throws SQLException;
 
 }
