@@ -5,13 +5,11 @@ import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
-import java.util.Scanner;
 
 import com.sp.dao.DeptDAO;
 import com.sp.dao.impl.DeptDAOImpl;
 import com.sp.exception.UserQuitException;
 import com.sp.model.DeptDTO;
-import com.sp.model.DeptMemberDTO;
 import com.sp.util.InputValidator;
 import com.sp.util.PrintUtil;
 import com.sp.view.common.DeptCommonUI;
