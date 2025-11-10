@@ -17,23 +17,35 @@ public class AdminAuthUI {
     
     public void menu() {
         int ch;
-        System.out.println("\n[관리자 - 권한관리]");
+        String input;
         
-        try {
-            do {
-                System.out.print("1.관리자정보수정 2.관리자계정등록 3.관리자계정삭제 4.메뉴로돌아가기 => ");
-                ch = Integer.parseInt(br.readLine());
-            } while(ch < 1 || ch > 4);
-            
-            switch(ch) {
-            case 1: updateAdmin(); break; // AUTH_UPD_002
-            case 2: insertAdmin(); break; // AUTH_INS_001
-            case 3: deleteAdmin(); break; // AUTH_DEL_003
-            case 4: return; // 4.메뉴화면으로
-            }
-            
-        } catch (Exception e) {
-            e.printStackTrace();
+        System.out.println("\n[관리자 - 권한관리]");
+        while(true) {
+        	
+        	try {
+        		do {
+        			System.out.print("1.관리자정보수정 2.관리자계정등록 3.관리자계정삭제 4.메뉴로돌아가기 => ");
+        			
+        			input = br.readLine();
+                    
+                    if(input == null || input.trim().isEmpty()) {
+                    	ch = 0;
+                    	continue;
+                    }
+                    ch = Integer.parseInt(input);
+        			
+        		} while(ch < 1 || ch > 4);
+        		
+        		switch(ch) {
+        		case 1: updateAdmin(); break; // AUTH_UPD_002
+        		case 2: insertAdmin(); break; // AUTH_INS_001
+        		case 3: deleteAdmin(); break; // AUTH_DEL_003
+        		case 4: return; // 4.메뉴화면으로
+        		}
+        		
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        	}
         }
     }
     

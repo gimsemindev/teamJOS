@@ -14,26 +14,38 @@ public class AdminAttUI {
     
     public void menu() {
         int ch;
-        System.out.println("\n[관리자 - 근태관리]");
+        String input;
         
-        try {
-            
-            do {
-                System.out.print("1.근태정보수정 2.휴가승인 3.근무시간조회 4.연차조회 5.메뉴로돌아가기 => ");
-                ch = Integer.parseInt(br.readLine());
-            } while(ch < 1 || ch > 5);
-            
-            if(ch==5) return; // 5.메뉴화면으로
-            
-            switch(ch) {
-            case 1: updateAttendanceInfo(); break; // ATT_UPD_010
-            case 2: updateVacationApproveInfo(); break; // ATT_UPD_003
-            case 3: manageWorkTimeSearch(); break; // 3.근무시간조회 (하위 메뉴로 위임)
-            case 4: manageVacationSearch(); break; // 4.연차조회 (하위 메뉴로 위임)
-            }
-            
-        } catch (Exception e) {
-            e.printStackTrace();
+        System.out.println("\n[관리자 - 근태관리]");
+        while(true) {
+        	
+        	try {
+        		
+        		do {
+        			System.out.print("1.근태정보수정 2.휴가승인 3.근무시간조회 4.연차조회 5.메뉴로돌아가기 => ");
+        			
+        			input = br.readLine();
+                    
+                    if(input == null || input.trim().isEmpty()) {
+                    	ch = 0;
+                    	continue;
+                    }
+                    ch = Integer.parseInt(input);
+        			
+        		} while(ch < 1 || ch > 5);
+        		
+        		if(ch==5) return; // 5.메뉴화면으로
+        		
+        		switch(ch) {
+        		case 1: updateAttendanceInfo(); break; // ATT_UPD_010
+        		case 2: updateVacationApproveInfo(); break; // ATT_UPD_003
+        		case 3: manageWorkTimeSearch(); break; // 3.근무시간조회 (하위 메뉴로 위임)
+        		case 4: manageVacationSearch(); break; // 4.연차조회 (하위 메뉴로 위임)
+        		}
+        		
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        	}
         }
     }
     

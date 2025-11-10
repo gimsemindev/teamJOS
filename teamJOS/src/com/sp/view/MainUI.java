@@ -63,7 +63,7 @@ public class MainUI {
      */
     private void menuGuest() {
         int ch = 0;
-
+        String input;
         do {
             try {
                 System.out.println();
@@ -78,8 +78,14 @@ public class MainUI {
                 System.out.println(YELLOW + "   ② 종료" + RESET);
                 System.out.println(GRAY + "──────────────────────────────────────────" + RESET);
                 System.out.print(GREEN + "👉 메뉴 선택 : " + RESET);
-
-                ch = Integer.parseInt(br.readLine());
+                
+                input = br.readLine();
+                
+                if(input == null || input.trim().isEmpty()) {
+                	ch = 0;
+                	continue;
+                }
+                ch = Integer.parseInt(input);
 
             } catch (Exception e) {
                 ch = 0;
@@ -130,37 +136,51 @@ public class MainUI {
      */
     private void menuEmployee() {
         int ch = 0;
-
-        try {
-            MemberDTO member = login.loginMember();
-            System.out.println("\n[" + member.getMemberName() + "] 님 (사원 권한)");
-
-            do {
-                System.out.print("1.사원관리 2.부서관리 3.근태관리 4.게시판관리 5.로그아웃 => ");
-                ch = Integer.parseInt(br.readLine());
-            } while (ch < 1 || ch > 5);
-
-            switch (ch) {
-                case 1:
-                    employeeUI.manageEmployee();
-                    break;
-                case 2:
-                    employeeUI.manageDepartment();
-                    break;
-                case 3:
-                    employeeUI.manageAttendance();
-                    break; 
-                case 4:
-                	employeeUI.manageBoard();
-                	break;
-                case 5:	
-                    login.logout();
-                    System.out.println("로그아웃 되었습니다.\n");
-                    break;
-            }
-        } catch (IOException e) {
-            System.err.println("입력 오류: " + e.getMessage());
+        String input;
+        
+        while(true) {
+        	
+        	try {
+        		MemberDTO member = login.loginMember();
+        		System.out.println("\n[" + member.getMemberName() + "] 님 (사원 권한)");
+        		
+        		do {
+        			System.out.print("1.사원관리 2.부서관리 3.근태관리 4.게시판관리 5.로그아웃 => ");
+        			
+        			input = br.readLine();
+                    
+                    if(input == null || input.trim().isEmpty()) {
+                    	ch = 0;
+                    	continue;
+                    }
+                    
+                    ch = Integer.parseInt(input);
+                    
+        		} while (ch < 1 || ch > 5);
+        		
+        		switch (ch) {
+        		case 1:
+        			employeeUI.manageEmployee();
+        			break;
+        		case 2:
+        			employeeUI.manageDepartment();
+        			break;
+        		case 3:
+        			employeeUI.manageAttendance();
+        			break; 
+        		case 4:
+        			employeeUI.manageBoard();
+        			break;
+        		case 5:	
+        			login.logout();
+        			System.out.println("로그아웃 되었습니다.\n");
+        			return;
+        		}
+        	} catch (IOException e) {
+        		System.err.println("입력 오류: " + e.getMessage());
+        	}
         }
+        
     }
 
     /**
@@ -168,38 +188,50 @@ public class MainUI {
      */
     private void menuAdmin() {
         int ch = 0;
+        String input;
+        
+        while(true) {
+        	
+        	try {
+        		System.out.println("\n[관리자 모드]");
+        		
+        		do {
+        			System.out.print("1.사원관리 2.부서관리 3.근태관리 4.권한관리 5.게시판관리 6.로그아웃 => ");
 
-        try {
-            System.out.println("\n[관리자 모드]");
-
-            do {
-                System.out.print("1.사원관리 2.부서관리 3.근태관리 4.권한관리 5.게시판관리 6.로그아웃 => ");
-                ch = Integer.parseInt(br.readLine());
-            } while (ch < 1 || ch > 6);
-
-            switch (ch) {
-                case 1:
-                    adminUI.manageEmployee();
-                    break;
-                case 2:
-                    adminUI.manageDepartment();
-                    break;
-                case 3:
-                    adminUI.manageAttendance();
-                    break;
-                case 4:
-                	adminUI.manageAuth();
-                    break;    
-                case 5:
-                    adminUI.manageBoard();
-                    break;
-                case 6:
-                    login.logout();
-                    System.out.println("로그아웃 되었습니다.\n");
-                    break;
-            }
-        } catch (IOException e) {
-            System.err.println("입력 오류: " + e.getMessage());
+        			input = br.readLine();
+                    
+                    if(input == null || input.trim().isEmpty()) {
+                    	ch = 0;
+                    	continue;
+                    }
+                    ch = Integer.parseInt(input);
+        			
+        		} while (ch < 1 || ch > 6);
+        		
+        		switch (ch) {
+        		case 1:
+        			adminUI.manageEmployee();
+        			break;
+        		case 2:
+        			adminUI.manageDepartment();
+        			break;
+        		case 3:
+        			adminUI.manageAttendance();
+        			break;
+        		case 4:
+        			adminUI.manageAuth();
+        			break;    
+        		case 5:
+        			adminUI.manageBoard();
+        			break;
+        		case 6:
+        			login.logout();
+        			System.out.println("로그아웃 되었습니다.\n");
+        			return;
+        		}
+        	} catch (IOException e) {
+        		System.err.println("입력 오류: " + e.getMessage());
+        	}
         }
     }
 }

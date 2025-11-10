@@ -15,30 +15,44 @@ public class AdminEmpUI {
     
     public void menu() {
         int ch;
+        String input;
+        
         System.out.println("\n[관리자 - 사원관리]");
-        try {
-            
-            do {
-                System.out.print("1.정보등록 2.정보수정 3.부서이동 4.진급관리 5.정보조회 6.퇴직신청결재 7.경력등록 8.자격증및포상 9.이력조회 10.메뉴로돌아가기 => ");
-                ch = Integer.parseInt(br.readLine());
-            } while(ch < 1 || ch > 10);
-            
-            if(ch==10) return; // 10.메뉴화면으로
-
-            switch (ch) {
-            case 1: insertEmployeeInfo(); break;
-            case 2: updateEmployeeinfo(); break; // EMP_UPD_002
-            //case 3: updateDeptMoveInfo(); break; // EMP_UPD_003
-            //case 4: updatePromotionInfo(); break; // EMP_UPD_004
-            case 5: manageEmployeeSearch(); break; // 5.정보조회 (하위 메뉴로 위임)
-            case 6: updateRetireApprovalInfo(); break; // EMP_UPD_008
-            case 7: insertCareerInfo(); break; // EMP_INS_009
-            case 8: insertLicenseInfo(); break; // EMP_INS_010
-            case 9: selectHistoryInfo(); break; // EMP_SEL_011
-            }
-            
-        } catch (Exception e) {
-            e.printStackTrace();
+        
+        while(true) {
+        	
+        	try {
+        		
+        		do {
+        			System.out.print("1.정보등록 2.정보수정 3.부서이동 4.진급관리 5.정보조회 6.퇴직신청결재 7.경력등록 8.자격증및포상 9.이력조회 10.메뉴로돌아가기 => ");
+        			
+        			input = br.readLine();
+                    
+                    if(input == null || input.trim().isEmpty()) {
+                    	ch = 0;
+                    	continue;
+                    }
+                    ch = Integer.parseInt(input);
+        			
+        		} while(ch < 1 || ch > 10);
+        		
+        		if(ch==10) return; // 10.메뉴화면으로
+        		
+        		switch (ch) {
+        		case 1: insertEmployeeInfo(); break;
+        		case 2: updateEmployeeinfo(); break; // EMP_UPD_002
+        		//case 3: updateDeptMoveInfo(); break; // EMP_UPD_003
+        		//case 4: updatePromotionInfo(); break; // EMP_UPD_004
+        		case 5: manageEmployeeSearch(); break; // 5.정보조회 (하위 메뉴로 위임)
+        		case 6: updateRetireApprovalInfo(); break; // EMP_UPD_008
+        		case 7: insertCareerInfo(); break; // EMP_INS_009
+        		case 8: insertLicenseInfo(); break; // EMP_INS_010
+        		case 9: selectHistoryInfo(); break; // EMP_SEL_011
+        		}
+        		
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        	}
         }
     }
 

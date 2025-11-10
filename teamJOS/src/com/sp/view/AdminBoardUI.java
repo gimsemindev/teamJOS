@@ -14,23 +14,35 @@ public class AdminBoardUI {
     
     public void menu() {
         int ch;
-        System.out.println("\n[관리자 - 게시판관리]");
+        String input;
         
-        try {
-            do {
-                System.out.print("1.게시글등록 2.게시글수정 3.게시글삭제 4.메뉴로돌아가기 => ");
-                ch = Integer.parseInt(br.readLine());
-            } while(ch < 1 || ch > 4);
-            
-            switch(ch) {
-            case 1: boardDao.insertPost(null); break; // BOARD_INS_001
-            case 2: boardDao.updatePost(null); break; // BOARD_UPD_002
-            case 3: boardDao.deletePost(0); break; // BOARD_DEL_003
-            case 4: return; // 4.메뉴화면으로
-            }
-            
-        } catch (Exception e) {
-            e.printStackTrace();
+        System.out.println("\n[관리자 - 게시판관리]");
+        while(true) {
+        	
+        	try {
+        		do {
+        			System.out.print("1.게시글등록 2.게시글수정 3.게시글삭제 4.메뉴로돌아가기 => ");
+        			
+        			input = br.readLine();
+                    
+                    if(input == null || input.trim().isEmpty()) {
+                    	ch = 0;
+                    	continue;
+                    }
+                    ch = Integer.parseInt(input);
+        			
+        		} while(ch < 1 || ch > 4);
+        		
+        		switch(ch) {
+        		case 1: boardDao.insertPost(null); break; // BOARD_INS_001
+        		case 2: boardDao.updatePost(null); break; // BOARD_UPD_002
+        		case 3: boardDao.deletePost(0); break; // BOARD_DEL_003
+        		case 4: return; // 4.메뉴화면으로
+        		}
+        		
+        	} catch (Exception e) {
+        		e.printStackTrace();
+        	}
         }
     }
 }
