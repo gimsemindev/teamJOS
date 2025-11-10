@@ -66,8 +66,6 @@ public class AdminEmpUI {
 	}
 
 	/** 사원관리 - 정보등록 */
-
-	/** 사원관리 사원정보등록 */
 	public void insertEmployeeInfo() {
 		System.out.println("\n[관리자 - 사원관리 - 사원정보등록]");
 		EmployeeDTO dto = new EmployeeDTO();
@@ -75,10 +73,10 @@ public class AdminEmpUI {
 		try {
 			String empNo;
 			while (true) {
-				System.out.print("사원번호(ex. D10001): ");
+				System.out.print("사원번호(ex. D1001): ");
 				empNo = br.readLine();
-				if (!empNo.matches("^D\\d{5}$")) {
-					System.out.println("잘못된 형식입니다. 예) D10001 형식으로 입력해주세요.");
+				if (!empNo.matches("^D\\d{4}$")) {
+					System.out.println("잘못된 형식입니다. 예) D1001 형식으로 입력해주세요.");
 					continue;
 				}
 				if (empDao.selectByEmpNo(empNo) != null) {
@@ -91,7 +89,7 @@ public class AdminEmpUI {
 			dto.setEmpNo(empNo);
 			System.out.print("이름: ");
 			dto.setEmpNm(br.readLine());
-			System.out.print("주민번호(ex.000000-0000000): ");
+			System.out.print("주민번호(ex.0000000000000): ");
 			dto.setRrn(br.readLine());
 			System.out.print("주소: ");
 			dto.setEmpAddr(br.readLine());
@@ -177,10 +175,10 @@ public class AdminEmpUI {
 		try {
 			String empNo;
 			while (true) {
-				System.out.print("수정할 사원번호(ex. D10001): ");
+				System.out.print("사원번호(ex. D1001): ");
 				empNo = br.readLine();
-				if (!empNo.matches("^D\\d{5}$")) {
-					System.out.println("잘못된 형식입니다. 예) D10001 형식으로 입력해주세요.");
+				if (!empNo.matches("^D\\d{4}$")) {
+					System.out.println("잘못된 형식입니다. 예) D1001 형식으로 입력해주세요.");
 					continue;
 				}
 				if (empDao.selectByEmpNo(empNo) == null) {
@@ -218,11 +216,11 @@ public class AdminEmpUI {
 			System.out.print("변경할 값 입력 ➤ ");
 			String val = br.readLine();
 
-			int r = empDao.updateEmployee(empNo, col, val);
-			if (r > 0)
+			empDao.updateEmployee(empNo, col, val);
+//			if (r > 0)
 				System.out.println("수정이 완료되었습니다.");
-			else
-				System.out.println("⚠수정에 실패했습니다.");
+//			else
+//				System.out.println("수정에 실패했습니다.");
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -240,17 +238,30 @@ public class AdminEmpUI {
 			DeptMoveDTO dto = new DeptMoveDTO();
 			String empNo;
 			while (true) {
-				System.out.print("사원번호(ex. D10001): ");
+				System.out.print("사원번호(ex. D1001): ");
 				empNo = br.readLine();
-				if (!empNo.matches("^D\\d{5}$")) {
-					System.out.println("잘못된 형식입니다. 예) D10001 형식으로 입력해주세요.");
+				if (!empNo.matches("^D\\d{4}$")) {
+					System.out.println("잘못된 형식입니다. 예) D1001 형식으로 입력해주세요.");
 					continue;
 				}
 				break;
 			}
+			
+			 EmployeeDTO emp = empDao.selectByEmpNo(empNo);
+		        if (emp == null) {
+		            System.out.println("해당 사원번호가 존재하지 않습니다.");
+		            return;
+		        }
+
+		        // 수정
+//		        String currentDeptCd = emp.getDeptCd();
+//		        if (currentDeptCd == null) {
+//		            System.out.println("현재 부서 정보를 찾을 수 없습니다.");
+//		            return;
+//		        }
+		        System.out.println("현재 부서코드: " + emp.getDeptCd());
+		        
 			dto.setEmpNo(empNo);
-			System.out.print("현재 부서코드: ");
-			dto.setCurrentDeptCd(br.readLine());
 			System.out.print("이동할 부서코드: ");
 			dto.setNewDeptCd(br.readLine());
 
@@ -273,10 +284,10 @@ public class AdminEmpUI {
 			PromotionDTO dto = new PromotionDTO();
 			String empNo;
 			while (true) {
-				System.out.print("사원번호(ex. D10001): ");
+				System.out.print("사원번호(ex. D1001): ");
 				empNo = br.readLine();
-				if (!empNo.matches("^D\\d{5}$")) {
-					System.out.println("잘못된 형식입니다. 예) D10001 형식으로 입력해주세요.");
+				if (!empNo.matches("^D\\d{4}$")) {
+					System.out.println("잘못된 형식입니다. 예) D1001 형식으로 입력해주세요.");
 					continue;
 				}
 				break;
@@ -312,10 +323,10 @@ public class AdminEmpUI {
 				case 1 -> {
 					String empNo;
 					while (true) {
-						System.out.print("조회할 사원번호(ex. D10001): ");
+						System.out.print("사원번호(ex. D1001): ");
 						empNo = br.readLine();
-						if (!empNo.matches("^D\\d{5}$")) {
-							System.out.println("잘못된 형식입니다. 예) D10001 형식으로 입력해주세요.");
+						if (!empNo.matches("^D\\d{4}$")) {
+							System.out.println("잘못된 형식입니다. 예) D1001 형식으로 입력해주세요.");
 							continue;
 						}
 						break;
@@ -348,10 +359,10 @@ public class AdminEmpUI {
 		try {
 			String empNo;
 			while (true) {
-				System.out.print("퇴직 승인할 사원번호(ex. D10001): ");
+				System.out.print("사원번호(ex. D1001): ");
 				empNo = br.readLine();
-				if (!empNo.matches("^D\\d{5}$")) {
-					System.out.println("잘못된 형식입니다. 예) D10001 형식으로 입력해주세요.");
+				if (!empNo.matches("^D\\d{4}$")) {
+					System.out.println("잘못된 형식입니다. 예) D1001 형식으로 입력해주세요.");
 					continue;
 				}
 				break;
@@ -380,10 +391,10 @@ public class AdminEmpUI {
 			CareerDTO dto = new CareerDTO();
 			String empNo;
 			while (true) {
-				System.out.print("사원번호(ex. D10001): ");
+				System.out.print("사원번호(ex. D1001): ");
 				empNo = br.readLine();
-				if (!empNo.matches("^D\\d{5}$")) {
-					System.out.println("잘못된 형식입니다. 예) D10001 형식으로 입력해주세요.");
+				if (!empNo.matches("^D\\d{4}$")) {
+					System.out.println("잘못된 형식입니다. 예) D1001 형식으로 입력해주세요.");
 					continue;
 				}
 				break;
@@ -398,9 +409,6 @@ public class AdminEmpUI {
 	        System.out.print("상세: ");
 	        dto.setDetails(br.readLine());
 	        
-	        empDao.insertCareer(dto);
-	        System.out.println("경력 등록이 완료되었습니다.");
-
 			empDao.insertCareer(dto);
 			System.out.println("경력 등록이 완료되었습니다.");
 		} catch (IOException e) {
@@ -419,10 +427,10 @@ public class AdminEmpUI {
 			RewardDTO dto = new RewardDTO();
 			String empNo;
 			while (true) {
-				System.out.print("사원번호(ex. D10001): ");
+				System.out.print("사원번호(ex. D1001): ");
 				empNo = br.readLine();
-				if (!empNo.matches("^D\\d{5}$")) {
-					System.out.println("잘못된 형식입니다. 예) D10001 형식으로 입력해주세요.");
+				if (!empNo.matches("^D\\d{4}$")) {
+					System.out.println("잘못된 형식입니다. 예) D1001 형식으로 입력해주세요.");
 					continue;
 				}
 				break;
@@ -453,10 +461,10 @@ public class AdminEmpUI {
 		try {
 			String empNo;
 			while (true) {
-				System.out.print("이력조회할 사원번호(ex. D10001): ");
+				System.out.print("사원번호(ex. D1001): ");
 				empNo = br.readLine();
-				if (!empNo.matches("^D\\d{5}$")) {
-					System.out.println("잘못된 형식입니다. 예) D10001 형식으로 입력해주세요.");
+				if (!empNo.matches("^D\\d{4}$")) {
+					System.out.println("잘못된 형식입니다. 예) D1001 형식으로 입력해주세요.");
 					continue;
 				}
 				break;
