@@ -44,7 +44,6 @@ public class LoginDAOImpl implements LoginDAO {
         } finally {
             DBUtil.close(rs);
             DBUtil.close(pstmt);
-            DBConn.close();
         }
 
         return loginInfo;
