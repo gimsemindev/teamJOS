@@ -195,10 +195,7 @@ public class DeptDAOImpl implements DeptDAO{
 
             if (rs.next()) {
                 result = rs.getInt("CNT");
-            }
-            
-            
-        	
+            }        	
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -220,25 +217,41 @@ public class DeptDAOImpl implements DeptDAO{
 	    
 		try {
 	    	sql = """
-	                SELECT *
+	              SELECT /** DEPT_SEL_005 */ *
 	                FROM (
-	                    SELECT ROWNUM rn, A.*
-	                    FROM (
-	                        SELECT D.DEPT_CD, D.DEPT_NM, G.GRADE_NM, C.CONTRACT_TP_NM,
-	                               S.EMP_STAT_NM, E.EMP_NO, E.EMP_NM,
-	                               TO_CHAR(E.HIRE_DT, 'YYYY/MM/DD') AS HIRE_DT,
-	                               NVL(P.CONTACT_NO,' ') AS CONTACT_NO, E.EMAIL
-	                        FROM TB_EMP E
-	                        LEFT JOIN TB_DEPT D ON E.DEPT_CD = D.DEPT_CD AND D.USE_YN='Y'
-	                        LEFT JOIN TB_GRADE G ON E.GRADE_CD = G.GRADE_CD AND G.USE_YN='Y'
-	                        LEFT JOIN TB_EMP_CNTRT_TYPE C ON E.CONTRACT_TP_CD=C.CONTRACT_TP_CD AND C.USE_YN='Y'
-	                        LEFT JOIN TB_EMP_STATUS S ON E.EMP_STAT_CD=S.EMP_STAT_CD AND S.USE_YN='Y'
-	                        LEFT JOIN TB_EMP_CNTCT P ON E.EMP_NO=P.EMP_NO AND P.CONTACT_TP_CD='1' AND P.USE_YN='Y'
-	                        WHERE E.USE_YN='Y'
-	                        ORDER BY D.DEPT_CD, E.GRADE_CD DESC
-	                    ) A
-	                )
-	                WHERE rn BETWEEN ? AND ? """;
+	                      SELECT ROWNUM rn, A.*
+	                        FROM (
+	                              SELECT D.DEPT_CD
+	                                   , D.DEPT_NM
+	                                   , G.GRADE_NM
+	                                   , C.CONTRACT_TP_NM
+	                                   , S.EMP_STAT_NM
+	                                   , E.EMP_NO
+	                                   , E.EMP_NM
+	                                   , TO_CHAR(E.HIRE_DT, 'YYYY/MM/DD') AS HIRE_DT
+	                                   , NVL(P.CONTACT_NO,' ') AS CONTACT_NO, E.EMAIL
+	                                FROM TB_EMP E
+	                                LEFT JOIN TB_DEPT D 
+	                                  ON E.DEPT_CD  = D.DEPT_CD 
+	                                 AND D.USE_YN   = 'Y'
+	                                LEFT JOIN TB_GRADE G 
+	                                  ON E.GRADE_CD = G.GRADE_CD 
+	                                 AND G.USE_YN= 'Y'
+	                                LEFT JOIN TB_EMP_CNTRT_TYPE C 
+	                                  ON E.CONTRACT_TP_CD = C.CONTRACT_TP_CD 
+	                                 AND C.USE_YN = 'Y'
+	                                LEFT JOIN TB_EMP_STATUS S 
+	                                  ON E.EMP_STAT_CD = S.EMP_STAT_CD 
+	                                 AND S.USE_YN = 'Y'
+	                                LEFT JOIN TB_EMP_CNTCT P 
+	                                  ON E.EMP_NO=P.EMP_NO 
+	                                 AND P.CONTACT_TP_CD = '1' 
+	                                 AND P.USE_YN = 'Y'
+	                               WHERE E.USE_YN = 'Y'
+	                               ORDER BY D.DEPT_CD, E.GRADE_CD DESC
+	                             ) A
+	                     )
+	               WHERE rn BETWEEN ? AND ? """;
 	    	
 	    	pstmt = conn.prepareStatement(sql);
             
