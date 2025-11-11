@@ -30,9 +30,9 @@ public interface BoardDAO {
     int updatePost(BoardDTO board) throws SQLException;
 
     /** BOARD_DEL_003 */
-    int deletePost(int postNo) throws SQLException;
+    int deletePost_Admin(BoardDTO board) throws SQLException;
     
-    int deletePost(BoardDTO board,LoginDAO info) throws SQLException;
+    int deletePost(BoardDTO board) throws SQLException;
     
       BoardDTO getPost(int boardSeq) throws SQLException;
       List<BoardDTO> listPosts() throws SQLException;

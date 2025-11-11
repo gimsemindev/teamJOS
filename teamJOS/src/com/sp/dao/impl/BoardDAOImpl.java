@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sp.dao.BoardDAO;
-import com.sp.dao.LoginDAO;
+
 import com.sp.model.BoardDTO;
 import com.sp.util.DBConn;
 import com.sp.util.DBUtil;
@@ -94,16 +94,38 @@ public class BoardDAOImpl implements BoardDAO{
 	}
 
 	@Override
-	public int deletePost(int postNo) throws SQLException {
+	public int deletePost_Admin(BoardDTO board) throws SQLException{
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int deletePost(BoardDTO board, LoginDAO info) throws SQLException {
+	public int deletePost(BoardDTO board) throws SQLException {
 		// TODO Auto-generated method stub
-		return 0;
+		int result = 0;
+        String sql;
+        
+        // 본인 글(BOARD_SEQ와 EMP_NO가 일치)만 삭제하도록 SQL 작성
+        sql = "DELETE FROM tb_board WHERE BOARD_SEQ = ? AND EMP_NO = ?";
+        
+        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            
+          
+            pstmt.setInt(1, board.getBoardNo());
+            pstmt.setString(2,board.getEmpNo());
+            
+            // SQL 실행
+            result = pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println("! DB 오류 (deletePost): " + e.getMessage());
+            e.printStackTrace();
+            
+        }
+        
+        return result; 
 	}
+	
 
 	@Override
 	public BoardDTO getPost(int boardSeq) throws SQLException {

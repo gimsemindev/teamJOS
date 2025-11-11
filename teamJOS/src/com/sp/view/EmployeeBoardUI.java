@@ -45,7 +45,7 @@ public class EmployeeBoardUI {
         		switch(ch) {
         		case 1: insert(); break; // BOARD_INS_001 
         		case 2: update(); break; // BOARD_UPD_002 
-        		case 3: boardDao.deletePost(0); break; // BOARD_DEL_003 
+        		case 3: delete(); break; // BOARD_DEL_003 
         		case 4: viewPostsList(); break;
         		case 5: return; // 4. 메뉴화면으로 
         		}
@@ -222,6 +222,48 @@ public class EmployeeBoardUI {
         } catch (Exception e) {
             System.out.println("! 상세 보기 중 오류 발생: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+    
+    private void delete() {
+        System.out.println("\n--- [ 3. 게시글 삭제 ] ---");
+        BoardDTO dto= new BoardDTO();
+        int boardNo;
+        try {
+            // 1. 사용자로부터 삭제할 글번호 입력
+        	System.out.print("삭제할 글번호 ? ");
+        	boardNo = Integer.parseInt(br.readLine());
+        	String empNo = "00001"; // TODO: 나중에 loginInfo.loginMember().getEmpNo()로 변경
+            
+            
+            dto.setBoardNo(boardNo);
+            dto.setEmpNo(empNo);
+            
+            // 2. [임시] 본인 확인용 사번 (로그인 기능 연동 시 변경)
+
+            // 3. (중요) 사용자에게 삭제 재확인
+            System.out.print("! 정말 " + boardNo + "번 글을 삭제하시겠습니까? (Y/N) ");
+            String confirm = br.readLine();
+
+            if (!confirm.equalsIgnoreCase("Y")) {
+                System.out.println("! 삭제를 취소했습니다.");
+                return;
+            }
+
+            // 4. DAO에 삭제 요청 (글번호와 사번을 넘겨 본인 글인지 확인)
+            int result = boardDao.deletePost(dto);
+
+            // 5. 결과 피드백
+            if (result > 0) {
+                System.out.println("✓ " + boardNo + "번 글이 성공적으로 삭제되었습니다.");
+            } else {
+                System.out.println("! 글 삭제에 실패했습니다. (글번호가 없거나 삭제 권한이 없습니다)");
+            }
+
+        } catch (NumberFormatException e) {
+            System.out.println("! 글번호는 숫자로 입력해야 합니다.");
+        } catch (Exception e) {
+            System.out.println("! 게시글 삭제 중 오류 발생: " + e.getMessage());
         }
     }
     
