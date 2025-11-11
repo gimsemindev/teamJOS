@@ -172,7 +172,7 @@ public class MainUI {
                 System.out.println("\n[" + member.getMemberName() + " " + gradeDisplay + "] 님");
         		
         		do {
-        			System.out.print("1.사원관리 2.부서관리 3.근태관리 4.게시판관리 5.로그아웃 => ");
+        			System.out.print("1.사원관리 2.부서관리 3.근태관리 4.게시판 5.로그아웃 => ");
         			
         			input = br.readLine();
                     
