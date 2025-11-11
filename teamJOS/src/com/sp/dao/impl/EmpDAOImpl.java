@@ -131,12 +131,13 @@ public class EmpDAOImpl implements EmpDAO{
 		String sql;
 		
 		try {
-			sql = " UPDATE TB_EMP SET DEPT_CD " + "= ? WHERE EMP_NO = ?";
+			sql = " UPDATE TB_EMP SET  " + "= ? WHERE EMP_NO = ?";
 			
 			pstmt = conn.prepareStatement(sql);
 			
-		
 			pstmt.executeUpdate();
+			
+			
 		} catch (SQLException e) {
 			DBUtil.rollback(conn);
 			throw e;
@@ -153,7 +154,7 @@ public class EmpDAOImpl implements EmpDAO{
 		
 		try {
 			sql = "INSERT INTO TB_EMP_CAREER_HIST(CAREER_SEQ, EMP_NO, PREV_COMP_NM, CAREER_STRT_DT, CAREER_END_DT, DETAILS) "
-					+ " VALUES(SQ_TB_EMP_CAREER_HIST, ?, ?, TO_DATE(?, 'YYYY-MM-DD'), TO_DATE(?, 'YYYY-MM-DD'), ?)";
+					+ " VALUES(SQ_TB_EMP_CAREER_HIST.NEXTVAL, ?, ?, TO_DATE(?, 'YYYY-MM-DD'), TO_DATE(?, 'YYYY-MM-DD'), ?)";
 			
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, career.getEmpNo());
@@ -179,7 +180,7 @@ public class EmpDAOImpl implements EmpDAO{
 		
 		try {
 			sql = "INSERT INTO TB_EMP_CERT(CERT_SEQ, EMP_NO, CERT_NM, ISSUE_ORG_NM, ISSUE_DT) "
-					+ " VALUES(SQ_TB_EMP_CERT, ?, ?, TO_DATE(?, 'YYYY-MM-DD'), ?)";
+					+ " VALUES(SQ_TB_EMP_CERT.NEXTVAL, ?, ?, TO_DATE(?, 'YYYY-MM-DD'), ?)";
 			
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, reward.getEmpNo());
@@ -397,13 +398,13 @@ public class EmpDAOImpl implements EmpDAO{
 		String sql;
 		EmployeeDTO dto = new EmployeeDTO();
 		try {
-			sql = "SELECT e.DEPT_CD, d.DEMP_NM FROM TB_EMP e JOIN TB_DEPT d ON e.DEPT_CD = d.DEPT_CD";
+			sql = "SELECT e.DEPT_CD, d.DEPT_NM FROM TB_EMP e JOIN TB_DEPT d ON e.DEPT_CD = d.DEPT_CD WHERE e.EMP_NO= ?";
 			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, empNo);
 			
 			rs = pstmt.executeQuery();
 			
 			if(rs.next()) {
-				dto = new EmployeeDTO();
 				dto.setDeptCd(rs.getString("DEPT_CD"));
 				dto.setDeptNm(rs.getString("DEMP_NM"));
 			}
