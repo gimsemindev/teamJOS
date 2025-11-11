@@ -9,6 +9,7 @@ import java.util.List;
 import com.sp.dao.AttDAO;
 import com.sp.model.VacationDTO;
 import com.sp.util.LoginInfo;
+import com.sp.util.PrintUtil;
 
 
 public class AdminAttUI {
@@ -59,82 +60,103 @@ public class AdminAttUI {
         	}
         }
     }
+    protected void updateAttendanceInfo() {
+    	
+    }
     
-    private void updateAttendanceInfo() {
-    	System.out.println("\n[관리자 - 근태관리 - 근태정보수정]");
-    	int ch;
-    	String str, empNo;
-    	try {
-    		// 수정하려는 사원의 사원번호 입력
-			System.out.print("수정을 원하는 사원의 사원번호를 입력하세요. => ");
-			empNo = br.readLine();
-			
-			// 사원번호를 제대로 입력했는지 확인
-			if(empNo==null || empNo.trim().isEmpty()) {
-				System.out.println("사원번호를 입력하여 주세요.");
-			} else {
-				// 사원번호 검색 메소드 수정 중
-			}
-			
-			do {
-				System.out.println("1.출근일시수정 2.퇴근일시 수정 3.이전메뉴로돌아가기 => ");
-				ch = Integer.parseInt(br.readLine());
-			}while(ch < 1 || ch > 3);
-			
-			if(ch==3) return;
-			
-			System.out.println("수정할 일시 입력 (YYYY-MM-DD 24HH:MI) => ");
-			str = br.readLine();
-			
-		} catch (Exception e) {
-			// TODO: handle exception
-		}
-		
-	}
+    protected void updateVacationApproveInfo() {
+		// ANSI Escape Codes (색상 상수)
+		final String RESET  = "\u001B[0m";
+		final String GREEN  = "\u001B[32m";
+		final String YELLOW = "\u001B[33m";
+		final String CYAN   = "\u001B[36m";
+		final String RED    = "\u001B[31m";
+		final String GRAY   = "\u001B[90m";
 
-	protected void updateVacationApproveInfo() {
-		System.out.println("\n[관리자 - 근태관리 - 휴가승인]");
-		int vacationSeq = 0;
+		System.out.println(CYAN + "\n╔════════════════════════════════════════╗" + RESET);
+		System.out.println(CYAN + "║       🗓️  관리자 - 휴가 승인 관리            ║" + RESET);
+		System.out.println(CYAN + "╚════════════════════════════════════════╝" + RESET);
+
+		String input;
+		int vacationSeq;
+
 		try {
-			System.out.println("\n[휴가 결재 리스트]");
+			// 1. 미승인 휴가 목록 조회 및 출력
 			List<VacationDTO> list = attDao.listVaction();
 			
-			System.out.println("전체 결재수 : "+list.size());
-			for(VacationDTO dto : list) {
-				System.out.print(dto.getVacationSeq() + "\t");
-				System.out.print(dto.getEmpNo() + "\t");
-				System.out.print(dto.getStartDt() + "\t");
-				System.out.print(dto.getEndDt() + "\t");
-				System.out.print(dto.getVacationMemo() + "\t");
-				System.out.println(dto.getApproverYn());
+			
+			PrintUtil.printLine('─', 100);
+			System.out.println(YELLOW + " 미승인 휴가 신청 (총 " + list.size() + "건)" + RESET);
+			PrintUtil.printLine('─', 100);
+            // 헤더 출력
+            System.out.printf("%s\t | %s\t | %s\t | %s\t | %s\t | %s\t\n",
+            		PrintUtil.padCenter("번호", 12),
+            		PrintUtil.padCenter("사번", 8),
+            		PrintUtil.padCenter("시작일", 12),
+            		PrintUtil.padCenter("종료일", 12),
+            		PrintUtil.padCenter("신청사유", 8),
+            		PrintUtil.padCenter("승인상태", 8)
+            		
+            		);
+            
+			PrintUtil.printLine('-', 100);
+
+
+			if (list.isEmpty()) {
+				System.out.println(CYAN + "👉 현재 미승인된 휴가 신청이 없습니다." + RESET);
+				PrintUtil.printLine('-', 100);
+				return;
 			}
-			System.out.println();
+            
+			// 목록 출력
+			for(VacationDTO dto : list) {
+				System.out.printf("%s\t | %s\t | %s\t | %s\t | %s\t | %s\t\n",
+						PrintUtil.padCenter(Integer.toString(dto.getVacationSeq()), 12),
+	            		PrintUtil.padCenter(dto.getEmpNo(), 8),
+	            		PrintUtil.padCenter(dto.getStartDt(),  12),
+	            		PrintUtil.padCenter(dto.getEndDt(),12),
+	            		PrintUtil.padCenter(dto.getVacationMemo() != null && dto.getVacationMemo().length() > 18 ? dto.getVacationMemo().substring(0, 15) + "..." : dto.getVacationMemo(), 8),
+	            		PrintUtil.padCenter(dto.getApproverYn(), 8));
+			}
+			PrintUtil.printLine('-', 100);
 			
-			System.out.println("승인 하실 휴가번호를 입력 하시오 : ");
-			vacationSeq = Integer.parseInt(br.readLine());  
+			// 2. 승인 번호 입력
+			System.out.print(GREEN + "👉 승인하실 휴가 신청 번호를 입력하세요 (취소: Enter) : " + RESET);
+			input = br.readLine();
+            
+            if (input == null || input.trim().isEmpty()) {
+                System.out.println(GRAY + "취소되었습니다." + RESET);
+                return;
+            }
+
+            // NumberFormatException 처리
+			vacationSeq = Integer.parseInt(input.trim());
 			
-			attDao.updateVacationApprove(vacationSeq);
+			// 3. DAO 호출 (updateVacationApprove: 프로시저 호출)
+			attDao.updateVacationApprove(vacationSeq); // ⚠️ DAO 메서드명을 approveVacation으로 통일하여 사용합니다.
 			
-			System.out.println ( "✅ 휴가 신청 번호 " + vacationSeq + " 승인 및 연차 차감 완료.");
+			System.out.println(GREEN + "\n✅ 휴가 신청 번호 " + vacationSeq + " 승인 및 연차 차감 완료." + RESET);
 			
 		} catch (NumberFormatException e) {
-			e.printStackTrace();
+			System.out.println(RED + "❌ 입력 오류: 휴가 번호는 숫자로만 입력해야 합니다." + RESET);
 		} catch (SQLException e) {
+			// PL/SQL 프로시저에서 발생한 에러 코드 처리 (-20000 대 오류)
 			if(e.getErrorCode() == 20001) {
-				System.out.println("승인실패 번호에 해당하는 휴가 신청번호가 없거나 연차정보가 없습니다.");
+				System.out.println(RED + "❌ 승인 실패: 입력하신 번호에 해당하는 휴가 신청번호가 없거나 연차 정보가 없습니다." + RESET);
 			} else if (e.getErrorCode() == 20003) {
-				System.out.println("승인실패 잔여 연차가 부족합니다.");
+                // 잔여 연차 부족 상세 메시지 출력
+                String errorDetail = e.getMessage().substring(e.getMessage().indexOf(":") + 1).trim();
+				System.out.println(RED + "❌ 승인 실패: 잔여 연차가 부족합니다. (" + errorDetail + ")" + RESET);
 			} else if (e.getErrorCode() == 20099) {
-				System.out.println("승인실패 승인중 오류 발생");
+				System.out.println(RED + "❌ 승인 실패: 시스템 오류로 승인 중 오류가 발생했습니다." + RESET);
 			} else {
-				e.printStackTrace();
+				System.out.println(RED + "❌ DB 오류 발생 (코드: " + e.getErrorCode() + "): " + e.getMessage() + RESET);
 			}	
 		} catch (IOException e) {
-			e.printStackTrace();
+			System.out.println(RED + "❌ 입출력 오류가 발생했습니다." + RESET);
 		} catch (Exception e) {
-			e.printStackTrace();
+			System.out.println(RED + "❌ 알 수 없는 오류가 발생했습니다: " + e.getMessage() + RESET);
 		}
-		
 	}
 
 	// WBS의 4레벨 메뉴(3.근무시간조회) 처리를 위한 별도 메서드
