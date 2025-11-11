@@ -31,20 +31,20 @@ public class EmpDAOImpl implements EmpDAO{
 		
 		try {
 			sql = "INSERT INTO TB_EMP(EMP_NO, EMP_NM, RRN, EMP_ADDR, HIRE_DT, DEPT_CD, GRADE_CD, EMP_STAT_CD, CONTRACT_TP_CD, EMAIL, PWD, LEVEL_CODE) "
-					+ " VALUES(?, ?, ?, ?, SYSDATE, ?, ?, ?, ?, ?, ?, ?)";
-			
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, emp.getEmpNo());
-			pstmt.setString(2, emp.getEmpNm());
-			pstmt.setString(3, emp.getRrn());
-			pstmt.setString(4, emp.getEmpAddr());
-			pstmt.setString(5, emp.getDeptCd());
-			pstmt.setString(6, emp.getGradeCd());
-			pstmt.setString(7, emp.getEmpStatCd());
-			pstmt.setString(8, emp.getContractTpCd());
-			pstmt.setString(9, emp.getEmail());
-			pstmt.setString(10, emp.getPwd());
-			pstmt.setString(11, emp.getLevelCode());
+		               + " VALUES(?, ?, ?, ?, SYSDATE, ?, ?, 'A', ?, ?, ?, ?)";
+		         
+		         pstmt = conn.prepareStatement(sql);
+		         pstmt.setString(1, emp.getEmpNo());
+		         pstmt.setString(2, emp.getEmpNm());
+		         pstmt.setString(3, emp.getRrn());
+		         pstmt.setString(4, emp.getEmpAddr());
+		         pstmt.setString(5, emp.getDeptCd());
+		         pstmt.setString(6, emp.getGradeCd());
+		         pstmt.setString(7, emp.getContractTpCd());
+		         pstmt.setString(8, emp.getEmail());
+		         pstmt.setString(9, emp.getPwd());
+		         pstmt.setString(10, emp.getLevelCode());
+
 			
 			result += pstmt.executeUpdate();
 			DBUtil.close(pstmt);
@@ -508,7 +508,17 @@ public class EmpDAOImpl implements EmpDAO{
 
 	   @Override
 	   public boolean isValidDeptCd(String deptCd) {
-		// TODO Auto-generated method stub
+		   String sql = "SELECT COUNT(*) FROM TB_DEPT WHERE DEPT_CD = ?";
+		   try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			   pstmt.setString(1, deptCd);
+			   ResultSet rs = pstmt.executeQuery();
+			   if (rs.next()) {
+				   return rs.getInt(1) > 0;
+			}
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
 		return false;
 	   }
 
