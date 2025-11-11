@@ -506,40 +506,70 @@ public class EmpDAOImpl implements EmpDAO{
 	    return dto;
 	}
 
-	   @Override
-	   public boolean isValidDeptCd(String deptCd) {
-		   String sql = "SELECT COUNT(*) FROM TB_DEPT WHERE DEPT_CD = ?";
-		   try(PreparedStatement pstmt = conn.prepareStatement(sql)) {
-			   pstmt.setString(1, deptCd);
-			   ResultSet rs = pstmt.executeQuery();
-			   if (rs.next()) {
-				   return rs.getInt(1) > 0;
+	@Override
+	public boolean isValidDeptCd(String deptCd) {
+		String sql = "SELECT COUNT(*) FROM TB_DEPT WHERE DEPT_CD = ?";
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setString(1, deptCd);
+			ResultSet rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				return rs.getInt(1) > 0;
 			}
-			
-		} catch (Exception e) {
-			// TODO: handle exception
+
+		} catch (SQLException e) {
+			e.printStackTrace();
 		}
 		return false;
-	   }
+	}
 
-	   @Override
-	   public boolean isValidGradeCd(String gradeCd) {
-		// TODO Auto-generated method stub
-		return false;
-	   }
+	@Override
+	public boolean isValidGradeCd(String gradeCd) {
+		String sql = "SELECT COUNT(*) FROM TB_GRADE WHERE GRADE_CD = ?";
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setString(1, gradeCd);
+			ResultSet rs = pstmt.executeQuery();
 
-	   @Override
-	   public boolean isValidContractTpCd(String contractTpCd) {
-		// TODO Auto-generated method stub
+			if (rs.next()) {
+				return rs.getInt(1) > 0;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
-	   }
+	}
 
-	   @Override
-	   public boolean isValidLevelCode(String levelCode) {
-		// TODO Auto-generated method stub
+	@Override
+	public boolean isValidContractTpCd(String contractTpCd) {
+		String sql = "SELECT COUNT(*) FROM TB_EMP_CNTRT_TYPE WHERE CONTRACT_TP_CD = ?";
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setString(1, contractTpCd);
+			ResultSet rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				return rs.getInt(1) > 0;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		return false;
-	   }
-	   
+	}
+
+	@Override
+	public boolean isValidLevelCode(String levelCode) {
+		String sql = "SELECT COUNT(*) FROM TB_ROLE WHERE LEVEL_CODE = ?";
+		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+			pstmt.setString(1, levelCode);
+			ResultSet rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				return rs.getInt(1) > 0;
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
 	   
 
 
