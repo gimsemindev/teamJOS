@@ -69,8 +69,7 @@ public interface EmpDAO {
     List<DeptMoveDTO> selectDeptMove(String empNo);
     
     /** : 부서조회 */
-    EmployeeDTO selectdeptName(String empNo);
-//  EmployeeDTO selectDeptName(String empNo);
+    EmployeeDTO selectDeptName(String empNo);
     
     /** : 직급조회 */
     EmployeeDTO selectGradeName(String empNo);

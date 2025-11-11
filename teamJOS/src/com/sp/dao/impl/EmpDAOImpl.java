@@ -108,8 +108,7 @@ public class EmpDAOImpl implements EmpDAO{
 		String sqlinst;
 		int result =0;
 		try {
-			EmployeeDTO empDto = selectdeptName(promotion.getEmpNo());
-			// EmployeeDTO empDto = selectDeptName(promotion.getEmpNo());
+			EmployeeDTO empDto = selectDeptName(promotion.getEmpNo());
 	        String deptCd = empDto.getDeptCd();
 			
 			sqlup = "UPDATE TB_GRADE_HISTORY SET VALID_END_DT = SYSDATE-1 "
@@ -416,8 +415,7 @@ public class EmpDAOImpl implements EmpDAO{
 	}
 	
 	@Override
-	public EmployeeDTO selectdeptName(String empNo) {
-//	public EmployeeDTO selectDeptName(String empNo) {
+	public EmployeeDTO selectDeptName(String empNo) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		String sql;
