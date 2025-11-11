@@ -2,6 +2,8 @@ package com.sp.dao;
 
 import java.sql.SQLException;
 import java.util.List;
+
+import com.sp.model.AnnualLeaveDTO;
 import com.sp.model.AttendanceDTO;
 import com.sp.model.VacationDTO;
 
@@ -52,8 +54,11 @@ public interface AttDAO {
     List<AttendanceDTO> selectWorkTimeByEmp(int empNo);
 
     /** ATT_SEL_006 */
-    List<VacationDTO> selectAllVacation();
+    List<AnnualLeaveDTO> selectAllAnnualLeave(int start, int end);
 
     /** ATT_SEL_007 */
-    List<VacationDTO> selectVacationByEmp(int empNo);
+    List<VacationDTO> selectAnnualLeaveByEmp(int empNo);
+    
+    /** ATT_SEL_008 */
+    int selectAllAnnualLeaveCount();
 }

@@ -44,7 +44,7 @@ public class DBUtil {
 		}
 	}
 
-	/*
+	
 	public static void close(Connection conn) {
 		if (conn != null) {
 			try {
@@ -53,5 +53,5 @@ public class DBUtil {
 			}
 		}
 	}
-	*/
+	
 }

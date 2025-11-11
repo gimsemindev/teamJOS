@@ -9,13 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sp.dao.AttDAO;
+import com.sp.model.AnnualLeaveDTO;
 import com.sp.model.AttendanceDTO;
 import com.sp.model.VacationDTO;
 import com.sp.util.DBConn;
 import com.sp.util.DBUtil;
 
 public class AttDAOImpl implements AttDAO{
-
+	private Connection conn = DBConn.getConnection();
+	
 	@Override
 	public int insertAttendanceIn(AttendanceDTO att) throws SQLException{
 		// TODO Auto-generated method stub
@@ -38,7 +40,7 @@ public class AttDAOImpl implements AttDAO{
 	
 	@Override
 	public int updateVacationApprove(int vacationSeq) throws SQLException{
-		Connection conn = DBConn.getConnection();
+
 		int result = 0;
 		CallableStatement cstmt = null;
 		String sql;
@@ -88,13 +90,105 @@ public class AttDAOImpl implements AttDAO{
 	}
 
 	@Override
-	public List<VacationDTO> selectAllVacation() {
-		// TODO Auto-generated method stub
-		return null;
+	public List<AnnualLeaveDTO> selectAllAnnualLeave(int start, int end) {
+	    List<AnnualLeaveDTO> list = new ArrayList<>();
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+	    String sql;
+	    
+	    try {
+	        sql = """
+	              SELECT * 
+	                FROM (
+	                        SELECT ROWNUM rn, A.*
+	                          FROM (
+	                                SELECT A.LEAVE_SEQ
+	                                     , D.DEPT_NM
+	                                     , G.GRADE_NM
+	                                     , A.EMP_NO
+	                                     , E.EMP_NM
+	                                     , TO_CHAR(E.HIRE_DT, 'YYYY/MM/DD') AS HIRE_DT
+	                                     , A.TOTAL_DAYS
+	                                     , A.USED_DAYS
+	                                     , A.REMAIN_DAYS
+	                                     , A.USE_YN
+	                                  FROM TB_ANNUAL_LEAVE A
+	                                  JOIN TB_EMP E
+	                                    ON A.EMP_NO = E.EMP_NO
+	                                   AND E.USE_YN = 'Y'
+	                                  LEFT JOIN TB_DEPT D
+	                                    ON E.DEPT_CD = D.DEPT_CD
+	                                   AND D.USE_YN = 'Y'
+	                                  LEFT JOIN TB_GRADE G
+	                                    ON E.GRADE_CD = G.GRADE_CD
+	                                   AND G.USE_YN = 'Y'
+	                                 WHERE A.USE_YN = 'Y'
+	                                 ORDER BY D.DEPT_NM, G.GRADE_NM, E.EMP_NM
+	                               ) A
+	                     )
+	               WHERE rn BETWEEN ? AND ? """;
+	        
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setInt(1, start);
+	        pstmt.setInt(2, end);
+	        
+	        rs = pstmt.executeQuery();
+	        
+	        while (rs.next()) {
+	            AnnualLeaveDTO dto = new AnnualLeaveDTO();
+	            dto.setLeaveSeq(rs.getInt("LEAVE_SEQ"));
+	            dto.setDeptNm(rs.getString("DEPT_NM"));
+	            dto.setGradeNm(rs.getString("GRADE_NM"));
+	            dto.setEmpNo(rs.getString("EMP_NO"));
+	            dto.setEmpNm(rs.getString("EMP_NM"));
+	            dto.setHireDt(rs.getString("HIRE_DT"));
+	            dto.setTotalDays(rs.getInt("TOTAL_DAYS"));
+	            dto.setUsedDays(rs.getInt("USED_DAYS"));
+	            dto.setRemainDays(rs.getInt("REMAIN_DAYS"));
+	            dto.setUseYn(rs.getString("USE_YN"));
+	            
+	            list.add(dto);
+	        }
+	        
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    } finally {
+	        DBUtil.close(rs);
+	        DBUtil.close(pstmt);
+	    }
+	    
+	    return list;
 	}
 
 	@Override
-	public List<VacationDTO> selectVacationByEmp(int empNo) {
+	public int selectAllAnnualLeaveCount() {
+        int result = 0;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql;
+        
+        try {
+        	sql = "SELECT /* ATT_SEL_008 */ COUNT(*) AS CNT FROM TB_ANNUAL_LEAVE WHERE USE_YN='Y'";
+        	        	
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                result = rs.getInt("CNT");
+            }        	
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(rs);
+            DBUtil.close(pstmt);
+        }
+		
+        return result;
+	}
+	
+	
+	@Override
+	public List<VacationDTO> selectAnnualLeaveByEmp(int empNo) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -102,7 +196,6 @@ public class AttDAOImpl implements AttDAO{
 	@Override
 	public List<VacationDTO> listVaction() {
 		List<VacationDTO> list = new ArrayList<VacationDTO>();
-		Connection conn = DBConn.getConnection();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		String sql;

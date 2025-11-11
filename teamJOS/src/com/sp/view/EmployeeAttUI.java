@@ -43,7 +43,7 @@ public class EmployeeAttUI {
         		case 2: attDao.insertAttendanceOut(null); break; // ATT_INS_002 
         		case 3: attDao.insertVacation(null); break; // ATT_INS_008 (기존 코드의 insertVacation을 requestVacation으로 수정) 
         		case 4: attDao.updateVacation(null); break; // ATT_UPD_009 
-        		case 5: attDao.selectVacationByEmp(0); break; // ATT_SEL_007 
+        		case 5: attDao.selectAllAnnualLeave(1,1); break; // ATT_SEL_007 
         		case 6: attDao.selectWorkTimeByEmp(0); break; // ATT_SEL_005 
         		case 7: return; // 7.메뉴화면으로 
         		}

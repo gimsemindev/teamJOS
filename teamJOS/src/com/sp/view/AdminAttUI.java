@@ -10,12 +10,14 @@ import com.sp.dao.AttDAO;
 import com.sp.model.VacationDTO;
 import com.sp.util.LoginInfo;
 import com.sp.util.PrintUtil;
+import com.sp.view.common.DeptCommonUI;
 
 
 public class AdminAttUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private AttDAO attDao;
     private LoginInfo loginInfo;
+    private DeptCommonUI deptCommonUI = new DeptCommonUI();
     
     public AdminAttUI(AttDAO attDao, LoginInfo loginInfo) {
         this.attDao = attDao;
@@ -190,21 +192,16 @@ public class AdminAttUI {
             } while(ch < 1 || ch > 3);
 
             switch (ch) {
-            case 1: selectAllVacation(); break; // ATT_SEL_006
-            case 2: selectVacationByEmp(); break; // ATT_SEL_007
+            case 1: deptCommonUI.selectAllAnnualLeave(); break; // ATT_SEL_006
+            case 2: selectAnnualLeaveByEmp(); break; // ATT_SEL_007
             case 3: return;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    
-    private void selectAllVacation() {
-    	
-    	
-    }
-    
-    private void selectVacationByEmp() {
+        
+    private void selectAnnualLeaveByEmp() {
     	
     }
 }
