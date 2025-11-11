@@ -229,6 +229,10 @@ public class EmpDAOImpl implements EmpDAO{
 				dto.setRrn(rs.getString("RRN"));
 				dto.setEmpAddr(rs.getString("EMP_ADDR"));
 				dto.setHireDt(rs.getString("HIRE_DT"));
+				dto.setDeptNm(rs.getString("DEPT_NM"));
+				dto.setGradeNm(rs.getString("GRADE_NM"));
+				dto.setEmpStatNm(rs.getString("EMP_STAT_NM"));
+				dto.setContractTpNm(rs.getString("CONTRACT_TP_NM"));
 				dto.setEmail(rs.getString("EMAIL"));
 				dto.setPwd(rs.getString("pwd"));
 				dto.setRegDt(rs.getString("REG_DT"));;
