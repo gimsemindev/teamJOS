@@ -11,11 +11,11 @@ import com.sp.util.LoginInfo;
 public class AdminBoardUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private BoardDAO boardDao;
-    private LoginInfo loginInfo;
+    //private LoginInfo loginInfo;
     
     public AdminBoardUI(BoardDAO boardDao, LoginInfo loginInfo) {
         this.boardDao = boardDao;
-        this.loginInfo = loginInfo;
+        //this.loginInfo = loginInfo;
     }
     
     public void menu() {
@@ -41,7 +41,7 @@ public class AdminBoardUI {
         		switch(ch) {
         		case 1: insert(); break; // BOARD_INS_001 
         		case 2: update(); break; // BOARD_UPD_002 
-        		case 3: delete(); break; // BOARD_DEL_003 어드민 전용 삭제 추가  
+        		case 3: delete(); break; // BOARD_DEL_003 어드민 전용 삭제 추가
         		case 4: viewPostsList(); break;
         		case 5: return; // 4. 메뉴화면으로 
         		}
@@ -126,101 +126,120 @@ public class AdminBoardUI {
             System.out.println("! 게시글 수정 중 오류 발생: " + e.getMessage());
         }
     }
-    
     private void viewPostsList() {
-        System.out.println("\n--- [ 4. 게시글 전체 보기 ] ---");
+        System.out.println("--- [ 4. 게시글 전체 보기 ] ---");
         try {
-            // 1. DAO로부터 데이터 리스트를 받음 (출력 X)
             List<BoardDTO> list = boardDao.listPosts();
 
             if (list == null || list.isEmpty()) {
-                System.out.println("! 등록된 게시글이 없습니다.");
+                System.out.println("\n[정보] 등록된 게시글이 없습니다.");
                 return;
             }
 
-            // 2. [UI 담당] 리스트를 간략하게 출력
-            System.out.println("──────────────────────────────────────────────────");
-            System.out.println("  번호  |        제목        |  작성자  |   작성일");
-            System.out.println("──────────────────────────────────────────────────");
+            // 1. (수정) 헤더의 총 길이를 51 문자로 고정
+            //    (데이터 printf 형식: " %-5d | %-18s | %-8s | %-10s\n")
+            //    (1+5) + 3 + 18 + 3 + 8 + 3 + 10 = 51 문자
+            String line = "---------------------------------------------------"; // 51개
+            
+            System.out.println("\n" + line);
+            // 2. (수정) 헤더도 printf를 사용해 데이터와 동일한 칸을 차지하도록 함
+            System.out.printf(" %-5s | %-18s | %-8s | %-10s\n", 
+                                "번호", "제목", "작성자", "작성일");
+            System.out.println(line);
             
             for (BoardDTO dto : list) {
-                // 제목이 너무 길면 잘라내기
                 String title = dto.getTitle();
                 if (title.length() > 10) {
                     title = title.substring(0, 10) + "...";
                 }
                 
-                // 날짜만 표시 (시간 제외)
                 String regDate = dto.getRegDtm().substring(0, 10);
                 
+                // 3. (기존) 데이터 출력 (헤더와 형식이 동일함)
                 System.out.printf(" %-5d | %-18s | %-8s | %-10s\n", 
                     dto.getBoardNo(), 
                     title, 
-                    dto.getEmpNo(), // (추후 사원 이름으로 변경 가능)
+                    dto.getEmpNo(), 
                     regDate
                 );
             }
-            System.out.println("──────────────────────────────────────────────────");
+            System.out.println(line); // 마지막 구분선
 
-            // 3. [UI 담당] 사용자에게 상세 보기할 글번호 입력받기
+            // --- [이하 동일] ---
             while (true) {
-                System.out.print("👉 상세히 볼 글번호를 입력하세요 (0: 메뉴로 돌아가기) => ");
+                System.out.print("\n상세히 볼 글번호 (0: 메뉴로 돌아가기) > ");
                 String input = br.readLine();
-                int boardNo = Integer.parseInt(input);
+                int boardNo;
+
+                try {
+                    boardNo = Integer.parseInt(input);
+                } catch (NumberFormatException e) {
+                    System.out.println("[오류] 숫자를 입력해야 합니다.");
+                    continue;
+                }
 
                 if (boardNo == 0) {
                     return; // 메뉴로
                 }
                 
-                // 4. 상세 보기 메소드 호출
                 viewPostDetail(boardNo);
-                // 상세 보기가 끝나면 목록을 다시 보여주기 위해 루프를 빠져나가지 않음
-                // (만약 상세 보기 후 바로 메뉴로 가고 싶다면 viewPostDetail 호출 후 return;)
                 
-                // 상세 보기 후 목록을 다시 보여주기 전, 목록을 다시 로드할 수도 있음 (선택 사항)
-                list = boardDao.listPosts(); // (선택) 데이터 갱신
+                System.out.println("\n--- [ 전체 목록 다시 표시 ] ---");
+                list = boardDao.listPosts(); 
+                
+                // (수정) 갱신된 목록 출력 시에도 동일한 형식 적용
+                System.out.println(line);
+                System.out.printf(" %-5s | %-18s | %-8s | %-10s\n", 
+                                    "번호", "제목", "작성자", "작성일");
+                System.out.println(line);
+                for (BoardDTO dto : list) {
+                    String title = dto.getTitle();
+                    if (title.length() > 10) {
+                        title = title.substring(0, 10) + "...";
+                    }
+                    String regDate = dto.getRegDtm().substring(0, 10);
+                    System.out.printf(" %-5d | %-18s | %-8s | %-10s\n", 
+                        dto.getBoardNo(), title, dto.getEmpNo(), regDate);
+                }
+                System.out.println(line);
             }
 
-        } catch (NumberFormatException e) {
-            System.out.println("! 글번호는 숫자로 입력해야 합니다.");
         } catch (Exception e) {
-            System.out.println("! 게시글 조회 중 오류: " + e.getMessage());
+            System.out.println("\n[오류] 게시글 조회 중 예외 발생: " + e.getMessage());
         }
     }
-    
     private void viewPostDetail(int boardNo) {
         try {
-            // 1. DAO로부터 DTO 하나를 받음
             BoardDTO dto = boardDao.getPost(boardNo);
 
             if (dto == null) {
-                System.out.println("! 해당 번호의 게시글이 존재하지 않습니다.");
+                System.out.println("\n[오류] 해당 번호의 게시글이 존재하지 않습니다.");
                 return;
             }
 
-            // 2. [UI 담당] DTO의 모든 내용 출력
-            System.out.println("\n--- [ " + boardNo + "번 게시글 상세 보기 ] ---");
-            System.out.println(" 글번호: " + dto.getBoardNo());
-            System.out.println(" 제  목: " + dto.getTitle());
-            System.out.println(" 작성자: " + dto.getEmpNo());
-            System.out.println(" 작성일: " + dto.getRegDtm());
+            System.out.println("\n==================================================");
+            System.out.println("           [ " + boardNo + "번 게시글 상세 보기 ]");
+            System.out.println("--------------------------------------------------");
+            System.out.println(" > 글번호: " + dto.getBoardNo());
+            System.out.println(" > 제  목: " + dto.getTitle());
+            System.out.println(" > 작성자: " + dto.getEmpNo());
+            System.out.println(" > 작성일: " + dto.getRegDtm());
             
             if (dto.getUpdateDtm() != null) {
-                System.out.println(" 수정일: " + dto.getUpdateDtm());
+                System.out.println(" > 수정일: " + dto.getUpdateDtm());
             }
             
-            System.out.println("──────────────────────────────────────────────────");
-            System.out.println(dto.getContent()); // 내용 출력
-            System.out.println("──────────────────────────────────────────────────");
-            System.out.println("(엔터를 누르면 목록으로 돌아갑니다.)");
+            System.out.println("--------------------------------------------------");
+            System.out.println("\n" + dto.getContent() + "\n"); // 내용 위아래 공백 추가
+            System.out.println("==================================================");
+            System.out.print("\n(엔터를 누르면 목록으로 돌아갑니다.)");
             br.readLine(); // 사용자가 내용을 읽을 때까지 대기
 
         } catch (Exception e) {
-            System.out.println("! 상세 보기 중 오류 발생: " + e.getMessage());
-            e.printStackTrace();
+            System.out.println("\n[오류] 상세 보기 중 예외 발생: " + e.getMessage());
+            // e.printStackTrace();
         }
     }
-    
     private void delete() {
         System.out.println("\n--- [ 3. 게시글 삭제 ] ---");
         BoardDTO dto= new BoardDTO();
