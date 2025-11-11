@@ -506,6 +506,32 @@ public class EmpDAOImpl implements EmpDAO{
 	    return dto;
 	}
 
+	   @Override
+	   public boolean isValidDeptCd(String deptCd) {
+		// TODO Auto-generated method stub
+		return false;
+	   }
+
+	   @Override
+	   public boolean isValidGradeCd(String gradeCd) {
+		// TODO Auto-generated method stub
+		return false;
+	   }
+
+	   @Override
+	   public boolean isValidContractTpCd(String contractTpCd) {
+		// TODO Auto-generated method stub
+		return false;
+	   }
+
+	   @Override
+	   public boolean isValidLevelCode(String levelCode) {
+		// TODO Auto-generated method stub
+		return false;
+	   }
+	   
+	   
+
 
 
 	

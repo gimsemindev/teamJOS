@@ -96,12 +96,22 @@ public class AdminEmpUI {
 			dto.setEmpAddr(br.readLine());
 
 			// ==================== 부서 코드 ====================
-			System.out.println("\n───────────────────────────────");
-			System.out.println("[부서 목록]");
-			deptCommonUI.selectAllDept();
-			System.out.println("───────────────────────────────");
-			System.out.print("부서코드 입력 ➤ ");
-			dto.setDeptCd(br.readLine());
+			String deptCd;
+			while (true) {
+				System.out.println("\n───────────────────────────────");
+				System.out.println("[부서 목록]");
+				deptCommonUI.selectAllDept();
+				System.out.println("───────────────────────────────");
+				System.out.print("부서코드 입력 ➤ ");
+				deptCd = br.readLine();
+
+				if (!empDao.isValidDeptCd(deptCd)) {
+					System.out.println("존재하지 않는 부서 코드입니다. 다시 입력해주세요.");
+					continue;
+				}
+				dto.setDeptCd(deptCd);
+				break;
+			}
 
 			// ==================== 직급 코드 ====================
 			System.out.println("\n───────────────────────────────");
@@ -141,7 +151,7 @@ public class AdminEmpUI {
 			empDao.insertEmployee(dto);
 			System.out.println("\n사원 정보 등록이 완료되었습니다.\n");
 
-		} catch (IOException e) {
+		}catch (IOException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -242,15 +252,30 @@ public class AdminEmpUI {
 			System.out.println("현재 부서코드 : " + emp.getDeptCd());
 			System.out.println("──────────────────────────────\n");
 
-			System.out.print("이동할 부서코드 ➤ ");
-			dto.setNewDeptCd(br.readLine());
-			dto.setEmpNo(empNo);
+			// ==================== 새 부서 코드 입력 및 검증 ====================
+			String newDeptCd;
+			while (true) {
+				System.out.print("이동할 부서코드 ➤ ");
+				newDeptCd = br.readLine();
 
+				if (!empDao.isValidDeptCd(newDeptCd)) {
+					System.out.println("존재하지 않는 부서 코드입니다. 다시 입력해주세요.");
+					continue;
+				}
 
+				if (newDeptCd.equals(emp.getDeptCd())) {
+					System.out.println("현재 부서와 동일합니다. 다른 부서로 입력해주세요.");
+					continue;
+				}
+
+				dto.setNewDeptCd(newDeptCd);
+				dto.setEmpNo(empNo);
+				break;
+			}
 
 			// ==================== DB 업데이트 ====================
 			empDao.updateDeptMove(dto);
-			System.out.println("\n부서 이동이 완료되었습니다.\n");
+			System.out.println("\n 부서 이동이 완료되었습니다.\n");
 
 		} catch (IOException e) {
 			System.out.println("입력 처리 중 오류가 발생했습니다.");
@@ -270,7 +295,6 @@ public class AdminEmpUI {
 		}
 	}
 
-	/** 4. 사원관리 - 진급 관리 */
 	private void updatePromotionInfo() {
 		System.out.println("\n[관리자 - 사원관리 - 진급관리]");
 		try {
@@ -299,7 +323,7 @@ public class AdminEmpUI {
 			// ==================== 부서명 + 직급 불러오기 ====================
 			emp = empDao.selectDeptName(empNo);
 
-			// ==================== 진급 코드 입력 ====================
+			// ==================== 직급 코드 목록 출력 ====================
 			System.out.println("==============================================================");
 			System.out.println("                       [ 직급 코드 목록 ]");
 			System.out.println("==============================================================");
@@ -313,9 +337,35 @@ public class AdminEmpUI {
 			System.out.println("현재 부서명   : " + emp.getDeptNm());
 			System.out.println("──────────────────────────────\n");
 
-			System.out.print("진급할 직급코드 ➤ ");
-			String newGrade = br.readLine();
-			System.out.println("진급 사유 ➤ ");
+			// ==================== 진급 코드 입력 (유효성 검증) ====================
+			String newGrade;
+			while (true) {
+				System.out.print("진급할 직급코드 ➤ ");
+				newGrade = br.readLine();
+
+				if (!empDao.isValidGradeCd(newGrade)) {
+					System.out.println("존재하지 않는 직급 코드입니다. 다시 입력해주세요.");
+					continue;
+				}
+
+				if (newGrade.equals(emp.getGradeCd())) {
+					System.out.println("현재 직급과 동일합니다. 다른 직급을 입력해주세요.");
+					continue;
+				}
+				break;
+			}
+
+			// ==================== 진급 사유 입력 ====================
+			String reason;
+			while (true) {
+				System.out.print("진급 사유 ➤ ");
+				reason = br.readLine();
+				if (reason == null || reason.trim().isEmpty()) {
+					System.out.println("진급 사유는 반드시 입력해야 합니다.");
+					continue;
+				}
+				break;
+			}
 
 			// ==================== DTO 세팅 ====================
 			dto.setEmpNo(empNo);
@@ -344,6 +394,7 @@ public class AdminEmpUI {
 		}
 	}
 
+		
 	/** 5. 사원관리 - 정보조회 */
 	private void manageEmployeeSearch() {
 		System.out.println("\n[관리자 - 사원관리 - 정보조회]");
@@ -354,37 +405,37 @@ public class AdminEmpUI {
 
 				switch (ch) {
 				case 1 -> {
-				    String empNo;
-				    while (true) {
-				        System.out.print("사원번호(ex. D1001): ");
-				        empNo = br.readLine();
-				        if (!empNo.matches("^D\\d{4}$")) {
-				            System.out.println("잘못된 형식입니다. D1001 형식으로 입력해주세요.");
-				            continue;
-				        }
-				        break;
-				    }
+					String empNo;
+					while (true) {
+						System.out.print("사원번호(ex. D1001): ");
+						empNo = br.readLine();
+						if (!empNo.matches("^D\\d{4}$")) {
+							System.out.println("잘못된 형식입니다. D1001 형식으로 입력해주세요.");
+							continue;
+						}
+						break;
+					}
 
-				    EmployeeDTO dto = empDao.selectByEmpNo(empNo);
-				    if (dto == null) {
-				        System.out.println("해당 사원번호의 정보가 존재하지 않습니다.\n");
-				        return;
-				    }
+					EmployeeDTO dto = empDao.selectByEmpNo(empNo);
+					if (dto == null) {
+						System.out.println("해당 사원번호의 정보가 존재하지 않습니다.\n");
+						return;
+					}
 
-				    System.out.print(dto.getEmpNo() + "\t");
-				    System.out.print(dto.getEmpNm() + "\t");
-				    System.out.print(dto.getRrn() + "\t");
-				    System.out.print(dto.getEmpAddr() + "\t");
-				    System.out.print(dto.getHireDt() + "\t");
-				    System.out.print(dto.getDeptNm() + "\t");
-				    System.out.print(dto.getGradeNm() + "\t");
-				    System.out.print(dto.getEmpStatNm() + "\t");
-				    System.out.print(dto.getContractTpNm() + "\t");
-				    System.out.print(dto.getEmail() + "\t");
-				    System.out.print(dto.getPwd() + "\t");
-				    System.out.print(dto.getRegDt() + "\t");
-				    System.out.print(dto.getRetireDt() + "\t");
-				    System.out.println(dto.getLevelCode());
+					System.out.print(dto.getEmpNo() + "\t");
+					System.out.print(dto.getEmpNm() + "\t");
+					System.out.print(dto.getRrn() + "\t");
+					System.out.print(dto.getEmpAddr() + "\t");
+					System.out.print(dto.getHireDt() + "\t");
+					System.out.print(dto.getDeptNm() + "\t");
+					System.out.print(dto.getGradeNm() + "\t");
+					System.out.print(dto.getEmpStatNm() + "\t");
+					System.out.print(dto.getContractTpNm() + "\t");
+					System.out.print(dto.getEmail() + "\t");
+					System.out.print(dto.getPwd() + "\t");
+					System.out.print(dto.getRegDt() + "\t");
+					System.out.print(dto.getRetireDt() + "\t");
+					System.out.println(dto.getLevelCode());
 				}
 
 				case 2 -> {
@@ -485,7 +536,8 @@ public class AdminEmpUI {
 
 			// ==================== DB 업데이트 ====================
 			empDao.updateRetireApproval(empNo, status);
-			System.out.println("부서 이동이 완료되었습니다.");
+
+			System.out.println("부서 이동이 완료되었습니다.\n");
 
 		} catch (IOException e) {
 			System.out.println("입력 처리 중 오류가 발생했습니다.");

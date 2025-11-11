@@ -73,5 +73,17 @@ public interface EmpDAO {
     
     /** : 직급조회 */
     EmployeeDTO selectGradeName(String empNo);
+    
+    /** 부서코드 유효성 검증 */
+    boolean isValidDeptCd(String deptCd);
+
+    /** 직급코드 유효성 검증 */
+    boolean isValidGradeCd(String gradeCd);
+
+    /** 계약구분코드 유효성 검증 */
+    boolean isValidContractTpCd(String contractTpCd);
+
+    /** 권한레벨코드 유효성 검증 */
+    boolean isValidLevelCode(String levelCode);
 }
 
