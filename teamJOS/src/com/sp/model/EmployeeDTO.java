@@ -16,6 +16,10 @@ public class EmployeeDTO {
     private String retireDt;      // RETIRE_DT DATE
     private String useYn;         // USE_YN CHAR(1)
     private String levelCode;     // LEVEL_CODE CHAR(2)
+    private String deptNm;
+    private String gradeNm;
+    private String empStatNm;
+    private String contractTpNm;
     
     public EmployeeDTO() {
     	
@@ -134,5 +138,30 @@ public class EmployeeDTO {
 	public void setLevelCode(String levelCode) {
 		this.levelCode = levelCode;
 	}
+	public String getDeptNm() {
+		return deptNm;
+	}
+	public void setDeptNm(String deptNm) {
+		this.deptNm = deptNm;
+	}
+	public String getGradeNm() {
+		return gradeNm;
+	}
+	public void setGradeNm(String gradeNm) {
+		this.gradeNm = gradeNm;
+	}
+	public String getEmpStatNm() {
+		return empStatNm;
+	}
+	public void setEmpStatNm(String empstatNm) {
+		this.empStatNm = empstatNm;
+	}
+	public String getContractTpNm() {
+		return contractTpNm;
+	}
+	public void setContractTpNm(String contractTpNm) {
+		this.contractTpNm = contractTpNm;
+	}
+	
     
 }

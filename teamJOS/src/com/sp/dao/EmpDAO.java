@@ -67,5 +67,8 @@ public interface EmpDAO {
 
     /** EMP_SEL_012 : 부서이동이력조회 */
     List<DeptMoveDTO> selectDeptMove(String empNo);
+    
+    /** : 부서조회 */
+    EmployeeDTO selectdeptName(String empNo);
 }
 
