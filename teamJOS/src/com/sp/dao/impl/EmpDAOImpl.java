@@ -232,14 +232,13 @@ public class EmpDAOImpl implements EmpDAO{
 		
 		try {
 			sql = "INSERT INTO TB_EMP_CERT(CERT_SEQ, EMP_NO, CERT_NM, ISSUE_ORG_NM, ISSUE_DT) "
-					+ " VALUES(SQ_TB_EMP_CERT.NEXTVAL, ?, ?, TO_DATE(?, 'YYYY-MM-DD'), ?)";
+					+ " VALUES(SQ_TB_EMP_CERT.NEXTVAL, ?, ?, ?, TO_DATE(?, 'YYYY-MM-DD'))";
 			
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, reward.getEmpNo());
 			pstmt.setString(2, reward.getRewardName());
-			pstmt.setString(3, reward.getDate());
-			pstmt.setString(4, reward.getIssuer());
-			
+			pstmt.setString(3, reward.getIssuer());
+			pstmt.setString(4, reward.getDate());
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
 			throw e;
