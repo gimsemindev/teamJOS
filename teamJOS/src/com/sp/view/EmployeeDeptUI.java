@@ -43,7 +43,7 @@ public class EmployeeDeptUI {
         		
         		switch(ch) {
         		case 1: deptCommonUI.selectAllDept(); break; // DEPT_SEL_003  (기존 코드의 selectDeptByNo(0)은 selectAllDept로 수정)
-        		case 2: deptDao.selectDeptMemberCount(); break; // DEPT_SEL_005 
+        		case 2: deptCommonUI.selectDeptMember(); break; // DEPT_SEL_005 
         		case 3: return; // 3. 메뉴화면으로 
         		}
         		
