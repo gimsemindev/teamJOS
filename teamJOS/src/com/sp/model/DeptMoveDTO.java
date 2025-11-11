@@ -2,7 +2,6 @@ package com.sp.model;
 
 public class DeptMoveDTO {
 	private String empNo;
-	private String currentDeptCd;
 	private String newDeptCd;
 	
 	public String getEmpNo() {
@@ -10,12 +9,6 @@ public class DeptMoveDTO {
 	}
 	public void setEmpNo(String empNo) {
 		this.empNo = empNo;
-	}
-	public String getCurrentDeptCd() {
-		return currentDeptCd;
-	}
-	public void setCurrentDeptCd(String currentDeptCd) {
-		this.currentDeptCd = currentDeptCd;
 	}
 	public String getNewDeptCd() {
 		return newDeptCd;

@@ -45,7 +45,7 @@ public interface EmpDAO {
     int updatePromotion(PromotionDTO promotion) throws SQLException;
 
     /** EMP_UPD_008 : 퇴직신청결재 */
-    int updateRetireApproval(int empNo) throws SQLException;
+    int updateRetireApproval(String empNo, String status) throws SQLException;
 
     /** EMP_INS_009 : 경력등록 */
     int insertCareer(CareerDTO career) throws SQLException;

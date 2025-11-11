@@ -82,21 +82,20 @@ public class EmpDAOImpl implements EmpDAO{
 		String sql;
 		
 		try {
-			sql = " UPDATE TB_EMP SET DEPT_CD " + "= ? WHERE EMP_NO = ? AND DEPT_CD = ?";
+			sql = " UPDATE TB_EMP SET DEPT_CD = ? WHERE EMP_NO = ?";
 			
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, move.getNewDeptCd());
 			pstmt.setString(2, move.getEmpNo());
-			pstmt.setString(3, move.getCurrentDeptCd());
 		
 			pstmt.executeUpdate();	
+			
 		} catch (SQLException e) {
 			DBUtil.rollback(conn);
 			throw e;
 		} finally {
 			DBUtil.close(pstmt);
 		}
-		
 		return 0;
 	}
 
@@ -124,19 +123,19 @@ public class EmpDAOImpl implements EmpDAO{
 	}
 	
 	// 퇴직 신청 결재 메소드
-	// 사원이 퇴직 신청하는 메소드가 있어야 할 거 같음
 	@Override
-	public int updateRetireApproval(int empNo) throws SQLException{
+	public int updateRetireApproval(String empNo, String status) throws SQLException{
 		PreparedStatement pstmt = null;
 		String sql;
 		
 		try {
-			sql = " UPDATE TB_EMP SET  " + "= ? WHERE EMP_NO = ?";
+			sql = " UPDATE TB_EMP SET EMP_STAT_CD = ? WHERE EMP_NO = ?";
 			
 			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, status);
+			pstmt.setString(2, empNo);
 			
 			pstmt.executeUpdate();
-			
 			
 		} catch (SQLException e) {
 			DBUtil.rollback(conn);
