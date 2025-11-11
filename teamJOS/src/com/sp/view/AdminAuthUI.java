@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.sql.SQLException;
 
 import com.sp.dao.AuthDAO;
+import com.sp.model.LoginDTO;
 import com.sp.util.LoginInfo;
 
 
@@ -47,7 +48,7 @@ public class AdminAuthUI {
                     }
                     ch = Integer.parseInt(input);
         			
-        		} while(ch < 1 || ch > 4);
+        		} while(ch < 1 || ch > 3);
         		
         		switch(ch) {
         		case 1: updateAdmin(); break; // AUTH_UPD_002
@@ -65,17 +66,23 @@ public class AdminAuthUI {
     public void updateAdmin() {
     	System.out.println("\n[관리자 계정 수정]");
     	String empNo = null;
-    	
     	try {
             System.out.print("수정할 사번 (관리자 ID): ");
             empNo = br.readLine();
+            
+            LoginDTO currentUser = loginInfo.loginMember();
+            
+            if (currentUser != null && currentUser.getMemberId().equals(empNo)) {
+                System.out.println(YELLOW + "❌ 권한 강등 실패: 현재 로그인한 관리자 본인의 권한은 강등할 수 없습니다." + RESET);
+                return; 
+            }
             
             int result = authDao.insertAdmin(empNo, EMPLOYEE_LEVEL_CODE);
             
             if (result > 0) {
                 System.out.println(GREEN + "✅ 권한 수정 완료! 사번 " + empNo + "이(가) 일반사원으로 변경되었습니다." + RESET);
             } else {
-                System.out.println(YELLOW + "❌ 권한 수정 실패: 해당 사번이 존재하지 않거나, 이미 관리자입니다." + RESET);
+                System.out.println(YELLOW + "❌ 권한 수정 실패: 해당 사번이 존재하지 않거나, 이미 일반사원입니다." + RESET);
             }
             
         } catch (IOException e) {

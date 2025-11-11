@@ -21,14 +21,14 @@ public class EmployeeUI {
 	
 	private LoginInfo loginInfo; 
 	
-	public  EmployeeUI(EmpDAO empDao,DeptDAO deptDao,AttDAO attDao,BoardDAO boardDao, LoginInfo logininfo) {
+	public  EmployeeUI(EmpDAO empDao,DeptDAO deptDao,AttDAO attDao,BoardDAO boardDao, LoginInfo loginInfo) {
 	
 		// 주입받은 DAO를 사용하여 분할된 UI 클래스 인스턴스 초기화
-		this.employeeEmpUI = new EmployeeEmpUI(empDao, loginInfo);
-		this.employeeDeptUI = new EmployeeDeptUI(deptDao, loginInfo);
-		this.employeeAttUI = new EmployeeAttUI(attDao, loginInfo);
-		this.employeeBoardUI = new EmployeeBoardUI(boardDao, loginInfo);
-        this.loginInfo = loginInfo;
+		this.loginInfo = loginInfo;
+		this.employeeEmpUI = new EmployeeEmpUI(empDao, this.loginInfo);
+		this.employeeDeptUI = new EmployeeDeptUI(deptDao, this.loginInfo);
+		this.employeeAttUI = new EmployeeAttUI(attDao, this.loginInfo);
+		this.employeeBoardUI = new EmployeeBoardUI(boardDao, this.loginInfo);
 	}
 	
 	public void manageEmployee() {

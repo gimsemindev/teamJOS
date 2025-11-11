@@ -29,8 +29,8 @@ public class MainUI {
     final String GRAY   = "\u001B[90m";
 	
 	private BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	private LoginInfo login = new LoginInfo();
 
-    private LoginInfo login = new LoginInfo();
 
     // DAO 초기화
     private EmpDAO empDao = new EmpDAOImpl();
@@ -41,8 +41,8 @@ public class MainUI {
     private LoginDAO loginDao = new LoginDAOImpl();
 
     // UI 초기화
-    public AdminUI adminUI = new AdminUI(empDao, deptDao, attDao, authDao,boardDao, login);
-    public EmployeeUI employeeUI = new EmployeeUI(empDao, deptDao, attDao, boardDao, login);
+    public AdminUI adminUI = null;
+    public EmployeeUI employeeUI = null;
     
     
     // MainUI.java 내부 권한 레벨 상수 
@@ -55,12 +55,13 @@ public class MainUI {
     public void menu() {
         while (true) {
             LoginDTO member = login.loginMember();
-
+            
             if (member == null) {
                 menuGuest(); 
                 continue; 
             }
-            
+            adminUI= new AdminUI(empDao, deptDao, attDao, authDao,boardDao, login);
+            employeeUI = new EmployeeUI(empDao, deptDao, attDao, boardDao, login);
             int authLevel; 
             try {
 
