@@ -360,7 +360,8 @@ public class DeptDAOImpl implements DeptDAO{
 	public void makeCSVFile() throws Exception {
 		String sql;
 		sql = """
-			  SELECT D.DEPT_CD
+			  SELECT /* DEPT_DEL_009 */
+			         D.DEPT_CD
 	               , D.DEPT_NM
 	               , G.GRADE_NM
 	               , C.CONTRACT_TP_NM

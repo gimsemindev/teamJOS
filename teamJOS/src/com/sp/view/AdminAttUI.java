@@ -120,12 +120,20 @@ public class AdminAttUI {
             } while(ch < 1 || ch > 3);
 
             switch (ch) {
-            case 1: attDao.selectAllVacation(); break; // ATT_SEL_006
-            case 2: attDao.selectVacationByEmp(0); break; // ATT_SEL_007
+            case 1: selectAllVacation(); break; // ATT_SEL_006
+            case 2: selectVacationByEmp(); break; // ATT_SEL_007
             case 3: return;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    private void selectAllVacation() {
+    	
+    }
+    
+    private void selectVacationByEmp() {
+    	
     }
 }
