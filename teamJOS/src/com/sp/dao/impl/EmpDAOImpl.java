@@ -24,12 +24,14 @@ public class EmpDAOImpl implements EmpDAO{
 	@Override
 	public int insertEmployee(EmployeeDTO emp) throws SQLException{
 		PreparedStatement pstmt = null;
+		PreparedStatement pstmt2 = null;
 		String sql;
+		String sqlGd;
 		int result = 0;
 		
 		try {
 			sql = "INSERT INTO TB_EMP(EMP_NO, EMP_NM, RRN, EMP_ADDR, HIRE_DT, DEPT_CD, GRADE_CD, EMP_STAT_CD, CONTRACT_TP_CD, EMAIL, PWD, LEVEL_CODE) "
-					+ " VALUES(?, ?, ?, ?, TO_DATE(sysdate, 'YYYY-MM-DD'), ?, ?, ?, ?, ?, ?, ?)";
+					+ " VALUES(?, ?, ?, ?, SYSDATE, ?, ?, ?, ?, ?, ?, ?)";
 			
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, emp.getEmpNo());
@@ -44,12 +46,26 @@ public class EmpDAOImpl implements EmpDAO{
 			pstmt.setString(10, emp.getPwd());
 			pstmt.setString(11, emp.getLevelCode());
 			
-			result = pstmt.executeUpdate();
+			result += pstmt.executeUpdate();
+			DBUtil.close(pstmt);
+			
+			sqlGd = "INSERT INTO TB_EMP_GRADE_HIST "
+	        		+ " (EMP_NO, GRADE_CD, VALID_STRT_DT, VALID_END_DT, DETAILS, REG_DT, DEPT_CD) "
+	                  + " VALUES (?, ?, SYSDATE, NULL, ?, SYSDATE, ?)";
+			
+			pstmt2 = conn.prepareStatement(sqlGd);
+			pstmt2.setString(1, emp.getEmpNo());
+			pstmt2.setString(2, emp.getGradeCd());
+			pstmt2.setString(3, "입사 시 기본 직급 부여");
+			pstmt2.setString(4, emp.getDeptCd());
+			
+			result += pstmt2.executeUpdate();
 			
 		} catch (SQLException e) {
 			throw e;
 		} finally {
 			DBUtil.close(pstmt);
+			DBUtil.close(pstmt2);
 		}
 		return result;
 	}
@@ -104,37 +120,50 @@ public class EmpDAOImpl implements EmpDAO{
 	@Override
 	public int updatePromotion(PromotionDTO promotion) throws SQLException{
 		PreparedStatement pstmt = null;
+		PreparedStatement pstmt2 = null;
+		PreparedStatement pstmt3 = null;
+		
 		String sqlup;
 		String sqlinst;
+		String sqlupm;
+		
 		int result =0;
 		try {
 			EmployeeDTO empDto = selectDeptName(promotion.getEmpNo());
 	        String deptCd = empDto.getDeptCd();
 			
-			sqlup = "UPDATE TB_GRADE_HISTORY SET VALID_END_DT = SYSDATE-1 "
-					+ "WHERE EMP_NO = ? AND VALID_END_DT IS NULL";
+			sqlup = "UPDATE TB_EMP_GRADE_HIST SET VALID_END_DT = SYSDATE-1 "
+					+ " WHERE EMP_NO = ? AND VALID_END_DT IS NULL";
 			
 			pstmt = conn.prepareStatement(sqlup);
 	        pstmt.setString(1, promotion.getEmpNo());
-	        pstmt.executeUpdate();
-	        pstmt = null;
+	        result += pstmt.executeUpdate();
 			
-	        sqlinst = "INSERT INTO TB_GRADE_HISTORY "
+	        sqlinst = "INSERT INTO TB_EMP_GRADE_HIST "
 	        		+ " (EMP_NO, GRADE_CD, VALID_STRT_DT, VALID_END_DT, DETAILS, REG_DT, DEPT_CD) "
 	                  + " VALUES (?, ?, SYSDATE, NULL, ?, SYSDATE, ?)";
 			
-			pstmt = conn.prepareStatement(sqlinst);
-			pstmt.setString(1, promotion.getEmpNo());
-			pstmt.setString(2, promotion.getNewGradeCd());
-			pstmt.setString(3, promotion.getDetails());
-			pstmt.setString(4, deptCd);
-			
+			pstmt2 = conn.prepareStatement(sqlinst);
+			pstmt2.setString(1, promotion.getEmpNo());
+			pstmt2.setString(2, promotion.getNewGradeCd());
+			pstmt2.setString(3, promotion.getDetails());
+			pstmt2.setString(4, deptCd);
 		
-			result = pstmt.executeUpdate();
+			result += pstmt2.executeUpdate();
+			
+			sqlupm = "UPDATE TB_EMP SET GRADE_CD = ? WHERE EMP_NO = ?";
+			
+			pstmt3 = conn.prepareStatement(sqlupm);
+			pstmt3.setString(1, promotion.getNewGradeCd());
+			pstmt3.setString(2, promotion.getEmpNo());
+		
+			result += pstmt3.executeUpdate();
+			
 		} catch (SQLException e) {
 			throw e;
 		} finally {
 			DBUtil.close(pstmt);
+			DBUtil.close(pstmt2);
 		}
 		return result;
 	}
@@ -143,12 +172,19 @@ public class EmpDAOImpl implements EmpDAO{
 	@Override
 	public int updateRetireApproval(String empNo, String status) throws SQLException{
 		PreparedStatement pstmt = null;
-		String sql;
+//		String sqlselect;
+		String sqlupdate;
 		
 		try {
-			sql = " UPDATE TB_EMP SET EMP_STAT_CD = ? WHERE EMP_NO = ?";
+//			sqlselect = " SELECT * FROM 퇴직신청테이블 WHERE 조건 ";
 			
-			pstmt = conn.prepareStatement(sql);
+//			pstmt = conn.prepareStatement(sqlselect);
+			
+//			pstmt.executeQuery();
+			
+			sqlupdate = " UPDATE TB_EMP SET EMP_STAT_CD = ? WHERE EMP_NO = ?";
+			
+			pstmt = conn.prepareStatement(sqlupdate);
 			pstmt.setString(1, status);
 			pstmt.setString(2, empNo);
 			
