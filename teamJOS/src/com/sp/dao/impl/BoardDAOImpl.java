@@ -85,7 +85,7 @@ public class BoardDAOImpl implements BoardDAO{
 	        result = pstmt.executeUpdate();
 			
 		} catch (SQLException e) {
-			e.printStackTrace();
+			throw e;
 		}finally {
 			DBUtil.close(pstmt);
 		}
@@ -95,8 +95,28 @@ public class BoardDAOImpl implements BoardDAO{
 
 	@Override
 	public int deletePost_Admin(BoardDTO board) throws SQLException{
-		// TODO Auto-generated method stub
-		return 0;
+		
+				int result = 0;
+		        String sql;
+		        
+		        
+		        sql = "DELETE FROM tb_board WHERE BOARD_SEQ = ? ";
+		        
+		        try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
+		            
+		          
+		            pstmt.setInt(1, board.getBoardNo());
+		            
+		            
+		            // SQL 실행
+		            result = pstmt.executeUpdate();
+
+		        } catch (SQLException e) {
+		            System.out.println("! DB 오류 (deletePost): " + e.getMessage());
+		            e.printStackTrace();
+		            
+		        }
+		return result;
 	}
 
 	@Override
