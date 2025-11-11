@@ -520,6 +520,10 @@ public class AdminEmpUI {
 					System.out.println("잘못된 형식입니다. D1001 형식으로 입력해주세요.");
 					continue;
 				}
+				if (empDao.selectByEmpNo(empNo) == null) {
+					System.out.println("해당 사원번호가 존재하지 않습니다. 다시 입력해주세요.");
+					continue;
+				}
 				break;
 			}
 
@@ -573,6 +577,9 @@ public class AdminEmpUI {
 				if (!empNo.matches("^D\\d{4}$")) {
 					System.out.println("잘못된 형식입니다. D1001 형식으로 입력해주세요.");
 					continue;
+				} else if (empDao.selectByEmpNo(empNo) == null) {
+					System.out.println("존재하지 않는 사원번호입니다. 다른 번호를 입력해주세요.");
+					continue;
 				}
 				break;
 			}
@@ -622,6 +629,9 @@ public class AdminEmpUI {
 				if (!empNo.matches("^D\\d{4}$")) {
 					System.out.println("잘못된 형식입니다. D1001 형식으로 입력해주세요.");
 					continue;
+				} else if (empDao.selectByEmpNo(empNo) == null) {
+					System.out.println("존재하지 않는 사원번호입니다. 다른 번호를 입력해주세요.");
+					continue;
 				}
 				break;
 			}
@@ -667,6 +677,10 @@ public class AdminEmpUI {
 				empNo = br.readLine();
 				if (!empNo.matches("^D\\d{4}$")) {
 					System.out.println("잘못된 형식입니다. D1001 형식으로 입력해주세요.");
+					continue;
+				}
+				if (empDao.selectByEmpNo(empNo) == null) {
+					System.out.println("존재하지 않는 사원번호입니다.");
 					continue;
 				}
 				break;
