@@ -121,11 +121,11 @@ public class AdminEmpUI {
 			dto.setGradeCd(br.readLine());
 
 			// ==================== 사원 상태 ====================
-			System.out.println("\n───────────────────────────────");
-			System.out.println("[사원상태 코드]");
-			System.out.println("A.재직 | R.퇴직 | L.휴직");
-			System.out.print("사원상태코드 입력 ➤ ");
-			dto.setEmpStatCd(br.readLine());
+//			System.out.println("\n───────────────────────────────");
+//			System.out.println("[사원상태 코드]");
+//			System.out.println("A.재직 | R.퇴직 | L.휴직");
+//			System.out.print("사원상태코드 입력 ➤ ");
+//			dto.setEmpStatCd(br.readLine());
 
 			// ==================== 계약 구분 ====================
 			System.out.println("\n───────────────────────────────");
@@ -148,9 +148,13 @@ public class AdminEmpUI {
 			dto.setLevelCode(br.readLine());
 
 			// ==================== DB 등록 ====================
-			empDao.insertEmployee(dto);
-			System.out.println("\n사원 정보 등록이 완료되었습니다.\n");
-
+			int result = empDao.insertEmployee(dto);
+			if(result > 1) {
+				System.out.println("\n사원 정보 등록이 완료되었습니다.\n");
+			} else {
+				System.out.println("\n사원 정보 등록에 실패하였습니다.\n");
+			}
+			
 		}catch (IOException e) {
 			e.printStackTrace();
 		} catch (SQLException e) {
@@ -373,8 +377,14 @@ public class AdminEmpUI {
 			dto.setNewGradeCd(newGrade);
 
 			// ==================== DB 업데이트 ====================
-			empDao.updatePromotion(dto);
-			System.out.println("\n진급 처리가 완료되었습니다.\n");
+			int result = empDao.updatePromotion(dto);
+			
+			
+			if(result > 2) {
+				System.out.println("\n진급 처리가 완료되었습니다.\n");
+			} else {
+				System.out.println("\n진급 처리에 실패하였습니다.\n");
+			}
 
 		} catch (IOException e) {
 			System.out.println("입력 처리 중 오류가 발생했습니다.");
