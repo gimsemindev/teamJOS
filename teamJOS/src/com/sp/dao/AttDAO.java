@@ -34,13 +34,16 @@ public interface AttDAO {
     int insertVacation(VacationDTO vacation) throws SQLException;
 
     /** ATT_UPD_003 */
-    int updateVacationApprove(VacationDTO vacation) throws SQLException;
+    int updateVacationApprove(int vacationSeq) throws SQLException;
 
     /** ATT_UPD_009 */
     int updateVacation(VacationDTO vacation) throws SQLException;
 
     /** ATT_UPD_010 */
     int updateAttendance(AttendanceDTO att) throws SQLException;
+    
+    
+    List<VacationDTO> listVaction();
 
     /** ATT_SEL_004 */
     List<AttendanceDTO> selectAllWorkTime();

@@ -1,9 +1,15 @@
 package com.sp.view;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
+import java.sql.SQLException;
+import java.util.List;
+
 import com.sp.dao.AttDAO;
+import com.sp.model.VacationDTO;
 import com.sp.util.LoginInfo;
+
 
 public class AdminAttUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -14,6 +20,8 @@ public class AdminAttUI {
         this.attDao = attDao;
         this.loginInfo = loginInfo;
     }
+    
+    
     
     public void menu() {
         int ch;
@@ -86,6 +94,46 @@ public class AdminAttUI {
 
 	protected void updateVacationApproveInfo() {
 		System.out.println("\n[관리자 - 근태관리 - 휴가승인]");
+		int vacationSeq = 0;
+		try {
+			System.out.println("\n[휴가 결재 리스트]");
+			List<VacationDTO> list = attDao.listVaction();
+			
+			System.out.println("전체 결재수 : "+list.size());
+			for(VacationDTO dto : list) {
+				System.out.print(dto.getVacationSeq() + "\t");
+				System.out.print(dto.getEmpNo() + "\t");
+				System.out.print(dto.getStartDt() + "\t");
+				System.out.print(dto.getEndDt() + "\t");
+				System.out.print(dto.getVacationMemo() + "\t");
+				System.out.println(dto.getApproverYn());
+			}
+			System.out.println();
+			
+			System.out.println("승인 하실 휴가번호를 입력 하시오 : ");
+			vacationSeq = Integer.parseInt(br.readLine());  
+			
+			attDao.updateVacationApprove(vacationSeq);
+			
+			System.out.println ( "✅ 휴가 신청 번호 " + vacationSeq + " 승인 및 연차 차감 완료.");
+			
+		} catch (NumberFormatException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			if(e.getErrorCode() == 20001) {
+				System.out.println("승인실패 번호에 해당하는 휴가 신청번호가 없거나 연차정보가 없습니다.");
+			} else if (e.getErrorCode() == 20003) {
+				System.out.println("승인실패 잔여 연차가 부족합니다.");
+			} else if (e.getErrorCode() == 20099) {
+				System.out.println("승인실패 승인중 오류 발생");
+			} else {
+				e.printStackTrace();
+			}	
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 	}
 
