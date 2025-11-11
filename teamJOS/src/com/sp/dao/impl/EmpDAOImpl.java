@@ -20,6 +20,7 @@ import com.sp.util.DBUtil;
 public class EmpDAOImpl implements EmpDAO{
 	private Connection conn = DBConn.getConnection();
 
+	// 사원 등록 메소드
 	@Override
 	public int insertEmployee(EmployeeDTO emp) throws SQLException{
 		PreparedStatement pstmt = null;
@@ -46,14 +47,14 @@ public class EmpDAOImpl implements EmpDAO{
 			result = pstmt.executeUpdate();
 			
 		} catch (SQLException e) {
-			DBUtil.rollback(conn);
 			throw e;
 		} finally {
 			DBUtil.close(pstmt);
 		}
 		return result;
 	}
-
+	
+	// 사원 정보 수정 메소드
 	@Override
 	public int updateEmployee(String empNo, String col, String con) throws SQLException{
 		PreparedStatement pstmt = null;
@@ -68,7 +69,6 @@ public class EmpDAOImpl implements EmpDAO{
 		
 			pstmt.executeUpdate();	
 		} catch (SQLException e) {
-			DBUtil.rollback(conn);
 			throw e;
 		} finally {
 			DBUtil.close(pstmt);
@@ -76,6 +76,7 @@ public class EmpDAOImpl implements EmpDAO{
 		return 0;
 	}
 
+	// 부서 이동 메소드
 	@Override
 	public int updateDeptMove(DeptMoveDTO move) throws SQLException{
 		PreparedStatement pstmt = null;
@@ -91,7 +92,6 @@ public class EmpDAOImpl implements EmpDAO{
 			pstmt.executeUpdate();	
 			
 		} catch (SQLException e) {
-			DBUtil.rollback(conn);
 			throw e;
 		} finally {
 			DBUtil.close(pstmt);
@@ -99,27 +99,45 @@ public class EmpDAOImpl implements EmpDAO{
 		return 0;
 	}
 
+	// 직급 변경 및 직급 변경 이력 업데이트 메소드
+	// 수정 중
 	@Override
 	public int updatePromotion(PromotionDTO promotion) throws SQLException{
 		PreparedStatement pstmt = null;
-		String sql;
-		
+		String sqlup;
+		String sqlinst;
+		int result =0;
 		try {
-			sql = " UPDATE TB_EMP SET GRADE_CD " + "= ? WHERE EMP_NO = ? AND GRADE_CD = ?";
+			EmployeeDTO empDto = selectdeptName(promotion.getEmpNo());
+			// EmployeeDTO empDto = selectDeptName(promotion.getEmpNo());
+	        String deptCd = empDto.getDeptCd();
 			
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, promotion.getNewGradeCd());
-			pstmt.setString(2, promotion.getEmpNo());
-			pstmt.setString(3, promotion.getCurrentGradeCd());
+			sqlup = "UPDATE TB_GRADE_HISTORY SET VALID_END_DT = SYSDATE-1 "
+					+ "WHERE EMP_NO = ? AND VALID_END_DT IS NULL";
+			
+			pstmt = conn.prepareStatement(sqlup);
+	        pstmt.setString(1, promotion.getEmpNo());
+	        pstmt.executeUpdate();
+	        pstmt = null;
+			
+	        sqlinst = "INSERT INTO TB_GRADE_HISTORY "
+	        		+ " (EMP_NO, GRADE_CD, VALID_STRT_DT, VALID_END_DT, DETAILS, REG_DT, DEPT_CD) "
+	                  + " VALUES (?, ?, SYSDATE, NULL, ?, SYSDATE, ?)";
+			
+			pstmt = conn.prepareStatement(sqlinst);
+			pstmt.setString(1, promotion.getEmpNo());
+			pstmt.setString(2, promotion.getNewGradeCd());
+			pstmt.setString(3, promotion.getDetails());
+			pstmt.setString(4, deptCd);
+			
 		
-			pstmt.executeUpdate();
+			result = pstmt.executeUpdate();
 		} catch (SQLException e) {
-			DBUtil.rollback(conn);
 			throw e;
 		} finally {
 			DBUtil.close(pstmt);
 		}
-		return 0;
+		return result;
 	}
 	
 	// 퇴직 신청 결재 메소드
@@ -138,7 +156,6 @@ public class EmpDAOImpl implements EmpDAO{
 			pstmt.executeUpdate();
 			
 		} catch (SQLException e) {
-			DBUtil.rollback(conn);
 			throw e;
 		} finally {
 			DBUtil.close(pstmt);
@@ -146,6 +163,7 @@ public class EmpDAOImpl implements EmpDAO{
 		return 0;
 	}
 
+	// 경력 추가 메소드
 	@Override
 	public int insertCareer(CareerDTO career) throws SQLException{
 		PreparedStatement pstmt = null;
@@ -164,7 +182,6 @@ public class EmpDAOImpl implements EmpDAO{
 			
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
-			DBUtil.rollback(conn);
 			throw e;
 		} finally {
 			DBUtil.close(pstmt);
@@ -172,6 +189,7 @@ public class EmpDAOImpl implements EmpDAO{
 		return 0;
 	}
 
+	// 자격증 및 포상 추가 메소드
 	@Override
 	public int insertLicense(RewardDTO reward) throws SQLException{
 		PreparedStatement pstmt = null;
@@ -189,7 +207,6 @@ public class EmpDAOImpl implements EmpDAO{
 			
 			pstmt.executeUpdate();
 		} catch (SQLException e) {
-			DBUtil.rollback(conn);
 			throw e;
 		} finally {	
 			DBUtil.close(pstmt);
@@ -197,6 +214,7 @@ public class EmpDAOImpl implements EmpDAO{
 		return 0;
 	}
 
+	// 사원번호 조회 메소드
 	@Override
 	public EmployeeDTO selectByEmpNo(String empNo) {
 		EmployeeDTO dto = null;
@@ -233,7 +251,7 @@ public class EmpDAOImpl implements EmpDAO{
 				dto.setEmpStatNm(rs.getString("EMP_STAT_NM"));
 				dto.setContractTpNm(rs.getString("CONTRACT_TP_NM"));
 				dto.setEmail(rs.getString("EMAIL"));
-				dto.setPwd(rs.getString("pwd"));
+				dto.setPwd(rs.getString("PWD"));
 				dto.setRegDt(rs.getString("REG_DT"));;
 				dto.setRetireDt(rs.getString("RETIRE_DT"));
 				dto.setLevelCode(rs.getString("LEVEL_NM"));
@@ -247,6 +265,7 @@ public class EmpDAOImpl implements EmpDAO{
 		return dto;
 	}
 
+	// 사원이름 검색
 	@Override
 	public List<EmployeeDTO> selectByName(String name) {
 		List<EmployeeDTO> list = new ArrayList<EmployeeDTO>();
@@ -300,6 +319,7 @@ public class EmpDAOImpl implements EmpDAO{
 		return list;
 	}
 
+	// 전체 리스트
 	@Override
 	public List<EmployeeDTO> selectAll() {
 		List<EmployeeDTO> list = new ArrayList<EmployeeDTO>();
@@ -335,7 +355,7 @@ public class EmpDAOImpl implements EmpDAO{
 				dto.setEmpStatNm(rs.getString("EMP_STAT_NM"));
 				dto.setContractTpNm(rs.getString("CONTRACT_TP_NM"));
 				dto.setEmail(rs.getString("EMAIL"));
-				dto.setPwd(rs.getString("pwd"));
+				dto.setPwd(rs.getString("PWD"));
 				dto.setRegDt(rs.getString("REG_DT"));;
 				dto.setRetireDt(rs.getString("RETIRE_DT"));
 				dto.setUseYn(rs.getString("USE_YN"));
@@ -352,6 +372,7 @@ public class EmpDAOImpl implements EmpDAO{
 		return list;
 	}
 
+	// 이력 조회
 	@Override
 	public List<HistoryDTO> selectHistory(String empNo) {
 		List<HistoryDTO> list = new ArrayList<HistoryDTO>();
@@ -396,6 +417,7 @@ public class EmpDAOImpl implements EmpDAO{
 	
 	@Override
 	public EmployeeDTO selectdeptName(String empNo) {
+//	public EmployeeDTO selectDeptName(String empNo) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		String sql;
@@ -409,7 +431,7 @@ public class EmpDAOImpl implements EmpDAO{
 			
 			if(rs.next()) {
 				dto.setDeptCd(rs.getString("DEPT_CD"));
-				dto.setDeptNm(rs.getString("DEMP_NM"));
+				dto.setDeptNm(rs.getString("DEPT_NM"));
 			}
 		} catch (Exception e) {
 			// TODO: handle exception
@@ -423,7 +445,35 @@ public class EmpDAOImpl implements EmpDAO{
 		return null;
 	}
 
-	
+	   @Override
+	   public EmployeeDTO selectGradeName(String empNo) {
+	    PreparedStatement pstmt = null;
+	    ResultSet rs = null;
+	    String sql;
+	    EmployeeDTO dto = new EmployeeDTO();
+
+	    try {
+	        sql = " SELECT e.DEPT_CD, d.DEPT_NM, e.GRADE_CD, e.EMP_NM, FROM TB_EMP e, JOIN TB_DEPT d ON e.DEPT_CD = d.DEPT_CD, WHERE e.EMP_NO = ?";
+	        pstmt = conn.prepareStatement(sql);
+	        pstmt.setString(1, empNo);
+
+	        rs = pstmt.executeQuery();
+
+	        if (rs.next()) {
+	            dto = new EmployeeDTO();
+	            dto.setDeptCd(rs.getString("DEPT_CD"));
+	            dto.setDeptNm(rs.getString("DEPT_NM"));
+	            dto.setGradeCd(rs.getString("GRADE_CD"));
+	            dto.setEmpNm(rs.getString("EMP_NM"));
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } 
+	    return dto;
+	}
+
+
+
 	
 	
 

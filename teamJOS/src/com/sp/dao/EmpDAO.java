@@ -70,5 +70,9 @@ public interface EmpDAO {
     
     /** : 부서조회 */
     EmployeeDTO selectdeptName(String empNo);
+//  EmployeeDTO selectDeptName(String empNo);
+    
+    /** : 직급조회 */
+    EmployeeDTO selectGradeName(String empNo);
 }
 
