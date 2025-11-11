@@ -1,7 +1,6 @@
 package com.sp.dao.impl;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.sp.dao.BoardDAO;
+import com.sp.dao.LoginDAO;
 import com.sp.model.BoardDTO;
 import com.sp.util.DBConn;
 import com.sp.util.DBUtil;
@@ -18,184 +18,173 @@ import com.sp.util.DBUtil;
 
 public class BoardDAOImpl implements BoardDAO{
 	private Connection conn = DBConn.getConnection();
-	private BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	BoardDTO dto;
+
 	@Override
-	public int insertPost(BoardDTO board) throws SQLException{
-		
-		
-		
-		 
+	public int insertPost(BoardDTO board) throws SQLException {
+		int result = 0;
 		PreparedStatement pstmt = null;
 		String sql;
-		 dto =new BoardDTO();
+		
 		try {
-			System.out.println("게시글 작성!");
-			
-			
-			System.out.println("사번 ?");
-			dto.setEmpNo(br.readLine());
-			System.out.println("제목");
-			dto.setTitle(br.readLine());
-			System.out.println("내용");
-			dto.setContent(br.readLine());
-			
-			
-			sql ="INSERT INTO tb_board(BOARD_SEQ, EMP_NO  ,TITLE ,CONTENT , REG_DTM ) VALUES (?,?, ?, ?,SYSDATE)";
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setInt(1, 1123);
-			pstmt.setString(2, dto.getEmpNo());
-			pstmt.setString(3, dto.getTitle());
-			pstmt.setString(4, dto.getContent());
-			System.out.println("작성 완료!");
+            
+            if (board == null) {
+                System.out.println("! DAO 오류: 전달된 board 객체가 null입니다.");
+                return 0;
+            }
 
+            // 2. SQL 쿼리 준비
+			sql ="INSERT INTO tb_board(BOARD_SEQ, EMP_NO, TITLE, CONTENT, REG_DTM) "
+               + " VALUES(SQ_TB_BOARD_SEQ.NEXTVAL, ?, ?, ?, SYSTIMESTAMP)";
+            
+			pstmt = conn.prepareStatement(sql);
+            
+            
+            
+			pstmt.setString(1, board.getEmpNo());   
+			pstmt.setString(2, board.getTitle());   
+			pstmt.setString(3, board.getContent()); 
+			
+       
+           
+			result = pstmt.executeUpdate(); 
+			
+         
+			
 		} catch (SQLException e) {
-			e.printStackTrace();
+            System.out.println("! DB 오류 (insertPost): " + e.getMessage());
+            e.printStackTrace(); 
+            throw e; 
 		} catch (Exception e) {
+            e.printStackTrace();
+		} finally {
+			DBUtil.close(pstmt); 
+            
+		}
+		
+		return result; // 0 (실패) 또는 1 (성공) 반환
+	}
+
+	@Override
+	public int updatePost(BoardDTO board) throws SQLException {
+		int result = 0;
+		PreparedStatement pstmt = null;
+		String sql;
+		try {
+			sql = "UPDATE tb_board SET TITLE = ?, CONTENT = ?, UPDATE_DTM = SYSTIMESTAMP "
+		            + " WHERE BOARD_SEQ = ? AND EMP_NO = ?"; 
+			pstmt = conn.prepareStatement(sql);
+			
+			 if (board == null) {
+	                System.out.println("! DAO 오류: 전달된 board 객체가 null입니다.");
+	                return 0;
+	            }
+			pstmt.setString(1, board.getTitle());   // 새 제목
+	        pstmt.setString(2, board.getContent()); // 새 내용
+	        pstmt.setInt(3, board.getBoardNo());    // 수정할 글번호
+	        pstmt.setString(4, board.getEmpNo());   // 작성자 사번 (수정 권한 확인용)
+	        result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
 			e.printStackTrace();
 		}finally {
 			DBUtil.close(pstmt);
 		}
-
 		
-	return 0;}
-
-	@Override
-	public int updatePost(BoardDTO board) throws SQLException{
-		int result = 0;
-        String sql;
-        
-        sql = "UPDATE tb_board SET TITLE = ?, CONTENT = ?, UPDATE_DTM = SYSTIMESTAMP "
-            + " WHERE BOARD_SEQ = ? AND EMP_NO = ?"; 
-        
-        try (Connection conn = DBConn.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            
-            pstmt.setString(1, board.getTitle());
-            pstmt.setString(2, board.getContent());
-            pstmt.setInt(3, 1123); 
-            pstmt.setString(4, board.getEmpNo());   
-
-            result = pstmt.executeUpdate();
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
-        }
-        return result;
+		return result;
 	}
 
 	@Override
-	public int deletePost(int postNo) throws SQLException{
+	public int deletePost(int postNo) throws SQLException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
-	public int deletePost(int boardSeq, String empNo) {
+	public int deletePost(BoardDTO board, LoginDAO info) throws SQLException {
 		// TODO Auto-generated method stub
 		return 0;
 	}
 
 	@Override
 	public BoardDTO getPost(int boardSeq) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<BoardDTO> listPosts() throws SQLException {
-		List<BoardDTO> list = new ArrayList<BoardDTO>();
-		BoardDTO dto = new BoardDTO();
+		BoardDTO dto = null; 
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		String sql;
 		
 		try {
-			sql ="SELECT * FROM tb_board";
-			pstmt = conn.prepareStatement(sql);
+			sql = "SELECT BOARD_SEQ, EMP_NO, TITLE, CONTENT, REG_DTM, UPDATE_DTM "
+			    + " FROM tb_board WHERE BOARD_SEQ = ?";
 			
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, boardSeq);
+			rs = pstmt.executeQuery();
+
+			if (rs.next()) {
+				dto = new BoardDTO(); 
+				dto.setBoardNo(rs.getInt("BOARD_SEQ"));
+				dto.setEmpNo(rs.getString("EMP_NO"));
+				dto.setTitle(rs.getString("TITLE"));
+				dto.setContent(rs.getString("CONTENT")); // 내용 포함
+				dto.setRegDtm(rs.getString("REG_DTM"));
+				dto.setUpdateDtm(rs.getString("UPDATE_DTM"));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+            throw e;
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		
+		return dto; // 찾으면 DTO, 못 찾으면 null 반환
+		
+	}
+
+	@Override
+	public List<BoardDTO> listPosts() throws SQLException {
+		List<BoardDTO> list = new ArrayList<BoardDTO>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;
+		
+		try {
+			
+			sql ="SELECT BOARD_SEQ, EMP_NO, TITLE, REG_DTM, UPDATE_DTM "
+               + " FROM tb_board ORDER BY BOARD_SEQ DESC";
+			
+			pstmt = conn.prepareStatement(sql);
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
-				 
+				BoardDTO dto = new BoardDTO(); 
 
 				dto.setBoardNo(rs.getInt("BOARD_SEQ"));
 				dto.setEmpNo(rs.getString("EMP_NO"));
 				dto.setTitle(rs.getString("TITLE"));
-				dto.setContent(rs.getString("CONTENT"));
 				dto.setRegDtm(rs.getString("REG_DTM"));
 				dto.setUpdateDtm(rs.getString("UPDATE_DTM"));
 
 				list.add(dto);
 				
-				System.out.println("-----------------------------------------");
-				System.out.println("제목: "+dto.getTitle()+"-------------------");
-				System.out.println("-------글쓴이:"+dto.getEmpNo()+"--글번호: "+dto.getBoardNo());
-				System.out.println("작성시간: "+dto.getRegDtm());
-				System.out.println("글 내용 :"+dto.getContent());
+				
 			}
-
 
 		} catch (SQLException e) {
 			e.printStackTrace();
-
+            throw e;
 		} finally {
-			DBConn.close();
-			
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
 		}
 
 		return list;
 	}
+		
 
-	@Override
-	public void updateBoard() throws Exception {
-		// TODO Auto-generated method stub
-		System.out.println("\n--- [ 2. 게시글 수정 ] ---");
-        
-
-        try {
-            System.out.print("수정할 글번호 ? ");
-            String input = br.readLine();
-             dto.setBoardNo(Integer.parseInt(input));
-
-            
-            if (dto == null) {
-                System.out.println("! 존재하지 않는 게시글입니다.");
-                return;
-            }
-            
-            // 본인 글인지 확인
-            
-
-            System.out.println(" [ " + dto.getTitle() + " ] 글을 수정합니다.");
-            System.out.print("새 제목 ? ");
-            String newTitle = br.readLine();
-            if (newTitle == null || newTitle.trim().isEmpty()) {
-                System.out.println("! 제목은 필수 입력 사항입니다.");
-                return;
-            }
-            
-            System.out.print("새 내용 ? ");
-            String newContent = br.readLine();
-
-            dto.setTitle(newTitle);
-            dto.setContent(newContent);
-            
-
-            int result = updatePost(dto);
-            if(result > 0) {
-                System.out.println("✓ 글 수정 성공 !!!");
-            } else {
-                System.out.println("! 글 수정 실패.");
-            }
-
-        } catch (NumberFormatException e) {
-            System.out.println("! 글번호는 숫자로 입력해야 합니다.");
-        } catch (SQLException e) {
-            System.out.println("! 데이터베이스 오류: " + e.getMessage());
-        }	
-	}
+	
+	
 		
 
 }
