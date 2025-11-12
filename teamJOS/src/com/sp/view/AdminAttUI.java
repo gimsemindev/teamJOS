@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.sp.dao.AttDAO;
+import com.sp.dao.EmpDAO;
+import com.sp.dao.impl.EmpDAOImpl;
+import com.sp.model.AttendanceDTO;
 import com.sp.model.VacationDTO;
 import com.sp.util.LoginInfo;
 import com.sp.util.PrintUtil;
@@ -15,6 +18,7 @@ import com.sp.view.common.DeptCommonUI;
 
 public class AdminAttUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    private EmpDAO empDao = new EmpDAOImpl();
     private AttDAO attDao;
     private LoginInfo loginInfo;
     private DeptCommonUI deptCommonUI;
@@ -37,7 +41,7 @@ public class AdminAttUI {
         	try {
         		
         		do {
-        			System.out.print("1.근태정보수정 2.휴가승인 3.근무시간조회 4.연차조회 5.메뉴로돌아가기 => ");
+        			System.out.print("1.출근시간입력 2.퇴근시간입력 3.근태정보수정 4.휴가승인 5.근무시간조회 6.연차조회 7.메뉴로돌아가기 => ");
         			
         			input = br.readLine();
                     
@@ -47,15 +51,18 @@ public class AdminAttUI {
                     }
                     ch = Integer.parseInt(input);
         			
-        		} while(ch < 1 || ch > 5);
+        		} while(ch < 1 || ch > 7);
         		
-        		if(ch==5) return; // 5.메뉴화면으로
+        		if(ch==7) return; // 5.메뉴화면으로
         		
         		switch(ch) {
-        		case 1: updateAttendanceInfo(); break; // ATT_UPD_010
-        		case 2: updateVacationApproveInfo(); break; // ATT_UPD_003
-        		case 3: manageWorkTimeSearch(); break; // 3.근무시간조회 (하위 메뉴로 위임)
-        		case 4: deptCommonUI.selectAllAnnualLeave(); break; // 4.연차조회 (전체조회) // ATT_SEL_006
+        		case 1: insertCheckInInfo(); break; // 1. 출근시간 입력
+        		case 2: insertCheckOutInfo(); break; // 2. 퇴근시간 입력
+        		case 3: updateAttendanceInfo(); break; // 3.근태정보수정 // ATT_UPD_010
+        		case 4: updateVacationApproveInfo(); break; // 4.휴가승인 // ATT_UPD_003
+        		case 5: manageWorkTimeSearch(); break; // 5.근무시간조회 (하위 메뉴로 위임)
+        		case 6: deptCommonUI.selectAllAnnualLeave(); break; // 6.연차조회 (전체조회) // ATT_SEL_006
+        		
         		}
         		
         	} catch (Exception e) {
@@ -63,7 +70,72 @@ public class AdminAttUI {
         	}
         }
     }
+    
+    // 출근 시간 입력 메소드 추가 예정
+    protected void insertCheckInInfo() {
+    	System.out.println("[관리자 - 근태관리 - 출근시간입력]");
+//    	AttendanceDTO attdto = new AttendanceDTO();
+    	try {
+			
+		} catch (Exception e) {
+		}
+	}
+    
+    // 퇴근 시간 입력 메소드 추가 예정
+    protected void insertCheckOutInfo() {
+    	System.out.println("[관리자 - 근태관리 - 퇴근시간입력]");
+//    	AttendanceDTO attdto = new AttendanceDTO();
+    	
+    	try {
+			
+		} catch (Exception e) {
+			
+		}
+	}
+    
     protected void updateAttendanceInfo() {
+    	System.out.println("[관리자 - 근태관리 - 근태정보수정]");
+    	AttendanceDTO attdto = new AttendanceDTO();
+    	
+    	try {
+    		attdto.setEmpNo(checkEmpNo(true));
+    		
+			System.out.println("""
+				=====================================================
+				            [수정할 항목 선택]
+				1.출근일시 | 2.퇴근일시 | 3.근무상태코드 | 4.상위메뉴
+				=====================================================
+				""");
+
+		System.out.print("선택 ➤ ");
+		int ch = Integer.parseInt(br.readLine());
+		if (ch == 4)
+			return;
+
+		String col = switch (ch) {
+		case 1 -> "CHECK_IN";
+		case 2 -> "CHECK_OUT";
+		case 3 -> "EMAIL";
+		default -> null;
+		};
+		
+		if (col == null) {
+			System.out.println("잘못된 입력입니다\n");
+			return;
+		}
+		
+		attdto.setAtdNo(col);
+
+		System.out.print("변경할 값 입력 ➤ ");
+		attdto.setAtdStatusCd(br.readLine());
+
+		attDao.updateAttendance(attdto);
+		
+		System.out.println("\n수정이 완료되었습니다.\n");
+		
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
     	
     }
     
@@ -181,5 +253,35 @@ public class AdminAttUI {
             e.printStackTrace();
         }
     }
+    
+    protected String checkEmpNo(boolean mustExist) throws IOException, SQLException {
+		String empNo;
+		while (true) {
+			System.out.print("사원번호(ex. 00001): ");
+			empNo = br.readLine();
+
+			// 형식검증
+			if (!empNo.matches("^\\d{5}$")) {
+				System.out.println("잘못된 형식입니다. 숫자 5자리로 입력해주세요.");
+				continue;
+			}
+
+			// DB 존재여부
+			boolean exists = empDao.selectByEmpNo(empNo) != null;
+
+			if (mustExist && !exists) {
+				System.out.println("존재하지 않는 사원번호입니다.");
+				continue;
+			}
+
+			if (!mustExist && exists) {
+				System.out.println("이미 존재하는 사원번호입니다.");
+				continue;
+			}
+			break;
+		}
+		return empNo;
+
+	}
 
 }

@@ -106,8 +106,21 @@ public class AttDAOImpl implements AttDAO{
 
 	@Override
 	public int updateAttendance(AttendanceDTO att) throws SQLException{
-		// TODO Auto-generated method stub
-		return 0;
+		int result = 0;
+		PreparedStatement pstmt = null;
+		String sql;
+		
+		try {
+			sql = "UPDATE TB_ATD SET " + att.getAtdNo() + " = ? WHERE EMP_NO = ? ";
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, att.getAtdStatusCd());
+			pstmt.setString(2, att.getEmpNo());
+			result = pstmt.executeUpdate();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
 	}
 
 	@Override
