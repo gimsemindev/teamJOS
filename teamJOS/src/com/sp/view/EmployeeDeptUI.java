@@ -10,12 +10,14 @@ import com.sp.view.common.DeptCommonUI;
 public class EmployeeDeptUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private DeptDAO deptDao;
-    private DeptCommonUI deptCommonUI = new DeptCommonUI();
+    private DeptCommonUI deptCommonUI = null;
     private LoginInfo loginInfo;
     
     public EmployeeDeptUI(DeptDAO deptDao, LoginInfo loginInfo) {
         this.deptDao = deptDao;
         this.loginInfo = loginInfo;
+		this.deptCommonUI = new DeptCommonUI(loginInfo);        
+        
     }
     
     // EmployeeUI의 manageDepartment() 기능을 menu()로 변경

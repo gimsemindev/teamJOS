@@ -10,12 +10,21 @@ import com.sp.dao.impl.DeptDAOImpl;
 import com.sp.model.AnnualLeaveDTO;
 import com.sp.model.DeptDTO;
 import com.sp.model.DeptMemberDTO;
+import com.sp.util.LoginInfo;
 import com.sp.util.PrintUtil;
 
 public class DeptCommonUI {
+	
+	private LoginInfo loginInfo;
+	
 	private static final int PAGE_SIZE = 15;
     private DeptDAO deptDao = new DeptDAOImpl();
     private AttDAO attDao = new AttDAOImpl(); 
+    
+    
+	public DeptCommonUI(LoginInfo loginInfo){
+		this.loginInfo = loginInfo;
+	}
     
 	public void selectAllDept() {
 		System.out.println("\n전체 부서 리스트...");
@@ -125,7 +134,6 @@ public class DeptCommonUI {
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
-			sc.close();
 		}
 	}
 	// 202511111628 : 김세민 수정중
@@ -215,7 +223,6 @@ public class DeptCommonUI {
 		} catch(Exception e) {
 			e.printStackTrace();
 		} finally {
-			sc.close();
 		}
 	}
 	

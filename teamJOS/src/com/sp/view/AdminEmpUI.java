@@ -17,11 +17,12 @@ import com.sp.view.common.DeptCommonUI;
 
 public class AdminEmpUI {
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-	private DeptCommonUI deptCommonUI = new DeptCommonUI();
+	private DeptCommonUI deptCommonUI = null;
 	private EmpDAO empDao;
 
 	public AdminEmpUI(EmpDAO empDao, LoginInfo loginInfo) {
 		this.empDao = empDao;
+		this.deptCommonUI = new DeptCommonUI(loginInfo);
 	}
 
 	/** 메인 메뉴 */
