@@ -9,6 +9,12 @@ public class HistoryDTO {
 	private String details;
 	private String regDt;
 	private String deptNm;
+	private String prevCompNm;
+	private String apprvD;
+	private String certNm;
+	private String issueOrgNm;
+	private String issueDt;
+	
 	public String getStartDt() {
 		return startDt;
 	}
@@ -56,6 +62,36 @@ public class HistoryDTO {
 	}
 	public void setDeptNm(String deptNm) {
 		this.deptNm = deptNm;
+	}
+	public String getPrevCompNm() {
+		return prevCompNm;
+	}
+	public void setPrevCompNm(String prevCompNm) {
+		this.prevCompNm = prevCompNm;
+	}
+	public String getApprvD() {
+		return apprvD;
+	}
+	public void setApprvD(String apprvD) {
+		this.apprvD = apprvD;
+	}
+	public String getCertNm() {
+		return certNm;
+	}
+	public void setCertNm(String certNm) {
+		this.certNm = certNm;
+	}
+	public String getIssueOrgNm() {
+		return issueOrgNm;
+	}
+	public void setIssueOrgNm(String issueOrgNm) {
+		this.issueOrgNm = issueOrgNm;
+	}
+	public String getIssueDt() {
+		return issueDt;
+	}
+	public void setIssueDt(String issueDt) {
+		this.issueDt = issueDt;
 	}
 	
 	
