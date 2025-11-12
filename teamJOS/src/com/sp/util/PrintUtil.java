@@ -91,6 +91,7 @@ public class PrintUtil {
 	        System.out.print(padRight(c, 15));
 	    }
 	    System.out.println();
+	    
 	}
 }
 

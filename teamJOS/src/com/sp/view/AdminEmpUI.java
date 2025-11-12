@@ -598,6 +598,7 @@ public class AdminEmpUI {
 			e.printStackTrace();
 		}
 	}
+	
 
 	/** 8. 사원관리 - 자격증등록 */
 	protected void insertLicenseInfo() {
@@ -635,90 +636,72 @@ public class AdminEmpUI {
 
 	/** 9. 사원관리 - 이력조회 */
 	protected void selectHistoryInfo() {
-	    PrintUtil.printTitle("관리자 - 사원관리 - 이력조회");
-	    try {
-	        while (true) {
-	            System.out.print("1. 경력 | 2. 자격증 | 3. 직급이력 | 4. 상위메뉴(q: 돌아가기) ➤ ");
-	            String sel = br.readLine();
-	            InputValidator.isUserExit(sel);
-	            int ch = Integer.parseInt(sel);
+		PrintUtil.printTitle("관리자 - 사원관리 - 이력조회");
+		try {
+			while (true) {
+				System.out.print("1. 경력 | 2. 자격증 | 3. 직급이력 | 4. 상위메뉴(q: 돌아가기) ➤ ");
+				String sel = br.readLine();
+				InputValidator.isUserExit(sel);
+				int ch = Integer.parseInt(sel);
 
-	            List<HistoryDTO> list;
+				List<HistoryDTO> list;
 
-	            switch (ch) {
-	                // ==================== 1. 경력 이력 ====================
-	                case 1 -> {
-	                    list = empDao.selectCareerHisAll();
+				switch (ch) {
+				// ==================== 1. 경력 이력 ====================
+				case 1 -> {
+					list = empDao.selectCareerHisAll();
 
+					PrintUtil.printSection("경력 이력");
+					PrintUtil.printTableHeader("사번", "이름", "회사명", "시작일", "종료일", "상세");
+					for (HistoryDTO d : list) {
+						PrintUtil.printTableRow(d.getEmpNo(), d.getEmpNm(), d.getPrevCompNm(), d.getStartDt(),
+								d.getEndDt(), d.getDetails());
+					}
+					PrintUtil.printLine('-', 70);
+				}
 
-	                    PrintUtil.printSection("경력 이력");
-	                    PrintUtil.printTableHeader("사번", "이름", "회사명", "시작일", "종료일", "상세");
-	                    for (HistoryDTO d : list) {
-	                        PrintUtil.printTableRow(
-	                            d.getEmpNo(),
-	                            d.getEmpNm(),
-	                            d.getPrevCompNm(),
-	                            d.getStartDt(),
-	                            d.getEndDt(),
-	                            d.getDetails()
-	                        );
-	                    }
-	                    PrintUtil.printLine('-', 70);
-	                }
+				// ==================== 2. 자격증 이력 ====================
+				case 2 -> {
+					list = empDao.selectCertHisAll();
 
-	                // ==================== 2. 자격증 이력 ====================
-	                case 2 -> {
-	                    list = empDao.selectCertHisAll();
+					PrintUtil.printSection("자격증");
+					PrintUtil.printTableHeader("사번", "이름", "자격증명", "발급기관", "발급일");
+					for (HistoryDTO d : list) {
+						PrintUtil.printTableRow(d.getEmpNo(), d.getEmpNm(), d.getCertNm(), d.getIssueOrgNm(),
+								d.getIssueDt());
+					}
+					PrintUtil.printLine('-', 70);
+				}
 
-	                    PrintUtil.printSection("자격증");
-	                    PrintUtil.printTableHeader("사번", "이름", "자격증명", "발급기관", "발급일");
-	                    for (HistoryDTO d : list) {
-	                        PrintUtil.printTableRow(
-	                            d.getEmpNo(),
-	                            d.getEmpNm(),
-	                            d.getCertNm(),
-	                            d.getIssueOrgNm(),
-	                            d.getIssueDt()
-	                        );
-	                    }
-	                    PrintUtil.printLine('-', 70);
-	                }
+				// ==================== 3. 직급 이력 ====================
+				case 3 -> {
+					list = empDao.selectGradeHisAll();
 
-	                // ==================== 3. 직급 이력 ====================
-	                case 3 -> {
-	                    list = empDao.selectGradeHisAll();
+					PrintUtil.printSection("직급 이력");
+					PrintUtil.printTableHeader("시작일", "사번", "이름", "직급", "종료일", "부서");
+					for (HistoryDTO d : list) {
+						PrintUtil.printTableRow(d.getStartDt(), d.getEmpNo(), d.getEmpNm(), d.getGradeNm(),
+								d.getEndDt(), d.getDeptNm());
+					}
+					PrintUtil.printLine('-', 70);
+				}
 
-	                    PrintUtil.printSection("직급 이력");
-	                    PrintUtil.printTableHeader("시작일", "사번", "이름", "직급", "종료일", "부서");
-	                    for (HistoryDTO d : list) {
-	                        PrintUtil.printTableRow(
-	                            d.getStartDt(),
-	                            d.getEmpNo(),
-	                            d.getEmpNm(),
-	                            d.getGradeNm(),
-	                            d.getEndDt(),
-	                            d.getDeptNm()
-	                        );
-	                    }
-	                    PrintUtil.printLine('-', 70);
-	                }
+				// ==================== 4. 상위메뉴 ====================
+				case 4 -> {
+					return;
+				}
 
-	                // ==================== 4. 상위메뉴 ====================
-	                case 4 -> {
-	                    return;
-	                }
+				// ==================== 예외 입력 ====================
+				default -> System.out.println("잘못된 번호입니다.\n");
+				}
+				System.out.println();
+			}
 
-	                // ==================== 예외 입력 ====================
-	                default -> System.out.println("잘못된 번호입니다.\n");
-	            }
-	            System.out.println();
-	        }
-
-	    } catch (UserQuitException e) {
-	        System.out.println("\n이력 조회를 취소했습니다.\n");
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
+		} catch (UserQuitException e) {
+			System.out.println("\n이력 조회를 취소했습니다.\n");
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	protected String checkEmpNo(boolean mustExist) throws IOException, SQLException {

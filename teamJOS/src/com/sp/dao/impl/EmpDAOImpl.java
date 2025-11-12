@@ -785,5 +785,5 @@ public class EmpDAOImpl implements EmpDAO{
 	    return false; // 예외 발생 시 기본 false 반환
 	}
 
-
 }
+

@@ -86,6 +86,7 @@ public class InputValidator {
             return Integer.parseInt(input.trim());
         } catch (NumberFormatException e) {
             return null;
+          
         }
     }
 
