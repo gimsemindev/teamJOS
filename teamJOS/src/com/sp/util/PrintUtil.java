@@ -84,6 +84,14 @@ public class PrintUtil {
 		System.out.println();
 		printLine('-', 70);
 	}
+	
+	// 표 형태 출력용 데이터 행
+	public static void printTableRow(String... cols) {
+	    for (String c : cols) {
+	        System.out.print(padRight(c, 15));
+	    }
+	    System.out.println();
+	}
 }
 
 	

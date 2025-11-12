@@ -419,7 +419,7 @@ public class EmpDAOImpl implements EmpDAO{
 			sql = "SELECT e.EMP_NO, e.EMP_NM, c.PREV_COMP_NM, TO_CHAR(c.CAREER_STRT_DT, 'YYYY-MM-DD') CAREER_STRT_DT, TO_CHAR(c.CAREER_END_DT, 'YYYY-MM-DD') CAREER_END_DT, c.DETAILS, TO_CHAR(c.REG_DT, 'YYYY-MM-DD') REG_DT, c.APPRV_D "
 					+ " FROM TB_EMP_CAREER_HIST c "
 					+ " JOIN TB_EMP e ON c.EMP_NO = e.EMP_NO "
-					+ " WHERE c.EMP_NO = ?";
+					+ " WHERE c.EMP_NP = ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, empNo);
 			
@@ -765,6 +765,25 @@ public class EmpDAOImpl implements EmpDAO{
 		return false;
 	}
 
+	@Override
+	public boolean isEmailExists(String email) {
+	    String sql = "SELECT COUNT(*) FROM TB_EMP WHERE EMAIL = ?";
+	    try (Connection conn = DBConn.getConnection();
+	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+
+	        pstmt.setString(1, email);
+	        ResultSet rs = pstmt.executeQuery();
+
+	        if (rs.next()) {
+	            int count = rs.getInt(1);
+	            return count > 0; // count가 1 이상이면 이미 등록된 이메일
+	        }
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    return false; // 예외 발생 시 기본 false 반환
+	}
 
 
 }

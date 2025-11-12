@@ -66,7 +66,7 @@ public interface EmpDAO {
     List<HistoryDTO> selectGradeHis(String empNo);
 
     /** EMP_SEL_012 : 경력이력조회 */
-    List<HistoryDTO> selectCareerHis(String empNo);
+    List<HistoryDTO> selectCareerHis(String empNo) throws SQLException;
     
     /** EMP_SEL_013 : 자격증및포상이력조회 */
     List<HistoryDTO> selectCertHis(String empNo);
@@ -97,5 +97,9 @@ public interface EmpDAO {
 
     /** 권한레벨코드 유효성 검증 */
     boolean isValidLevelCode(String levelCode);
+
+    /** 이메일 중복처리 검증 */
+	boolean isEmailExists(String email);
+
 }
 
