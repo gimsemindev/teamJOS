@@ -40,7 +40,8 @@ public class AdminEmpUI {
 				System.out.println("""
 						===================================================================
 						  1. 정보등록     2. 정보수정     3. 부서이동     4. 진급관리     5. 정보조회
-						  6. 재직결재     7. 경력등록     8. 자격증등록    9. 이력조회     10. 상위메뉴
+						  6. 재직결재     7. 경력등록     8. 자격증등록    9. 이력조회    10. 일괄등록 
+						  11. 상위메뉴
 						===================================================================""");
 
 				System.out.print("선택 ➤ ");
@@ -57,7 +58,8 @@ public class AdminEmpUI {
 				case 7 -> insertCareerInfo();
 				case 8 -> insertLicenseInfo();
 				case 9 -> selectHistoryInfo();
-				case 10 -> {
+				case 10 -> loadEmployeeInfo();
+				case 11 -> {
 					System.out.println("상위 메뉴로 돌아갑니다.");
 					return;
 				}
@@ -727,5 +729,12 @@ public class AdminEmpUI {
 			}
 
 		}
+	}
+	
+	protected void loadEmployeeInfo() {
+		PrintUtil.printSection("csv 파일로드");
+		empDao.loadEmployeeInfo();
+		PrintUtil.printSection("로드 완료");
+		
 	}
 }

@@ -1,5 +1,7 @@
 package com.sp.dao.impl;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -783,6 +785,79 @@ public class EmpDAOImpl implements EmpDAO{
 	        e.printStackTrace();
 	    }
 	    return false; // 예외 발생 시 기본 false 반환
+	}
+
+	@Override
+	public void loadEmployeeInfo() {
+        PreparedStatement pstmt = null;
+        
+        String csvPath = "LOAD_TB_EMP.csv";
+        
+	    String SQL = """
+	            INSERT INTO TB_EMP (
+	                EMP_NO, EMP_NM, RRN, EMP_ADDR, HIRE_DT, DEPT_CD, GRADE_CD,
+	                EMP_STAT_CD, CONTRACT_TP_CD, EMAIL, PWD, REG_DT, RETIRE_DT,
+	                USE_YN, LEVEL_CODE
+	            ) VALUES (
+	                ?, ?, ?, ?, TO_DATE(?, 'YYYY-MM-DD'), ?, ?, ?, ?, ?, ?,
+	                TO_DATE(?, 'YYYY-MM-DD'), NULL, ?, ?
+	            )
+	        """;
+
+	        /**
+	         * CSV 파일을 읽어서 TB_EMP에 일괄 Insert
+	         * @param csvPath CSV 파일 전체 경로
+	         */
+
+	            try (BufferedReader br = new BufferedReader(new FileReader(csvPath))) {
+	                conn = DBConn.getConnection();
+	                conn.setAutoCommit(false);
+	                pstmt = conn.prepareStatement(SQL);
+
+	                // 첫줄 헤더임으로 스킵
+	                String header = br.readLine();
+	                String line;
+	                int count = 0;
+
+	                while ((line = br.readLine()) != null) {
+	                    String[] data = line.split(",", -1); // 빈값 허용
+
+	                    pstmt.setString(1, data[0]);  // EMP_NO
+	                    pstmt.setString(2, data[1]);  // EMP_NM
+	                    pstmt.setString(3, data[2]);  // RRN
+	                    pstmt.setString(4, data[3]);  // EMP_ADDR
+	                    pstmt.setString(5, data[4]);  // HIRE_DT
+	                    pstmt.setString(6, data[5]);  // DEPT_CD
+	                    pstmt.setString(7, data[6]);  // GRADE_CD
+	                    pstmt.setString(8, data[7]);  // EMP_STAT_CD
+	                    pstmt.setString(9, data[8]);  // CONTRACT_TP_CD
+	                    pstmt.setString(10, data[9]); // EMAIL
+	                    pstmt.setString(11, data[10]); // PWD
+	                    pstmt.setString(12, data[11]); // REG_DT
+	                    pstmt.setString(13, data[13]); // USE_YN
+	                    pstmt.setString(14, data[14]); // LEVEL_CODE
+
+	                    pstmt.addBatch();
+	                    count++;
+
+	                    if (count % 500 == 0) {
+	                        pstmt.executeBatch();
+	                        conn.commit();
+	                        System.out.println(count + "건 커밋 완료...");
+	                    }
+	                }
+
+	                pstmt.executeBatch();
+	                conn.commit();
+	                System.out.println("✅ 총 " + count + "건 INSERT 완료!");
+
+	            } catch (Exception e) {
+	                e.printStackTrace();
+	                try { if (conn != null) conn.rollback(); } catch (Exception ex) {}
+	            } finally {
+	                try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
+	                try { if (conn != null) conn.close(); } catch (Exception e) {}
+	            }	
 	}
 
 }

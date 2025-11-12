@@ -101,6 +101,9 @@ public interface EmpDAO {
     /** 이메일 중복처리 검증 */
 	boolean isEmailExists(String email);
 	
+	/** csv 파일 로드 */
+	void loadEmployeeInfo();
+	
 
 }
 
