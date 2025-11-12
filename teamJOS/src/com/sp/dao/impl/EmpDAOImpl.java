@@ -418,8 +418,11 @@ public class EmpDAOImpl implements EmpDAO{
 		try {
 			sql = "SELECT e.EMP_NO, e.EMP_NM, c.PREV_COMP_NM, TO_CHAR(c.CAREER_STRT_DT, 'YYYY-MM-DD') CAREER_STRT_DT, TO_CHAR(c.CAREER_END_DT, 'YYYY-MM-DD') CAREER_END_DT, c.DETAILS, TO_CHAR(c.REG_DT, 'YYYY-MM-DD') REG_DT, c.APPRV_D "
 					+ " FROM TB_EMP_CAREER_HIST c "
-					+ " JOIN TB_EMP e ON c.EMP_NO = e.EMP_NO ";
+					+ " JOIN TB_EMP e ON c.EMP_NO = e.EMP_NO "
+					+ " WHERE c.EMP_NP = ?";
 			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, empNo);
+			
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
@@ -456,9 +459,11 @@ public class EmpDAOImpl implements EmpDAO{
 		try {
 			sql = "SELECT e.EMP_NO, e.EMP_NM, c.CERT_NM, c.ISSUE_ORG_NM, TO_CHAR(c.ISSUE_DT, 'YYYY-MM-DD') ISSUE_DT, TO_CHAR(c.REG_DT, 'YYYY-MM-DD') REG_DT "
 					+ " FROM TB_EMP_CERT c"
-					+ " JOIN TB_EMP e ON c.EMP_NO = e.EMP_NO";
+					+ " JOIN TB_EMP e ON c.EMP_NO = e.EMP_NO "
+					+ " WHERE c.EMP_NO = ? ";
 			
 			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, empNo);
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
@@ -495,10 +500,11 @@ public class EmpDAOImpl implements EmpDAO{
 					+ " FROM TB_EMP_GRADE_HIST gh "
 					+ " LEFT JOIN TB_EMP e ON e.EMP_NO = gh.EMP_NO "
 					+ " LEFT JOIN TB_GRADE g ON g.GRADE_CD = gh.GRADE_CD "
-					+ " LEFT JOIN TB_DEPT d ON gh.DEPT_CD = d.DEPT_CD ";
+					+ " LEFT JOIN TB_DEPT d ON gh.DEPT_CD = d.DEPT_CD "
+					+ " WHERE gh.EMP_NO = ?";
 			
 			pstmt = conn.prepareStatement(sql);
-			
+			pstmt.setString(1, empNo);
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
@@ -513,6 +519,120 @@ public class EmpDAOImpl implements EmpDAO{
 				dto.setRegDt(rs.getString("REG_DT"));
 				dto.setDeptNm(rs.getString("DEPT_NM"));
 
+				list.add(dto);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		return list;
+	}
+	
+	// 전체 사원 자격증 및 포상 이력 조회
+	@Override
+	public List<HistoryDTO> selectCertHisAll() {
+		List<HistoryDTO> list = new ArrayList<HistoryDTO>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;
+		
+		try {
+			sql = "SELECT e.EMP_NO, e.EMP_NM, c.CERT_NM, c.ISSUE_ORG_NM, TO_CHAR(c.ISSUE_DT, 'YYYY-MM-DD') ISSUE_DT, TO_CHAR(c.REG_DT, 'YYYY-MM-DD') REG_DT "
+					+ " FROM TB_EMP_CERT c"
+					+ " JOIN TB_EMP e ON c.EMP_NO = e.EMP_NO ";
+			
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				HistoryDTO dto = new HistoryDTO();
+				
+				dto.setEmpNo(rs.getString("EMP_NO"));
+				dto.setEmpNm(rs.getString("EMP_NM"));
+				dto.setCertNm(rs.getString("CERT_NM"));
+				dto.setIssueOrgNm(rs.getString("ISSUE_ORG_NM"));
+				dto.setIssueDt(rs.getString("ISSUE_DT"));
+				dto.setRegDt(rs.getString("REG_DT"));
+				
+				list.add(dto);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		return list;
+	}
+	// 전체 사원 직급 이력 조회
+	@Override
+	public List<HistoryDTO> selectGradeHisAll() {
+		List<HistoryDTO> list = new ArrayList<HistoryDTO>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;
+		
+		try {
+			sql = "SELECT TO_CHAR(VALID_STRT_DT, 'YYYY-MM-DD') VALID_STRT_DT, e.EMP_NO, e.EMP_NM, g.GRADE_NM, TO_CHAR(VALID_END_DT, 'YYYY-MM-DD') VALID_END_DT, DETAILS, TO_CHAR(gh.REG_DT, 'YYYY-MM-DD') REG_DT, d.DEPT_NM "
+					+ " FROM TB_EMP_GRADE_HIST gh "
+					+ " LEFT JOIN TB_EMP e ON e.EMP_NO = gh.EMP_NO "
+					+ " LEFT JOIN TB_GRADE g ON g.GRADE_CD = gh.GRADE_CD "
+					+ " LEFT JOIN TB_DEPT d ON gh.DEPT_CD = d.DEPT_CD ";
+			
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				HistoryDTO dto = new HistoryDTO();
+				
+				dto.setStartDt(rs.getString("VALID_STRT_DT"));
+				dto.setEmpNo(rs.getString("EMP_NO"));
+				dto.setEmpNm(rs.getString("EMP_NM"));
+				dto.setGradeNm(rs.getString("GRADE_NM"));
+				dto.setEndDt(rs.getString("VALID_END_DT"));
+				dto.setDetails(rs.getString("DETAILS"));
+				dto.setRegDt(rs.getString("REG_DT"));
+				dto.setDeptNm(rs.getString("DEPT_NM"));
+
+				list.add(dto);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		return list;
+	}
+	// 전체 사원 경력 조회
+	@Override
+	public List<HistoryDTO> selectCareerHisAll() {
+		List<HistoryDTO> list = new ArrayList<HistoryDTO>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;
+		
+		try {
+			sql = "SELECT e.EMP_NO, e.EMP_NM, c.PREV_COMP_NM, TO_CHAR(c.CAREER_STRT_DT, 'YYYY-MM-DD') CAREER_STRT_DT, TO_CHAR(c.CAREER_END_DT, 'YYYY-MM-DD') CAREER_END_DT, c.DETAILS, TO_CHAR(c.REG_DT, 'YYYY-MM-DD') REG_DT, c.APPRV_D "
+					+ " FROM TB_EMP_CAREER_HIST c "
+					+ " JOIN TB_EMP e ON c.EMP_NO = e.EMP_NO ";
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				HistoryDTO dto = new HistoryDTO();
+				
+				dto.setEmpNo(rs.getString("EMP_NO"));
+				dto.setEmpNm(rs.getString("EMP_NM"));
+				dto.setPrevCompNm(rs.getString("PREV_COMP_NM"));
+				dto.setStartDt(rs.getString("CAREER_STRT_DT"));
+				dto.setEndDt(rs.getString("CAREER_END_DT"));
+				dto.setDetails(rs.getString("DETAILS"));
+				dto.setRegDt(rs.getString("REG_DT"));
+				dto.setApprvD(rs.getString("APPRV_D"));
+				
 				list.add(dto);
 			}
 		} catch (SQLException e) {
@@ -644,5 +764,7 @@ public class EmpDAOImpl implements EmpDAO{
 		}
 		return false;
 	}
+
+
 
 }

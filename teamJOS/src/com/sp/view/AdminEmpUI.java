@@ -621,8 +621,8 @@ public class AdminEmpUI {
 
 				switch (ch) {
 				case 1 -> {
-					empNo = checkEmpNo(true); // 추후 삭제해야 하는 코드임
-					List<HistoryDTO> list = empDao.selectCareerHis(empNo);
+					// 전체 사원 경력 조회
+					List<HistoryDTO> list = empDao.selectCareerHisAll();
 					
 					for (HistoryDTO dto : list) {
 						System.out.print(dto.getEmpNo() + "\t");
@@ -636,8 +636,8 @@ public class AdminEmpUI {
 					}
 				}
 				case 2 -> {
-					empNo = checkEmpNo(true); // 추후 삭제해야 하는 코드임
-					List<HistoryDTO> list = empDao.selectCertHis(empNo);
+					// 전체 사원 자격증 및 포상 조회
+					List<HistoryDTO> list = empDao.selectCertHisAll();
 					for (HistoryDTO dto : list) {
 						System.out.print(dto.getEmpNo() + "\t");
 						System.out.print(dto.getEmpNm() + "\t");
@@ -648,8 +648,8 @@ public class AdminEmpUI {
 					}
 				}
 				case 3 -> {
-					empNo = checkEmpNo(true); // 추후 삭제해야 하는 코드임
-					List<HistoryDTO> list = empDao.selectGradeHis(empNo);
+					// 전체 사원 직급 이력 조회
+					List<HistoryDTO> list = empDao.selectGradeHisAll();
 					for (HistoryDTO dto : list) {
 						System.out.print(dto.getStartDt() + "\t");
 						System.out.print(dto.getEmpNo() + "\t");
@@ -662,12 +662,11 @@ public class AdminEmpUI {
 					}
 				}
 				case 4 -> {
+					// 상위 메뉴로
 					return;
 				}
 				default -> System.out.println("잘못된 번호입니다. 1~4 사이의 값을 입력해주세요.");
 				}
-
-				// ==================== DB 조회 ====================
 
 				System.out.println("\n이력 조회가 완료되었습니다.\n");
 			}
