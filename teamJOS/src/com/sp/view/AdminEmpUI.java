@@ -10,6 +10,7 @@ import com.sp.dao.EmpDAO;
 import com.sp.model.CareerDTO;
 import com.sp.model.DeptMoveDTO;
 import com.sp.model.EmployeeDTO;
+import com.sp.model.HistoryDTO;
 import com.sp.model.PromotionDTO;
 import com.sp.model.RewardDTO;
 import com.sp.util.LoginInfo;
@@ -19,10 +20,11 @@ public class AdminEmpUI {
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	private DeptCommonUI deptCommonUI = null;
 	private EmpDAO empDao;
+	private LoginInfo loginInfo;
 
 	public AdminEmpUI(EmpDAO empDao, LoginInfo loginInfo) {
 		this.empDao = empDao;
-		this.deptCommonUI = new DeptCommonUI(loginInfo);
+		this.deptCommonUI = new DeptCommonUI(this.loginInfo);
 	}
 
 	/** 메인 메뉴 */
@@ -613,34 +615,62 @@ public class AdminEmpUI {
 	protected void selectHistoryInfo() {
 		System.out.println("\n[관리자 - 사원관리 - 이력조회]");
 		try {
-			String empNo;
-			System.out.print("1.경력조회 | 2.자격증및포상조회 | 3.진급이력조회 | 4.상위메뉴로 ➤ ");
-			int ch = Integer.parseInt(br.readLine());
-				
-			empNo = checkEmpNo(true);
-			
-			switch (ch) {
-			case 1 -> {
-				// 경력조회 메소드 추가 예정
-				
-			}
-			case 2 -> {
-				// 자격증 및 포상 조회 메소드 추가 예정
-				
-			}
-			case 3 -> {
-				// 진급이력 조회 메소드 추가 예정
-				empDao.selectGradeHis(empNo);
-			}
-			case 4 -> { 
-				return; 
-			}
-			default -> System.out.println("잘못된 번호입니다. 1~4 사이의 값을 입력해주세요.");
-			}
+			while (true) {
+				String empNo;
+				System.out.print("1.경력조회 | 2.자격증및포상조회 | 3.직급이력조회 | 4.상위메뉴로 ➤ ");
+				int ch = Integer.parseInt(br.readLine());
 
-			// ==================== DB 조회 ====================
-			
-			System.out.println("\n이력 조회가 완료되었습니다.\n");
+				switch (ch) {
+				case 1 -> {
+					// 전체 사원 경력 조회
+					List<HistoryDTO> list = empDao.selectCareerHisAll();
+					
+					for (HistoryDTO dto : list) {
+						System.out.print(dto.getEmpNo() + "\t");
+						System.out.print(dto.getEmpNm() + "\t");
+						System.out.print(dto.getPrevCompNm() + "\t");
+						System.out.print(dto.getStartDt() + "\t");
+						System.out.print(dto.getEndDt() + "\t");
+						System.out.print(dto.getDetails() + "\t");
+						System.out.print(dto.getRegDt() + "\t");
+						System.out.println(dto.getApprvD());
+					}
+				}
+				case 2 -> {
+					// 전체 사원 자격증 및 포상 조회
+					List<HistoryDTO> list = empDao.selectCertHisAll();
+					for (HistoryDTO dto : list) {
+						System.out.print(dto.getEmpNo() + "\t");
+						System.out.print(dto.getEmpNm() + "\t");
+						System.out.print(dto.getCertNm() + "\t");
+						System.out.print(dto.getIssueOrgNm() + "\t");
+						System.out.print(dto.getIssueDt() + "\t");
+						System.out.println(dto.getRegDt());
+					}
+				}
+				case 3 -> {
+					// 전체 사원 직급 이력 조회
+					List<HistoryDTO> list = empDao.selectGradeHisAll();
+					for (HistoryDTO dto : list) {
+						System.out.print(dto.getStartDt() + "\t");
+						System.out.print(dto.getEmpNo() + "\t");
+						System.out.print(dto.getEmpNm() + "\t");
+						System.out.print(dto.getGradeNm() + "\t");
+						System.out.print(dto.getEndDt() + "\t");
+						System.out.print(dto.getDetails() + "\t");
+						System.out.print(dto.getRegDt() + "\t");
+						System.out.println(dto.getDeptNm());
+					}
+				}
+				case 4 -> {
+					// 상위 메뉴로
+					return;
+				}
+				default -> System.out.println("잘못된 번호입니다. 1~4 사이의 값을 입력해주세요.");
+				}
+
+				System.out.println("\n이력 조회가 완료되었습니다.\n");
+			}
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -648,34 +678,34 @@ public class AdminEmpUI {
 			e.printStackTrace();
 		}
 	}
-	
-	protected String checkEmpNo(boolean mustExist) throws IOException, SQLException{
+
+	protected String checkEmpNo(boolean mustExist) throws IOException, SQLException {
 		String empNo;
-	    while (true) {
-	        System.out.print("사원번호(ex. 00001): ");
-	        empNo = br.readLine();
+		while (true) {
+			System.out.print("사원번호(ex. 00001): ");
+			empNo = br.readLine();
 
-	        // 형식검증
-	        if (!empNo.matches("^\\d{5}$")) {
-	            System.out.println("잘못된 형식입니다. 숫자 5자리로 입력해주세요.");
-	            continue;
-	        }
+			// 형식검증
+			if (!empNo.matches("^\\d{5}$")) {
+				System.out.println("잘못된 형식입니다. 숫자 5자리로 입력해주세요.");
+				continue;
+			}
 
-	        // DB 존재여부
-	        boolean exists = empDao.selectByEmpNo(empNo) != null;
+			// DB 존재여부
+			boolean exists = empDao.selectByEmpNo(empNo) != null;
 
-	        if (mustExist && !exists) {
-	            System.out.println("존재하지 않는 사원번호입니다.");
-	            continue;
-	        }
+			if (mustExist && !exists) {
+				System.out.println("존재하지 않는 사원번호입니다.");
+				continue;
+			}
 
-	        if (!mustExist && exists) {
-	            System.out.println("이미 존재하는 사원번호입니다.");
-	            continue;
-	        }
-	        break;
-	    }
-	    return empNo;
-		
+			if (!mustExist && exists) {
+				System.out.println("이미 존재하는 사원번호입니다.");
+				continue;
+			}
+			break;
+		}
+		return empNo;
+
 	}
 }

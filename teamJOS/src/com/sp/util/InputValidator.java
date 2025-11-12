@@ -89,16 +89,4 @@ public class InputValidator {
         }
     }
 
-    /**
-     * 사용자가 'q' 또는 'Q'를 입력하면 프로그램 종료 예외를 던지는 메소드
-     * 
-     * @param input 사용자 입력값
-     * @throws UserQuitException 사용자가 'q'를 입력한 경우 발생
-     */
-    public static void checkUserExit(String input) throws UserQuitException {
-        if ("q".equalsIgnoreCase(input)) {
-            throw new UserQuitException();
-        }
-    }
-   
 }

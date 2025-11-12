@@ -71,6 +71,15 @@ public interface EmpDAO {
     /** EMP_SEL_013 : 자격증및포상이력조회 */
     List<HistoryDTO> selectCertHis(String empNo);
     
+    /** EMP_SEL_013 : 자격증및포상이력조회 */
+    List<HistoryDTO> selectCertHisAll();
+    
+    /** EMP_SEL_011 : 진급이력조회 */
+    List<HistoryDTO> selectGradeHisAll();
+
+    /** EMP_SEL_012 : 경력이력조회 */
+    List<HistoryDTO> selectCareerHisAll();
+    
     /** : 부서조회 */
     EmployeeDTO selectDeptName(String empNo);
     

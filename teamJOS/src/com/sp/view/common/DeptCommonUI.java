@@ -24,7 +24,7 @@ public class DeptCommonUI {
     
 	public DeptCommonUI(LoginInfo loginInfo){
 		this.loginInfo = loginInfo;
-		this.attDao = new AttDAOImpl(loginInfo);
+		this.attDao = new AttDAOImpl(this.loginInfo);
 	}
     
 	public void selectAllDept() {

@@ -22,7 +22,7 @@ public class AdminAttUI {
     public AdminAttUI(AttDAO attDao, LoginInfo loginInfo) {
         this.attDao = attDao;
         this.loginInfo = loginInfo;
-        this.deptCommonUI = new DeptCommonUI(loginInfo);
+        this.deptCommonUI = new DeptCommonUI(this.loginInfo);
     }
     
     
@@ -55,7 +55,7 @@ public class AdminAttUI {
         		case 1: updateAttendanceInfo(); break; // ATT_UPD_010
         		case 2: updateVacationApproveInfo(); break; // ATT_UPD_003
         		case 3: manageWorkTimeSearch(); break; // 3.근무시간조회 (하위 메뉴로 위임)
-        		case 4: manageVacationSearch(); break; // 4.연차조회 (하위 메뉴로 위임)
+        		case 4: deptCommonUI.selectAllAnnualLeave(); break; // 4.연차조회 (전체조회) // ATT_SEL_006
         		}
         		
         	} catch (Exception e) {
@@ -136,7 +136,7 @@ public class AdminAttUI {
 			vacationSeq = Integer.parseInt(input.trim());
 			
 			// 3. DAO 호출 (updateVacationApprove: 프로시저 호출)
-			attDao.updateVacationApprove(vacationSeq); // ⚠️ DAO 메서드명을 approveVacation으로 통일하여 사용합니다.
+			attDao.updateVacationApprove(vacationSeq); 
 			
 			System.out.println(GREEN + "\n✅ 휴가 신청 번호 " + vacationSeq + " 승인 및 연차 차감 완료." + RESET);
 			
@@ -181,28 +181,5 @@ public class AdminAttUI {
             e.printStackTrace();
         }
     }
-    
-    // WBS의 4레벨 메뉴(4.연차조회) 처리를 위한 별도 메서드
-    private void manageVacationSearch() {
-        int ch;
-        System.out.println("\n[관리자 - 근태관리 - 연차조회]");
-        try {
-            do {
-                System.out.print("1.전체조회 2.사번조회 3.상위메뉴로돌아가기 => ");
-                ch = Integer.parseInt(br.readLine());
-            } while(ch < 1 || ch > 3);
 
-            switch (ch) {
-            case 1: deptCommonUI.selectAllAnnualLeave(); break; // ATT_SEL_006
-            case 2: selectAnnualLeaveByEmp(); break; // ATT_SEL_007
-            case 3: return;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-        
-    private void selectAnnualLeaveByEmp() {
-    	
-    }
 }
