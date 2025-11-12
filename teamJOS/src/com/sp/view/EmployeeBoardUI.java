@@ -6,17 +6,18 @@ import java.util.List;
 
 import com.sp.dao.BoardDAO;
 import com.sp.model.BoardDTO;
-//import com.sp.model.LoginDTO; 
+
+
 import com.sp.util.LoginInfo;
 
 public class EmployeeBoardUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private BoardDAO boardDao;
-   // private LoginInfo loginInfo;
+    private LoginInfo loginInfo;
     
     public EmployeeBoardUI(BoardDAO boardDao, LoginInfo loginInfo) {
         this.boardDao = boardDao;
-       // this.loginInfo = loginInfo;
+       this.loginInfo = loginInfo;
         
     }
     
@@ -24,6 +25,7 @@ public class EmployeeBoardUI {
     public void menu() {
         int ch;
         String input;
+        
         
         while(true) {
         	try {
@@ -127,7 +129,7 @@ public class EmployeeBoardUI {
             dto.setContent(newContent);
 
            
-            dto.setEmpNo("00001"); // TODO: 로그인 정보 연동
+            dto.setEmpNo(loginInfo.loginMember().getMemberId()); // TODO: 로그인 정보 연동
             int result = boardDao.updatePost(dto);
 
           
@@ -267,11 +269,11 @@ public class EmployeeBoardUI {
         try {
         	System.out.print("삭제할 글번호 ? ");
         	boardNo = Integer.parseInt(br.readLine());
-        	String empNo = "00001"; // TODO: 나중에 loginInfo.loginMember().getEmpNo()로 변경
+        	 // TODO: 나중에 loginInfo.loginMember().getEmpNo()로 변경
             
             
             dto.setBoardNo(boardNo);
-            dto.setEmpNo(empNo);
+            dto.setEmpNo(loginInfo.loginMember().getMemberId());
             
             System.out.print("\n[경고] 정말 " + boardNo + "번 글을 삭제하시겠습니까? (Y/N) ");
             String confirm = br.readLine();

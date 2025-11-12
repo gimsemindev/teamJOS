@@ -11,11 +11,11 @@ import com.sp.util.LoginInfo;
 public class AdminBoardUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private BoardDAO boardDao;
-    //private LoginInfo loginInfo;
+    private LoginInfo loginInfo;
     
     public AdminBoardUI(BoardDAO boardDao, LoginInfo loginInfo) {
         this.boardDao = boardDao;
-        //this.loginInfo = loginInfo;
+        this.loginInfo = loginInfo;
     }
     
     public void menu() {
@@ -110,7 +110,7 @@ public class AdminBoardUI {
             dto.setContent(newContent);
 
            
-            dto.setEmpNo("01001"); 
+            dto.setEmpNo(loginInfo.loginMember().getMemberId()); 
             int result = boardDao.updatePost(dto);
 
           
@@ -264,7 +264,7 @@ public class AdminBoardUI {
                 return;
             }
 
-            // 4. DAO에 삭제 요청 (글번호와 사번을 넘겨 본인 글인지 확인)
+            
             int result = boardDao.deletePost_Admin(dto);
 
             // 5. 결과 피드백
