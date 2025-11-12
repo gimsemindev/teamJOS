@@ -19,11 +19,12 @@ public class DeptCommonUI {
 	
 	private static final int PAGE_SIZE = 15;
     private DeptDAO deptDao = new DeptDAOImpl();
-    private AttDAO attDao = new AttDAOImpl(); 
-    
+    private AttDAO attDao; 
+	private Scanner sc = new Scanner(System.in);
     
 	public DeptCommonUI(LoginInfo loginInfo){
 		this.loginInfo = loginInfo;
+		this.attDao = new AttDAOImpl(loginInfo);
 	}
     
 	public void selectAllDept() {
@@ -49,7 +50,6 @@ public class DeptCommonUI {
 	}
 
 	public void selectDeptMember() {
-		Scanner sc = new Scanner(System.in);
 		System.out.println("[부서인원현황]");	
 		
 		try {
@@ -138,9 +138,9 @@ public class DeptCommonUI {
 	}
 	// 202511111628 : 김세민 수정중
 	public void selectAllAnnualLeave() {
-		Scanner sc = new Scanner(System.in);
+
 		System.out.println("[연차현황]");	
-		
+				
 		try {
 			int totalCnt = attDao.selectAllAnnualLeaveCount();
 			

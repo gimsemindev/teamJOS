@@ -14,9 +14,20 @@ import com.sp.model.AttendanceDTO;
 import com.sp.model.VacationDTO;
 import com.sp.util.DBConn;
 import com.sp.util.DBUtil;
+import com.sp.util.LoginInfo;
 
 public class AttDAOImpl implements AttDAO{
 	private Connection conn = DBConn.getConnection();
+	private LoginInfo loginInfo;
+	
+	public AttDAOImpl() {
+		
+	}
+	
+	public AttDAOImpl(LoginInfo loginInfo){
+		this.loginInfo = loginInfo;
+	}
+	
 	
 	@Override
 	public int insertAttendanceIn(AttendanceDTO att) throws SQLException{
@@ -95,6 +106,17 @@ public class AttDAOImpl implements AttDAO{
 	    PreparedStatement pstmt = null;
 	    ResultSet rs = null;
 	    String sql;
+	    String addSql="";
+	    
+		System.out.println(loginInfo.loginMember().getGradeNm());
+		System.out.println(loginInfo.loginMember().getDeptCd());
+		System.out.println(loginInfo.loginMember().getRole());
+		
+	    if(!loginInfo.loginMember().getRole().equals("03")) {
+	    	addSql = " AND A.EMP_NO = '" + loginInfo.loginMember().getMemberId() + "'";
+	    }
+		
+		
 	    
 	    try {
 	        sql = """
@@ -128,6 +150,7 @@ public class AttDAOImpl implements AttDAO{
 	                     )
 	               WHERE rn BETWEEN ? AND ? """;
 	        
+	        sql += addSql;
 	        pstmt = conn.prepareStatement(sql);
 	        pstmt.setInt(1, start);
 	        pstmt.setInt(2, end);

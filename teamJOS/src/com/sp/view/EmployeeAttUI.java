@@ -18,6 +18,8 @@ public class EmployeeAttUI {
     // EmployeeUI의 manageAttendance() 기능을 menu()로 변경
     public void menu() {
         int ch;
+        String role = loginInfo.loginMember().getRole();
+        String deptCd = loginInfo.loginMember().getDeptCd();
         String input;
         System.out.println("\n[근태관리]");
         
