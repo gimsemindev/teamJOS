@@ -7,18 +7,41 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import com.sp.dao.BoardDAO;
-
 import com.sp.model.BoardDTO;
 import com.sp.util.DBConn;
 import com.sp.util.DBUtil;
 
-
-
 public class BoardDAOImpl implements BoardDAO{
 	private Connection conn = DBConn.getConnection();
 
+	@Override
+	public int listPostsCount() throws SQLException {
+        int result = 0;
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql;
+        
+        try {
+        	sql = "SELECT /* BOARD_SEL_007 */ COUNT(*) AS CNT FROM TB_BOARD ";
+        	        	
+            pstmt = conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                result = rs.getInt("CNT");
+            }        	
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(rs);
+            DBUtil.close(pstmt);
+        }
+		
+        return result;
+	}
+	
+	
 	@Override
 	public int insertPost(BoardDTO board) throws SQLException {
 		int result = 0;
@@ -185,7 +208,7 @@ public class BoardDAOImpl implements BoardDAO{
 	}
 
 	@Override
-	public List<BoardDTO> listPosts() throws SQLException {
+	public List<BoardDTO> listPosts(int start, int end) throws SQLException {
 		List<BoardDTO> list = new ArrayList<BoardDTO>();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -193,10 +216,23 @@ public class BoardDAOImpl implements BoardDAO{
 		
 		try {
 			
-			sql ="SELECT BOARD_SEQ, EMP_NO, TITLE, REG_DTM, UPDATE_DTM "
-               + " FROM tb_board ORDER BY BOARD_SEQ DESC";
+			sql= """
+					SELECT *
+			          FROM (
+			                SELECT ROWNUM rn, A.*
+			                  FROM (
+			                        SELECT BOARD_SEQ, EMP_NO, TITLE, REG_DTM, UPDATE_DTM
+			                          FROM tb_board
+			                         ORDER BY BOARD_SEQ DESC
+			                       ) A
+			                 WHERE ROWNUM <= ?
+			               )
+			         WHERE rn >= ? """;
 			
 			pstmt = conn.prepareStatement(sql);
+			pstmt.setInt(1, end);   //
+			pstmt.setInt(2, start); //
+			
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {

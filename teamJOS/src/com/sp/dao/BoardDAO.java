@@ -34,10 +34,13 @@ public interface BoardDAO {
     
     int deletePost(BoardDTO board) throws SQLException;
     
-      BoardDTO getPost(int boardSeq) throws SQLException;
-      List<BoardDTO> listPosts() throws SQLException;
+    BoardDTO getPost(int boardSeq) throws SQLException;
+    
+    /** BOARD_SEL_006 **/
+    List<BoardDTO> listPosts(int start, int end) throws SQLException;
       
-      
+    /** BOARD_SEL_007 **/
+    int listPostsCount() throws SQLException; 
      
 
 }
