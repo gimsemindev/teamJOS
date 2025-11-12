@@ -61,4 +61,30 @@ public class PrintUtil {
     public static void printLine(char ch, int length) {
         System.out.println(String.valueOf(ch).repeat(length));
     }
+
+	// 프로그램 상단 구분 (큰 제목)
+	public static void printTitle(String title) {
+		printLine('=', 65);
+		System.out.println(padCenter(title, 65));
+		printLine('=', 65);
+	}
+
+	// 세부 항복 구분 (소 제목)
+	public static void printSection(String section) {
+		printLine('-', 65);
+		System.out.println(padCenter("[ " + section + " ]", 65));
+		printLine('-', 65);
+	}
+	
+	// 표 형태의 데이터 출력 시 헤더 부분 출력
+	public static void printTableHeader(String...headers) {
+		for (String h : headers) {
+			System.out.print(padRight(h, 12));
+		}
+		System.out.println();
+		printLine('-', 70);
+	}
 }
+
+	
+
