@@ -76,7 +76,7 @@ public class EmployeeEmpUI {
 				return;
 			}
 
-			PrintUtil.printLine('-', 70);
+			PrintUtil.printLine('-', 160);
 			System.out.print(dto.getEmpNo() + "\t");
 			System.out.print(dto.getEmpNm() + "\t");
 			System.out.print(dto.getRrn() + "\t");
@@ -90,7 +90,7 @@ public class EmployeeEmpUI {
 			System.out.print(dto.getPwd() + "\t");
 			System.out.print(dto.getRegDt() + "\t");
 			System.out.println(dto.getLevelCode());
-			PrintUtil.printLine('-', 70);
+			PrintUtil.printLine('-', 160);
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -237,7 +237,7 @@ public class EmployeeEmpUI {
 				PrintUtil.printLine('-', 80);
 			}
 
-			System.out.println("\n전체 이력 조회가 완료되었습니다.\n");
+			System.out.println("\n이력 조회가 완료되었습니다.\n");
 
 		} catch (Exception e) {
 			e.printStackTrace();
