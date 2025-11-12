@@ -20,10 +20,11 @@ public class AdminEmpUI {
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	private DeptCommonUI deptCommonUI = null;
 	private EmpDAO empDao;
+	private LoginInfo loginInfo;
 
 	public AdminEmpUI(EmpDAO empDao, LoginInfo loginInfo) {
 		this.empDao = empDao;
-		this.deptCommonUI = new DeptCommonUI(loginInfo);
+		this.deptCommonUI = new DeptCommonUI(this.loginInfo);
 	}
 
 	/** 메인 메뉴 */

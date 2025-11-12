@@ -24,6 +24,7 @@ public class EmployeeEmpUI {
 	public EmployeeEmpUI(EmpDAO empDao, LoginInfo loginInfo) {
 		this.empDao = empDao;
 		this.loginInfo = loginInfo;
+//		this.loginDTO = loginInfo.getLoginDTO();
 	}
 
 	/** 메인 메뉴 */
@@ -67,7 +68,7 @@ public class EmployeeEmpUI {
 	private void selectMyInfo() throws SQLException {
 		System.out.println("\n[사원 - 내 정보 조회]");
 		try {
-			String empNo = loginDTO.getMemberId();
+			String empNo = loginInfo.loginMember().getMemberId();
 			EmployeeDTO dto = empDao.selectByEmpNo(empNo);
 
 			if (dto == null) {
@@ -100,7 +101,7 @@ public class EmployeeEmpUI {
 	private void updateMyInfo() {
 		System.out.println("\n[사원 - 내 정보 수정]");
 		try {
-			String empNo = loginDTO.getMemberId();
+			String empNo = loginInfo.loginMember().getMemberId();
 
 			System.out.println("""
 					=====================================================
@@ -155,7 +156,7 @@ public class EmployeeEmpUI {
 	private void selectMyGradeHistory() {
 		System.out.println("\n[사원 - 직급(진급) 이력 조회]");
 		try {
-			String empNo = loginDTO.getMemberId();
+			String empNo = loginInfo.loginMember().getMemberId();
 			List<HistoryDTO> list = empDao.selectGradeHis(empNo);
 
 			if (list == null || list.isEmpty()) {
@@ -189,7 +190,7 @@ public class EmployeeEmpUI {
 		System.out.println("\n[사원 - 전체 이력 조회]");
 
 		try {
-			String empNo = loginDTO.getMemberId();
+			String empNo = loginInfo.loginMember().getMemberId();
 			List<HistoryDTO> careerList = empDao.selectCareerHis(empNo);
 
 			if (careerList != null && !careerList.isEmpty()) {
