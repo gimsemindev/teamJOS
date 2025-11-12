@@ -50,5 +50,8 @@ public interface DeptDAO {
     
     /** DEPT_SEL_009 */
     void makeCSVFile() throws Exception;
+    
+    /** DEPT_SEL_010 */
+    List<DeptDTO> selectDeptMemberCountRatio();
         
 }

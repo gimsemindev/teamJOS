@@ -410,4 +410,62 @@ public class DeptDAOImpl implements DeptDAO{
 		}
 		
 	}
+	
+	public List<DeptDTO> selectDeptMemberCountRatio() {
+		List<DeptDTO> list = new ArrayList<>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;
+		
+	    try {
+	    	sql = """
+                  SELECT ROOT_DEPT_CD      AS DEPT_CD
+                       , MAX(ROOT_DEPT_NM) AS DEPT_NM
+                       , COUNT(DISTINCT EMP_NO) AS TOTAL_EMP_COUNT
+                       , ROUND(RATIO_TO_REPORT(COUNT(DISTINCT EMP_NO)) OVER(), 2) * 100 AS RATIO_PERCENT
+                    FROM ( 
+                          SELECT CONNECT_BY_ROOT D.DEPT_CD AS ROOT_DEPT_CD
+                               , CONNECT_BY_ROOT D.DEPT_NM AS ROOT_DEPT_NM
+                               , E.EMP_NO
+                            FROM TB_DEPT D
+                            LEFT JOIN TB_EMP E
+                              ON E.DEPT_CD = D.DEPT_CD
+                             AND E.USE_YN = 'Y'
+                           WHERE D.USE_YN = 'Y'
+                           START WITH D.DEPT_CD IN (
+                                                    SELECT DEPT_CD
+                                                      FROM TB_DEPT
+                                                     WHERE USE_YN = 'Y'
+                                                       AND SUPER_DEPT_CD IN (
+                                                                             SELECT DEPT_CD
+                                                                               FROM TB_DEPT
+                                                                              WHERE SUPER_DEPT_CD IS NULL
+                                                                            )
+                                                   )
+                        CONNECT BY PRIOR D.DEPT_CD = D.SUPER_DEPT_CD
+                        )
+                  GROUP BY ROOT_DEPT_CD
+                  ORDER BY ROOT_DEPT_CD""";	
+	    	
+	    	pstmt = conn.prepareStatement(sql);
+		 
+	        rs = pstmt.executeQuery();
+	        
+	        while (rs.next()) {
+	            DeptDTO dto = new DeptDTO();
+	            dto.setDeptCd(rs.getString("DEPT_CD"));
+	            dto.setDeptNm(rs.getString("DEPT_NM"));
+	            dto.setDeptCount(rs.getInt("TOTAL_EMP_COUNT"));
+	            dto.setDeptCountRatio(rs.getInt("RATIO_PERCENT"));
+	            list.add(dto);
+	        }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            DBUtil.close(rs);
+            DBUtil.close(pstmt);
+        }
+	    
+		return list;
+	}
 }

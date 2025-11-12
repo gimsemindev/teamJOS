@@ -66,7 +66,7 @@ public class AdminEmpUI {
 				default -> System.out.println("잘못된 입력입니다. 1~10 사이의 숫자를 입력해주세요.");
 				}
 
-			} while (ch != 10);
+			} while (ch != 11);
 
 		} catch (Exception e) {
 			e.printStackTrace();

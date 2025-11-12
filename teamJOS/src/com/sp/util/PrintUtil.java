@@ -38,8 +38,9 @@ public class PrintUtil {
 
         int pad = width - textWidth;
         StringBuilder sb = new StringBuilder();
-        while (pad-- > 0) {
+        while (pad > 0) {
             sb.append(" ");
+            pad = pad - 1;
         }
         sb.append(text);
         return sb.toString();
@@ -94,6 +95,3 @@ public class PrintUtil {
 	    
 	}
 }
-
-	
-

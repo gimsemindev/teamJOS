@@ -38,7 +38,7 @@ public class AdminDeptUI {
 			try {
 				
 				do {
-					System.out.print("1.부서등록 2.부서수정 3.부서조회 4.부서삭제 5.부서인원현황 6.부서인원현황 다운로드 7.메뉴로돌아가기 => ");
+					System.out.print("1.부서등록 2.부서수정 3.부서조회 4.부서삭제 5.전사인원현황 6.전사인원현황 다운로드 7.본부부서소속인원 8.메뉴로돌아가기 => ");
 					
 					input = br.readLine();
 	                
@@ -48,7 +48,7 @@ public class AdminDeptUI {
 	                }
 	                ch = Integer.parseInt(input);
 					
-				} while (ch < 1 || ch > 6);
+				} while (ch < 1 || ch > 8);
 				
 				switch (ch) {
 				case 1:
@@ -70,6 +70,9 @@ public class AdminDeptUI {
 					makeCSVFile();
 					break;
 				case 7:
+					selectDeptMemberCountRatio();
+					break;
+				case 8:
 					return; // 6.메뉴화면으로
 				}
 				
@@ -348,10 +351,40 @@ public class AdminDeptUI {
 	}
 	
 	public void makeCSVFile() {
+	    System.out.println("\n전사인원현황 다운로드...");
 		try {
 			 deptDao.makeCSVFile();
 		 } catch (Exception e) {
 		        e.printStackTrace();
 		    }
 	}
+	
+    public void selectDeptMemberCountRatio() {
+	    System.out.println("\n본부부서소속인원...");
+	    
+        List<DeptDTO> list = deptDao.selectDeptMemberCountRatio();
+
+        System.out.println("전체 부서수 : " + list.size());    
+        PrintUtil.printLine('=', 80);
+        System.out.printf("%s|%s\t|%s|%s|%s\n",
+        		PrintUtil.padCenter("본부부서코드", 12),
+        		PrintUtil.padCenter("본부부서명", 24),
+        		PrintUtil.padCenter("소속인원",10),
+                PrintUtil.padCenter("비율",8),
+                PrintUtil.padCenter("그래프",10)
+        		);
+        PrintUtil.printLine('=', 80);
+        
+        for(DeptDTO dto : list) {            
+            System.out.printf("%s|%s\t|%s|%s|",
+            		PrintUtil.padCenter(dto.getDeptCd(), 9),
+            		PrintUtil.padRight(dto.getDeptNm(), 20),
+            		PrintUtil.padLeft(Integer.toString(dto.getDeptCount()), 8),
+            		PrintUtil.padLeft(Integer.toString(dto.getDeptCountRatio())+"%", 8)
+            		);
+    		System.out.println("█".repeat((int)Math.round(dto.getDeptCountRatio() / 2.0)));
+    		
+        }
+        PrintUtil.printLine('-', 80);
+    }
 }

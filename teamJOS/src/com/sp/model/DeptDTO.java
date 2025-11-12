@@ -6,7 +6,9 @@ public class DeptDTO {
     private String extNo;         // EXT_NO VARCHAR2(20)
     private String superDeptCd;   // SUPER_DEPT_CD CHAR(6)
     private String useYn;         // USE_YN CHAR(1)
-    private String regDt;      // REG_DT DATE
+    private String regDt;         // REG_DT DATE
+    private int deptCount;
+    private int deptCountRatio;
     
     public DeptDTO() {
     }
@@ -57,6 +59,22 @@ public class DeptDTO {
 	}
 	public void setRegDt(String regDt) {
 		this.regDt = regDt;
+	}
+
+	public int getDeptCount() {
+		return deptCount;
+	}
+
+	public void setDeptCount(int deptCount) {
+		this.deptCount = deptCount;
+	}
+
+	public int getDeptCountRatio() {
+		return deptCountRatio;
+	}
+
+	public void setDeptCountRatio(int deptCountRatio) {
+		this.deptCountRatio = deptCountRatio;
 	}
     
     
