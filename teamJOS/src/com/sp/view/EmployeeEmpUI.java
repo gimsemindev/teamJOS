@@ -198,17 +198,48 @@ public class EmployeeEmpUI {
 				System.out.println(PrintUtil.padCenter("시작일자", 15) + PrintUtil.padCenter("종료일자", 15)
 						+ PrintUtil.padCenter("부서명", 20) + PrintUtil.padCenter("상세내용", 25));
 				PrintUtil.printLine('-', 80);
+				PrintUtil.printLine('-', 80);
+
+				for (HistoryDTO dto : careerList) {
+					System.out.println(PrintUtil.padCenter(dto.getStartDt(), 15)
+							+ PrintUtil.padCenter(dto.getEndDt(), 15) + PrintUtil.padCenter(dto.getDeptNm(), 20)
+							+ PrintUtil.padCenter(dto.getDetails(), 25));
+				}
+				PrintUtil.printLine('-', 80);
+			} else {
+				System.out.println("등록된 경력이력이 없습니다.");
+			}
+			List<HistoryDTO> certList = empDao.selectCertHis(empNo);
+
+			if (certList != null && !certList.isEmpty()) {
+				PrintUtil.printSection("자격증 이력");
+				PrintUtil.printLine('-', 80);
+				System.out.println(PrintUtil.padCenter("등록일자", 15) + PrintUtil.padCenter("자격증", 25)
+						+ PrintUtil.padCenter("상세내용", 25));
+				PrintUtil.printLine('-', 80);
+
+				for (HistoryDTO dto : certList) {
+					System.out.println(PrintUtil.padCenter(dto.getRegDt(), 15)
+							+ PrintUtil.padCenter(dto.getGradeNm(), 25) + PrintUtil.padCenter(dto.getDetails(), 25));
+
+				}
+				PrintUtil.printLine('-', 80);
+			} else {
+				System.out.println("등록된 자격증이 없습니다.");
+			}
+			EmployeeDTO empInfo = empDao.selectByEmpNo(empNo);
+			if (empInfo != null) {
+				PrintUtil.printSection("기본 사원 정보");
+				System.out.printf("사원번호: %s | 이름: %s | 부서: %s | 직급: %s%n", empInfo.getEmpNo(), empInfo.getEmpNm(),
+						empInfo.getDeptNm(), empInfo.getGradeNm());
+				System.out.printf("입사일자: %s | 계약구분: %s%n", empInfo.getHireDt(), empInfo.getContractTpNm());
+				PrintUtil.printLine('-', 80);
 			}
 
-			for (HistoryDTO dto : careerList) {
-				System.out.println(PrintUtil.padCenter(dto.getStartDt(), 15) + PrintUtil.padCenter(dto.getEndDt(), 15)
-						+ PrintUtil.padCenter(dto.getDeptNm(), 20) + PrintUtil.padCenter(dto.getDetails(), 25));
-			}
+			System.out.println("\n전체 이력 조회가 완료되었습니다.\n");
 
 		} catch (Exception e) {
-			System.out.println("예상치 못한 오류가 발생했습니다.");
 			e.printStackTrace();
 		}
 	}
-
 }
