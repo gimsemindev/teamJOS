@@ -18,13 +18,14 @@ import com.sp.view.common.DeptCommonUI;
 public class AdminDeptUI {
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	private DeptDAO deptDao = new DeptDAOImpl();
-	private DeptCommonUI deptCommonUI = new DeptCommonUI();
+	private DeptCommonUI deptCommonUI = null;
 	private LoginInfo loginInfo;
 	
 	
 	public AdminDeptUI(DeptDAO deptDao, LoginInfo loginInfo) {
 		this.deptDao = deptDao;
 		this.loginInfo = loginInfo;
+		this.deptCommonUI = new DeptCommonUI(loginInfo);
 	}
 
 	public void menu() {
