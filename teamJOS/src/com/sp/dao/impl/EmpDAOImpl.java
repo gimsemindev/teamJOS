@@ -408,7 +408,7 @@ public class EmpDAOImpl implements EmpDAO{
 
 	// 이력 조회
 	@Override
-	public List<HistoryDTO> selectHistory(String empNo) {
+	public List<HistoryDTO> selectGradeHis(String empNo) {
 		List<HistoryDTO> list = new ArrayList<HistoryDTO>();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -450,6 +450,18 @@ public class EmpDAOImpl implements EmpDAO{
 	}
 	
 	@Override
+	public List<HistoryDTO> selectCareerHis(String empNo) {
+		
+		return null;
+	}
+	
+	@Override
+	public List<HistoryDTO> selectCertHis(String empNo) {
+		// TODO Auto-generated method stub
+		return null;
+	}	
+	
+	@Override
 	public EmployeeDTO selectDeptName(String empNo) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -471,16 +483,10 @@ public class EmpDAOImpl implements EmpDAO{
 		}
 		return dto;
 	}
-	
-	@Override
-	public List<DeptMoveDTO> selectDeptMove(String empNo) {
-		
-		return null;
-	}
 
-	   @Override
-	   public EmployeeDTO selectGradeName(String empNo) {
-	    PreparedStatement pstmt = null;
+	@Override
+	public EmployeeDTO selectGradeName(String empNo) {
+		PreparedStatement pstmt = null;
 	    ResultSet rs = null;
 	    String sql;
 	    EmployeeDTO dto = new EmployeeDTO();
@@ -504,7 +510,9 @@ public class EmpDAOImpl implements EmpDAO{
 	    } 
 	    return dto;
 	}
+	   
 
+	
 	@Override
 	public boolean isValidDeptCd(String deptCd) {
 		String sql = "SELECT COUNT(*) FROM TB_DEPT WHERE DEPT_CD = ?";
@@ -569,6 +577,8 @@ public class EmpDAOImpl implements EmpDAO{
 		}
 		return false;
 	}
+
+	
 	   
 
 
