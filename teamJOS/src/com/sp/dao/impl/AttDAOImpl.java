@@ -43,8 +43,30 @@ public class AttDAOImpl implements AttDAO{
 
 	@Override
 	public int insertVacation(VacationDTO vacation) throws SQLException{
-		// TODO Auto-generated method stub
-		return 0;
+		int result = 0;
+		PreparedStatement pstmt = null;
+		String sql;
+		
+		try {
+			
+			sql = """
+					INSERT INTO TB_VACATION(VACATION_SEQ, EMP_NO, START_DT, END_DT, VACATION_MEMO, APPROVER_YN) VALUES(RETIRE_SEQ.NEXTVAL, ?, TO_TIMESTAMP(?, 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP(?, 'YYYY-MM-DD HH24:MI:SS'), ?, 'N')
+					""";
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, loginInfo.loginMember().getMemberId());
+			pstmt.setString(2, vacation.getStartDt());
+			pstmt.setString(3, vacation.getEndDt());
+			pstmt.setString(4, vacation.getVacationMemo());
+			
+			result = pstmt.executeUpdate();
+		} catch (SQLException e) {
+			throw e;
+		} finally {
+			DBUtil.close(pstmt);
+		}
+		
+		return result;
 	}
 	
 	
@@ -243,7 +265,7 @@ public class AttDAOImpl implements AttDAO{
 					FROM TB_VACATION V
 					LEFT JOIN TB_EMP E ON V.EMP_NO = E.EMP_NO 
 					WHERE APPROVER_YN = 'N'
-					ORDER BY VACATION_SEQ DESC
+					ORDER BY VACATION_SEQ ASC
 
 					""";
 			
