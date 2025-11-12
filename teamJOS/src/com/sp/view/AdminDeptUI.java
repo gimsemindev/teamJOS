@@ -25,7 +25,7 @@ public class AdminDeptUI {
 	public AdminDeptUI(DeptDAO deptDao, LoginInfo loginInfo) {
 		this.deptDao = deptDao;
 		this.loginInfo = loginInfo;
-		this.deptCommonUI = new DeptCommonUI(loginInfo);
+		this.deptCommonUI = new DeptCommonUI(this.loginInfo);
 	}
 
 	public void menu() {

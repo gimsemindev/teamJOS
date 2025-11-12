@@ -22,7 +22,7 @@ public class AdminAttUI {
     public AdminAttUI(AttDAO attDao, LoginInfo loginInfo) {
         this.attDao = attDao;
         this.loginInfo = loginInfo;
-        this.deptCommonUI = new DeptCommonUI(loginInfo);
+        this.deptCommonUI = new DeptCommonUI(this.loginInfo);
     }
     
     
@@ -136,7 +136,7 @@ public class AdminAttUI {
 			vacationSeq = Integer.parseInt(input.trim());
 			
 			// 3. DAO 호출 (updateVacationApprove: 프로시저 호출)
-			attDao.updateVacationApprove(vacationSeq); // ⚠️ DAO 메서드명을 approveVacation으로 통일하여 사용합니다.
+			attDao.updateVacationApprove(vacationSeq); 
 			
 			System.out.println(GREEN + "\n✅ 휴가 신청 번호 " + vacationSeq + " 승인 및 연차 차감 완료." + RESET);
 			
