@@ -116,8 +116,6 @@ public class AttDAOImpl implements AttDAO{
 	    	addSql = " AND A.EMP_NO = '" + loginInfo.loginMember().getMemberId() + "'";
 	    }
 		
-		
-	    
 	    try {
 	        sql = """
 	              SELECT * 
@@ -145,11 +143,14 @@ public class AttDAOImpl implements AttDAO{
 	                                    ON E.GRADE_CD = G.GRADE_CD
 	                                   AND G.USE_YN = 'Y'
 	                                 WHERE A.USE_YN = 'Y'
-	                                 ORDER BY D.DEPT_NM, G.GRADE_NM, E.EMP_NM
+	                                 """;
+	        sql += addSql;
+	        addSql= """
+	        		
+	        		ORDER BY D.DEPT_NM, G.GRADE_NM, E.EMP_NM
 	                               ) A
 	                     )
-	               WHERE rn BETWEEN ? AND ? """;
-	        
+	               WHERE rn BETWEEN ? AND ? """;  
 	        sql += addSql;
 	        pstmt = conn.prepareStatement(sql);
 	        pstmt.setInt(1, start);
@@ -189,10 +190,23 @@ public class AttDAOImpl implements AttDAO{
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         String sql;
+ 
+	    String addSql="";
+	    
+		System.out.println(loginInfo.loginMember().getGradeNm());
+		System.out.println(loginInfo.loginMember().getDeptCd());
+		System.out.println(loginInfo.loginMember().getRole());
+		
+	    if(!loginInfo.loginMember().getRole().equals("03")) {
+	    	addSql = " AND EMP_NO = '" + loginInfo.loginMember().getMemberId() + "'";
+	    }
         
         try {
         	sql = "SELECT /* ATT_SEL_008 */ COUNT(*) AS CNT FROM TB_ANNUAL_LEAVE WHERE USE_YN='Y'";
-        	        	
+        	 
+        	
+	        sql += addSql;
+        	
             pstmt = conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
 
