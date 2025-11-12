@@ -17,11 +17,12 @@ public class AdminAttUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private AttDAO attDao;
     private LoginInfo loginInfo;
-    private DeptCommonUI deptCommonUI = new DeptCommonUI();
+    private DeptCommonUI deptCommonUI;
     
     public AdminAttUI(AttDAO attDao, LoginInfo loginInfo) {
         this.attDao = attDao;
         this.loginInfo = loginInfo;
+        this.deptCommonUI = new DeptCommonUI(loginInfo);
     }
     
     
