@@ -114,39 +114,85 @@ public class AdminEmpUI {
 			}
 
 			// ==================== 직급 코드 ====================
-			System.out.println("\n───────────────────────────────");
-			System.out.println("[직급 코드]");
-			System.out.println("01.사원 | 02.대리 | 03.과장 | 04.차장 | 05.부장 | 06.이사 | 07.대표이사");
-			System.out.print("직급코드 입력 ➤ ");
-			dto.setGradeCd(br.readLine());
+			String gradeCd;
+			while (true) {
+			    System.out.println("\n───────────────────────────────");
+			    System.out.println("[직급 코드]");
+			    System.out.println("01.사원 | 02.대리 | 03.과장 | 04.차장 | 05.부장 | 06.이사 | 07.대표이사");
+			    System.out.print("직급코드 입력 ➤ ");
+			    gradeCd = br.readLine();
+
+			    if (!empDao.isValidGradeCd(gradeCd)) {
+			        System.out.println("존재하지 않는 직급 코드입니다. 다시 입력해주세요.");
+			        continue;
+			    }
+
+			    dto.setGradeCd(gradeCd);
+			    break;
+			}
 
 			// ==================== 사원 상태 ====================
-//			System.out.println("\n───────────────────────────────");
-//			System.out.println("[사원상태 코드]");
-//			System.out.println("A.재직 | R.퇴직 | L.휴직");
-//			System.out.print("사원상태코드 입력 ➤ ");
-//			dto.setEmpStatCd(br.readLine());
-
+			dto.setEmpStatCd("A");
+			System.out.println("신규 등록 사원은 기본적으로 재직 상태로 설정됩니다.");
+			
 			// ==================== 계약 구분 ====================
-			System.out.println("\n───────────────────────────────");
-			System.out.println("[계약구분 코드]");
-			System.out.println("1.정규직 | 2.계약직 | 3.인턴");
-			System.out.print("계약구분코드 입력 ➤ ");
-			dto.setContractTpCd(br.readLine());
+			String contractCd;
+			while (true) {
+			    System.out.println("\n───────────────────────────────");
+			    System.out.println("[계약구분 코드]");
+			    System.out.println("1.정규직 | 2.계약직 | 3.인턴");
+			    System.out.print("계약구분코드 입력 ➤ ");
+			    contractCd = br.readLine();
+
+			    if (!contractCd.matches("^[123]$")) {
+			        System.out.println("잘못된 계약구분 코드입니다. 1~3 중 하나를 입력해주세요.");
+			        continue;
+			    }
+
+			    dto.setContractTpCd(contractCd);
+			    break;
+			}
 
 			// ==================== 기본 정보 ====================
-			System.out.print("이메일: ");
-			dto.setEmail(br.readLine());
-			System.out.print("비밀번호: ");
-			dto.setPwd(br.readLine());
+			while (true) {
+			    System.out.print("이메일: ");
+			    String email = br.readLine();
+			    if (!email.matches("^[\\w._%+-]+@[\\w.-]+\\.[a-zA-Z]{2,6}$")) {
+			        System.out.println("잘못된 이메일 형식입니다. 다시 입력해주세요.");
+			        continue;
+			    }
+			    dto.setEmail(email);
+			    break;
+			}
+			
+			while (true) {
+			    System.out.print("비밀번호: ");
+			    String pwd = br.readLine();
+			    if (pwd == null || pwd.trim().isEmpty()) {
+			        System.out.println("비밀번호는 필수 입력값입니다.");
+			        continue;
+			    }
+			    dto.setPwd(pwd);
+			    break;
+			}
 
 			// ==================== 권한 레벨 ====================
-			System.out.println("\n───────────────────────────────");
-			System.out.println("[권한 레벨 코드]");
-			System.out.println("01.일반사원 | 02.관리자 | 03.인사담당자");
-			System.out.print("레벨코드 입력 ➤ ");
-			dto.setLevelCode(br.readLine());
+			String levelCode;
+			while (true) {
+			    System.out.println("\n───────────────────────────────");
+			    System.out.println("[권한 레벨 코드]");
+			    System.out.println("01.일반사원 | 02.관리자 | 03.인사담당자");
+			    System.out.print("레벨코드 입력 ➤ ");
+			    levelCode = br.readLine();
 
+			    if (!levelCode.matches("0[1-3]")) {
+			        System.out.println("잘못된 레벨 코드입니다. 01~03 사이의 값을 입력해주세요.");
+			        continue;
+			    }
+
+			    dto.setLevelCode(levelCode);
+			    break;
+			}
 			// ==================== DB 등록 ====================
 			int result = empDao.insertEmployee(dto);
 			if(result > 1) {
