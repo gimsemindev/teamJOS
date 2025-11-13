@@ -183,8 +183,8 @@ public class BoardDAOImpl implements BoardDAO{
 				       , E.EMP_NM || '[' || B.EMP_NO || ']' AS EMP_NO
 				       , B.TITLE
 				       , B.CONTENT
-				       , B.REG_DTM
-				       , B.UPDATE_DTM 
+				       , TO_CHAR(B.REG_DTM, 'YYYY-MM-DD HH24:MI:SS') AS REG_DTM
+				       , TO_CHAR(B.UPDATE_DTM, 'YYYY-MM-DD HH24:MI:SS') AS UPDATE_DTM 
 			        FROM TB_BOARD B
                     LEFT JOIN TB_EMP E
                       ON B.EMP_NO = E.EMP_NO
