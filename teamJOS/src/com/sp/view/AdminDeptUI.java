@@ -366,7 +366,7 @@ public class AdminDeptUI {
 
         System.out.println("전체 부서수 : " + list.size());    
         PrintUtil.printLine('=', 80);
-        System.out.printf("%s|%s\t|%s|%s|%s\n",
+        System.out.printf("%s|%s\t|%s|%s\t|%s\n",
         		PrintUtil.padCenter("본부부서코드", 12),
         		PrintUtil.padCenter("본부부서명", 24),
         		PrintUtil.padCenter("소속인원",10),
@@ -376,7 +376,7 @@ public class AdminDeptUI {
         PrintUtil.printLine('=', 80);
         
         for(DeptDTO dto : list) {            
-            System.out.printf("%s|%s\t|%s|%s|",
+            System.out.printf("%s|%s\t|%s|%s\t|",
             		PrintUtil.padCenter(dto.getDeptCd(), 9),
             		PrintUtil.padRight(dto.getDeptNm(), 20),
             		PrintUtil.padLeft(Integer.toString(dto.getDeptCount()), 8),

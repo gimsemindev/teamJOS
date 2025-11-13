@@ -227,11 +227,7 @@ public class AttDAOImpl implements AttDAO{
         String sql;
  
 	    String addSql="";
-	    
-		System.out.println(loginInfo.loginMember().getGradeNm());
-		System.out.println(loginInfo.loginMember().getDeptCd());
-		System.out.println(loginInfo.loginMember().getRole());
-		
+	    		
 	    if(!loginInfo.loginMember().getRole().equals("03")) {
 	    	addSql = " AND EMP_NO = '" + loginInfo.loginMember().getMemberId() + "'";
 	    }

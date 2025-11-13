@@ -667,7 +667,7 @@ public class EmpDAOImpl implements EmpDAO{
 				dto.setDeptNm(rs.getString("DEPT_NM"));
 			}
 		} catch (Exception e) {
-			// TODO: handle exception
+			
 		}
 		return dto;
 	}
