@@ -448,83 +448,97 @@ public class AdminEmpUI {
 
 	/** 5. 사원관리 - 정보조회 */
 	private void manageEmployeeSearch() {
-	    System.out.println("\n[관리자 - 사원관리 - 정보조회]");
-	    try {
-	        while (true) {
-	            System.out.print("1.사번조회 | 2.이름조회 | 3.전체조회 | 4.[q: 돌아가기] ➤ ");
-	            String sel = br.readLine();
-	            if (sel == null) sel = "";
-	            sel = sel.trim();
-	            if ("q".equalsIgnoreCase(sel)) {
-	                return;
-	            }
+		System.out.println("\n[관리자 - 사원관리 - 정보조회]");
+		try {
+			while (true) {
+				System.out.print("1.사번조회 | 2.이름조회 | 3.전체조회 | [q: 돌아가기] ➤ ");
+				String sel = br.readLine();
+				if (sel == null)
+					sel = "";
+				sel = sel.trim();
+				if ("q".equalsIgnoreCase(sel)) {
+					return;
+				}
 
-	            int ch;
-	            try {
-	                ch = Integer.parseInt(sel);
-	            } catch (NumberFormatException e) {
-	                System.out.println("잘못된 번호입니다. 1~4 사이의 값을 입력해주세요.\n");
-	                continue;
-	            }
+				int ch;
+				try {
+					ch = Integer.parseInt(sel);
+				} catch (NumberFormatException e) {
+					System.out.println("잘못된 번호입니다. 1~4 사이의 값을 입력해주세요.\n");
+					continue;
+				}
 
-	            switch (ch) {
-	            case 1 -> {
-	                String empNo = checkEmpNo(true);
-	                EmployeeDTO dto = empDao.selectByEmpNo(empNo);
-	                if (dto == null) {
-	                    System.out.println("해당 사원번호의 정보가 존재하지 않습니다.\n");
-	                    break;
-	                }
+				switch (ch) {
+				case 1 -> {
+					String empNo = checkEmpNo(true);
+					EmployeeDTO dto = empDao.selectByEmpNo(empNo);
+					if (dto == null) {
+						System.out.println("해당 사원번호의 정보가 존재하지 않습니다.\n");
+						break;
+					}
 
-	                PrintUtil.printLine('=', 120);
-	                System.out.println("[ 단일 사원 정보 ]");
-	                PrintUtil.printLine('-', 120);
-	                // 단건은 이전처럼 자유 포맷으로 출력
-	                System.out.printf("사번 : %s, 이름 : %s, 주민번호 : %s%n",
-	                        dto.getEmpNo(), dto.getEmpNm(), dto.getRrn());
-	                System.out.printf("주소 : %s%n", dto.getEmpAddr());
-	                System.out.printf("입사일자 : %s, 부서명 : %s, 직급 : %s%n",
-	                        dto.getHireDt(), dto.getDeptNm(), dto.getGradeNm());
-	                System.out.printf("재직상태 : %s, 계약유형 : %s%n",
-	                        dto.getEmpStatNm(), dto.getContractTpNm());
-	                System.out.printf("이메일 : %s, 비밀번호 : %s%n",
-	                        dto.getEmail(), dto.getPwd());
-	                System.out.printf("등록일 : %s, 퇴사일 : %s, 레벨 : %s%n",
-	                        dto.getRegDt(), dto.getRetireDt(), dto.getLevelCode());
-	                PrintUtil.printLine('=', 120);
-	                System.out.println();
-	            }
+					// null 값 처리
+					String regDt = dto.getRegDt() == null ? "-" : dto.getRegDt();
+					String retireDt = dto.getRetireDt() == null ? "-" : dto.getRetireDt();
+					String level = dto.getLevelCode() == null ? "-" : dto.getLevelCode();
 
-	            case 2 -> {
-	                System.out.print("조회할 이름([q: 돌아가기]) ➤ ");
-	                String name = br.readLine();
-	                InputValidator.isUserExit(name);
+					// 라인
+					String line = "============================================================";
 
-	                List<EmployeeDTO> list = empDao.selectByName(name);
-	                printEmployeeListPaged(list);
-	            }
+					System.out.println(line);
+					System.out.println("                    [ 단일 사원 정보 ]");
+					System.out.println(line);
+					System.out.println();
 
-	            case 3 -> {
-	                List<EmployeeDTO> list = empDao.selectAll();
-	                printEmployeeListPaged(list);
-	            }
 
-	            case 4 -> {
-	                return;
-	            }
+					System.out.println("사번: " + dto.getEmpNo());
+					System.out.println("이름: " + dto.getEmpNm());
+					System.out.println("주민번호: " + dto.getRrn());
+					System.out.println("주소: " + dto.getEmpAddr());
+					System.out.println("입사일자: " + dto.getHireDt());
+					System.out.println("부서명: " + dto.getDeptNm());
+					System.out.println("직급: " + dto.getGradeNm());
+					System.out.println("재직상태: " + dto.getEmpStatNm());
+					System.out.println("계약유형: " + dto.getContractTpNm());
+					System.out.println("이메일: " + dto.getEmail());
+					System.out.println("비밀번호: " + dto.getPwd());
+					System.out.println("등록일: " + regDt);
+					System.out.println("퇴사일: " + retireDt);
+					System.out.println("권한레벨: " + level);
 
-	            default -> System.out.println("잘못된 번호입니다. 1~4 사이의 값을 입력해주세요.\n");
-	            }
-	        }
-	    } catch (UserQuitException e) {
-	        System.out.println("\n정보 조회를 취소했습니다.\n");
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
+					System.out.println("────────────────────────────────────────────────────────────");
+					System.out.println();
+				}
+
+				case 2 -> {
+					System.out.print("조회할 이름([q: 돌아가기]) ➤ ");
+					String name = br.readLine();
+					InputValidator.isUserExit(name);
+
+					List<EmployeeDTO> list = empDao.selectByName(name);
+					printEmployeeListPaged(list);
+				}
+
+				case 3 -> {
+					List<EmployeeDTO> list = empDao.selectAll();
+					printEmployeeListPaged(list);
+				}
+
+				case 4 -> {
+					return;
+				}
+
+				default -> System.out.println("잘못된 번호입니다. 1~4 사이의 값을 입력해주세요.\n");
+				}
+			}
+		} catch (UserQuitException e) {
+			System.out.println("\n정보 조회를 취소했습니다.\n");
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-
 
 	/** 6. 사원관리 - 재직결재 */
 	protected void updateRetireApprovalInfo() {
@@ -666,56 +680,55 @@ public class AdminEmpUI {
 		}
 	}
 
-
 	/** 9. 사원관리 - 이력조회 */
 	protected void selectHistoryInfo() {
-	    PrintUtil.printTitle("관리자 - 사원관리 - 이력조회");
-	    try {
-	        while (true) {
-	            System.out.print("1. 경력 | 2. 자격증 | 3. 직급이력 | [q: 돌아가기] ➤ ");
-	            String sel = br.readLine();
-	            if (sel == null) sel = "";
-	            sel = sel.trim();
-	            if ("q".equalsIgnoreCase(sel)) {
-	                return;
-	            }
+		PrintUtil.printTitle("관리자 - 사원관리 - 이력조회");
+		try {
+			while (true) {
+				System.out.print("1. 경력 | 2. 자격증 | 3. 직급이력 | [q: 돌아가기] ➤ ");
+				String sel = br.readLine();
+				if (sel == null)
+					sel = "";
+				sel = sel.trim();
+				if ("q".equalsIgnoreCase(sel)) {
+					return;
+				}
 
-	            int ch;
-	            try {
-	                ch = Integer.parseInt(sel);
-	            } catch (NumberFormatException e) {
-	                System.out.println("잘못된 번호입니다.\n");
-	                continue;
-	            }
+				int ch;
+				try {
+					ch = Integer.parseInt(sel);
+				} catch (NumberFormatException e) {
+					System.out.println("잘못된 번호입니다.\n");
+					continue;
+				}
 
-	            List<HistoryDTO> list;
+				List<HistoryDTO> list;
 
-	            switch (ch) {
-	            case 1 -> {
-	                list = empDao.selectCareerHisAll();
-	                printCareerHistoryPaged(list);  // 🔹 페이징
-	            }
-	            case 2 -> {
-	                list = empDao.selectCertHisAll();
-	                printCertHistoryPaged(list);    // 🔹 페이징
-	            }
-	            case 3 -> {
-	                list = empDao.selectGradeHisAll();
-	                printGradeHistoryPaged(list);   // 🔹 페이징
-	            }
-	            case 4 -> {
-	                return;
-	            }
-	            default -> System.out.println("잘못된 번호입니다.\n");
-	            }
-	        }
-	    } catch (IOException e) {
-	        e.printStackTrace();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    }
+				switch (ch) {
+				case 1 -> {
+					list = empDao.selectCareerHisAll();
+					printCareerHistoryPaged(list);
+				}
+				case 2 -> {
+					list = empDao.selectCertHisAll();
+					printCertHistoryPaged(list);
+				}
+				case 3 -> {
+					list = empDao.selectGradeHisAll();
+					printGradeHistoryPaged(list);
+				}
+				case 4 -> {
+					return;
+				}
+				default -> System.out.println("잘못된 번호입니다.\n");
+				}
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
-
 
 	/** 10. 사원관리 - CSV 일괄등록 */
 	protected void loadEmployeeInfo() {
@@ -749,272 +762,276 @@ public class AdminEmpUI {
 			return empNo;
 		}
 	}
-	
-	 // ==================== 공통 : 사원 목록 페이징 ====================
-    private void printEmployeeListPaged(List<EmployeeDTO> list) throws IOException {
 
-        if (list == null || list.isEmpty()) {
-            System.out.println("조회 결과가 없습니다.\n");
-            return;
-        }
+	// ==================== 공통 : 사원 목록 페이징 ====================
+	private void printEmployeeListPaged(List<EmployeeDTO> list) throws IOException {
+		if (list == null || list.isEmpty()) {
+			System.out.println("조회 결과가 없습니다.\n");
+			return;
+		}
+		
 
-        final int pageSize = 15; // 한 페이지당 15건
-        int total = list.size();
-        int totalPage = (total + pageSize - 1) / pageSize;
-        int page = 1;
+		final int pageSize = 15; // 한 페이지에 15명
+		int total = list.size();
+		int totalPage = (total + pageSize - 1) / pageSize;
+		int page = 1;
 
-        while (true) {
-            int startIndex = (page - 1) * pageSize;
-            int endIndex = Math.min(startIndex + pageSize, total);
+		while (true) {
+			int startIndex = (page - 1) * pageSize;
+			int endIndex = Math.min(startIndex + pageSize, total);
 
-            System.out.printf("페이지 %d / %d   (총 %d건)   [조회범위: %d ~ %d]%n",
-                    page, totalPage, total, startIndex + 1, endIndex);
-            PrintUtil.printLine('=', 160);
+			System.out.printf("페이지 %d / %d   (총 %d건)   [조회범위: %d ~ %d]%n", page, totalPage, total, startIndex + 1,
+					endIndex);
+			PrintUtil.printLine('=', 120);
 
-            // 헤더
-            System.out.printf("%s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s%n",
-                    PrintUtil.padCenter("사번", 6),
-                    PrintUtil.padCenter("이름", 8),
-                    PrintUtil.padCenter("주민번호", 14),
-                    PrintUtil.padCenter("주소", 30),
-                    PrintUtil.padCenter("입사일자", 10),
-                    PrintUtil.padCenter("부서명", 10),
-                    PrintUtil.padCenter("직급", 6),
-                    PrintUtil.padCenter("재직상태", 8),
-                    PrintUtil.padCenter("계약유형", 8),
-                    PrintUtil.padCenter("이메일", 24),
-                    PrintUtil.padCenter("비밀번호", 8),
-                    PrintUtil.padCenter("등록일", 10),
-                    PrintUtil.padCenter("퇴사일", 10),
-                    PrintUtil.padCenter("레벨", 6)
-            );
-            PrintUtil.printLine('-', 160);
+			// 120칸 안에 맞추도록 폭 조정
+			System.out.printf("%s | %s | %s | %s | %s | %s | %s | %s | %s | %s%n", PrintUtil.padCenter("사번", 6),
+					PrintUtil.padCenter("이름", 6), PrintUtil.padCenter("주민번호", 13), PrintUtil.padCenter("주소", 18),
+					PrintUtil.padCenter("입사일", 10), PrintUtil.padCenter("부서명", 10), PrintUtil.padCenter("직급", 6),
+					PrintUtil.padCenter("재직", 4), PrintUtil.padCenter("계약", 4), PrintUtil.padCenter("이메일", 16));
+			PrintUtil.printLine('-', 120);
 
-            // 데이터 행
-            for (int i = startIndex; i < endIndex; i++) {
-                EmployeeDTO d = list.get(i);
+			for (int i = startIndex; i < endIndex; i++) {
+				EmployeeDTO d = list.get(i);
 
-                System.out.printf("%s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s%n",
-                        PrintUtil.padRight(d.getEmpNo(), 6),
-                        PrintUtil.padRight(d.getEmpNm(), 8),
-                        PrintUtil.padRight(d.getRrn(), 14),
-                        PrintUtil.padRight(d.getEmpAddr(), 30),
-                        PrintUtil.padRight(d.getHireDt(), 10),
-                        PrintUtil.padRight(d.getDeptNm(), 10),
-                        PrintUtil.padRight(d.getGradeNm(), 6),
-                        PrintUtil.padRight(d.getEmpStatNm(), 8),
-                        PrintUtil.padRight(d.getContractTpNm(), 8),
-                        PrintUtil.padRight(d.getEmail(), 24),
-                        PrintUtil.padRight(d.getPwd(), 8),
-                        PrintUtil.padRight(d.getRegDt(), 10),
-                        PrintUtil.padRight(d.getRetireDt() == null ? "" : d.getRetireDt(), 10),
-                        PrintUtil.padRight(d.getLevelCode(), 6)
-                );
-            }
+				String empNo = cut(d.getEmpNo(), 6);
+				String empNm = cut(d.getEmpNm(), 6);
+				String rrn = cut(d.getRrn(), 13);
+				String addr = cut(d.getEmpAddr(), 18);
+				String hireDt = cut(d.getHireDt(), 10);
+				String deptNm = cut(d.getDeptNm(), 10);
+				String gradeNm = cut(d.getGradeNm(), 6);
+				String statNm = cut(d.getEmpStatNm(), 4);
+				String cntrNm = cut(d.getContractTpNm(), 4);
+				String email = cut(d.getEmail(), 16);
 
-            PrintUtil.printLine('=', 160);
-            System.out.print("[n: 다음, p: 이전, q: 종료] ➤ ");
-            String cmd = br.readLine();
-            if (cmd == null) cmd = "";
-            cmd = cmd.trim().toLowerCase();
+				System.out.printf("%s | %s | %s | %s | %s | %s | %s | %s | %s | %s%n", PrintUtil.padRight(empNo, 6),
+						PrintUtil.padRight(empNm, 6), PrintUtil.padRight(rrn, 13), PrintUtil.padRight(addr, 18),
+						PrintUtil.padRight(hireDt, 10), PrintUtil.padRight(deptNm, 10), PrintUtil.padRight(gradeNm, 6),
+						PrintUtil.padRight(statNm, 4), PrintUtil.padRight(cntrNm, 4), PrintUtil.padRight(email, 16));
+			}
 
-            if ("n".equals(cmd)) {
-                if (page < totalPage) {
-                    page++;
-                } else {
-                    System.out.println("마지막 페이지입니다.\n");
-                }
-            } else if ("p".equals(cmd)) {
-                if (page > 1) {
-                    page--;
-                } else {
-                    System.out.println("첫 페이지입니다.\n");
-                }
-            } else if ("q".equals(cmd)) {
-                break;
-            }
-        }
-    }
-    
+			PrintUtil.printLine('=', 120);
+			System.out.print("[n: 다음, p: 이전, q: 종료] ➤ ");
+			String cmd = br.readLine();
+			if (cmd == null)
+				cmd = "";
+			cmd = cmd.trim().toLowerCase();
+
+			if ("n".equals(cmd)) {
+				if (page < totalPage)
+					page++;
+				else
+					System.out.println("마지막 페이지입니다.\n");
+			} else if ("p".equals(cmd)) {
+				if (page > 1)
+					page--;
+				else
+					System.out.println("첫 페이지입니다.\n");
+			} else if ("q".equals(cmd)) {
+				break;
+			}
+		// 주민등록번호 공백 2개 전까지만 보이게 출력
+			
+		}
+		
+	}
+
+	// 한글/영문 폭 기준으로 문자열을 잘라주는 헬퍼
+	private String cut(String s, int maxWidth) {
+		if (s == null)
+			return "";
+		int w = 0;
+		StringBuilder sb = new StringBuilder();
+		for (char c : s.toCharArray()) {
+			int cw = PrintUtil.getDisplayWidth(String.valueOf(c));
+			if (w + cw > maxWidth)
+				break;
+			sb.append(c);
+			w += cw;
+		}
+		return sb.toString();
+	}
 
 	/** 경력이력 페이징 출력 */
 	// ==================== 공통 : 경력 이력 페이징 ====================
 	private void printCareerHistoryPaged(List<HistoryDTO> list) throws IOException {
-	    if (list == null || list.isEmpty()) {
-	        System.out.println("등록된 경력 이력이 없습니다.\n");
-	        return;
-	    }
+		if (list == null || list.isEmpty()) {
+			System.out.println("등록된 경력 이력이 없습니다.\n");
+			return;
+		}
 
-	    final int pageSize = 10;
-	    int total = list.size();
-	    int totalPage = (total + pageSize - 1) / pageSize;
-	    int page = 1;
+		final int pageSize = 10;
+		int total = list.size();
+		int totalPage = (total + pageSize - 1) / pageSize;
+		int page = 1;
 
-	    while (true) {
-	        int startIndex = (page - 1) * pageSize;
-	        int endIndex = Math.min(startIndex + pageSize, total);
+		while (true) {
+			int startIndex = (page - 1) * pageSize;
+			int endIndex = Math.min(startIndex + pageSize, total);
 
-	        System.out.printf("페이지 %d / %d   (총 %d건)   [조회범위: %d ~ %d]%n",
-	                page, totalPage, total, startIndex + 1, endIndex);
-	        PrintUtil.printLine('=', 120);
+			System.out.printf("페이지 %d / %d   (총 %d건)   [조회범위: %d ~ %d]%n", page, totalPage, total, startIndex + 1,
+					endIndex);
+			PrintUtil.printLine('=', 120);
 
-	        System.out.printf("%s | %s | %s | %s | %s | %s%n",
-	                PrintUtil.padCenter("사번", 6),
-	                PrintUtil.padCenter("이름", 8),
-	                PrintUtil.padCenter("회사명", 20),
-	                PrintUtil.padCenter("시작일", 10),
-	                PrintUtil.padCenter("종료일", 10),
-	                PrintUtil.padCenter("상세", 30)
-	        );
-	        PrintUtil.printLine('-', 120);
+			System.out.printf("%s | %s | %s | %s | %s | %s%n", PrintUtil.padCenter("사번", 6),
+					PrintUtil.padCenter("이름", 8), PrintUtil.padCenter("회사명", 20), PrintUtil.padCenter("시작일", 10),
+					PrintUtil.padCenter("종료일", 10), PrintUtil.padCenter("상세", 30));
+			PrintUtil.printLine('-', 120);
 
-	        for (int i = startIndex; i < endIndex; i++) {
-	            HistoryDTO d = list.get(i);
+			for (int i = startIndex; i < endIndex; i++) {
+				HistoryDTO d = list.get(i);
 
-	            System.out.printf("%s | %s | %s | %s | %s | %s%n",
-	                    PrintUtil.padRight(d.getEmpNo(), 6),
-	                    PrintUtil.padRight(d.getEmpNm(), 8),
-	                    PrintUtil.padRight(d.getPrevCompNm(), 20),
-	                    PrintUtil.padRight(d.getStartDt(), 10),
-	                    PrintUtil.padRight(d.getEndDt(), 10),
-	                    PrintUtil.padRight(d.getDetails(), 30)
-	            );
-	        }
-	        PrintUtil.printLine('=', 120);
-	        System.out.print("[n: 다음, p: 이전, q: 종료] ➤ ");
-	        String cmd = br.readLine();
-	        if (cmd == null) cmd = "";
-	        cmd = cmd.trim().toLowerCase();
+				System.out.printf("%s | %s | %s | %s | %s | %s%n", PrintUtil.padRight(d.getEmpNo(), 6),
+						PrintUtil.padRight(d.getEmpNm(), 8), PrintUtil.padRight(d.getPrevCompNm(), 20),
+						PrintUtil.padRight(d.getStartDt(), 10), PrintUtil.padRight(d.getEndDt(), 10),
+						PrintUtil.padRight(d.getDetails(), 30));
+			}
+			PrintUtil.printLine('=', 120);
+			System.out.print("[n: 다음, p: 이전, q: 종료] ➤ ");
+			String cmd = br.readLine();
+			if (cmd == null)
+				cmd = "";
+			cmd = cmd.trim().toLowerCase();
 
-	        if ("n".equals(cmd)) {
-	            if (page < totalPage) page++;
-	            else System.out.println("마지막 페이지입니다.\n");
-	        } else if ("p".equals(cmd)) {
-	            if (page > 1) page--;
-	            else System.out.println("첫 페이지입니다.\n");
-	        } else if ("q".equals(cmd)) {
-	            break;
-	        }
-	    }
+			if ("n".equals(cmd)) {
+				if (page < totalPage)
+					page++;
+				else
+					System.out.println("마지막 페이지입니다.\n");
+			} else if ("p".equals(cmd)) {
+				if (page > 1)
+					page--;
+				else
+					System.out.println("첫 페이지입니다.\n");
+			} else if ("q".equals(cmd)) {
+				break;
+			}
+		}
 	}
-
 
 	// ==================== 공통 : 자격증 이력 페이징 ====================
 	private void printCertHistoryPaged(List<HistoryDTO> list) throws IOException {
-	    if (list == null || list.isEmpty()) {
-	        System.out.println("등록된 자격증 이력이 없습니다.\n");
-	        return;
-	    }
+		if (list == null || list.isEmpty()) {
+			System.out.println("등록된 자격증 이력이 없습니다.\n");
+			return;
+		}
 
-	    final int pageSize = 10;
-	    int total = list.size();
-	    int totalPage = (total + pageSize - 1) / pageSize;
-	    int page = 1;
+		final int pageSize = 10;
+		int total = list.size();
+		int totalPage = (total + pageSize - 1) / pageSize;
+		int page = 1;
 
-	    while (true) {
-	        int startIndex = (page - 1) * pageSize;
-	        int endIndex = Math.min(startIndex + pageSize, total);
+		while (true) {
+			int startIndex = (page - 1) * pageSize;
+			int endIndex = Math.min(startIndex + pageSize, total);
 
-	        System.out.printf("페이지 %d / %d   (총 %d건)   [조회범위: %d ~ %d]%n",
-	                page, totalPage, total, startIndex + 1, endIndex);
-	        PrintUtil.printLine('=', 120);
+			System.out.printf("페이지 %d / %d   (총 %d건)   [조회범위: %d ~ %d]%n", page, totalPage, total, startIndex + 1,
+					endIndex);
+			PrintUtil.printLine('=', 120);
 
-	        System.out.printf("%s | %s | %s | %s | %s%n",
-	                PrintUtil.padCenter("사번", 6),
-	                PrintUtil.padCenter("이름", 8),
-	                PrintUtil.padCenter("자격증명", 20),
-	                PrintUtil.padCenter("발급기관", 20),
-	                PrintUtil.padCenter("발급일", 10)
-	        );
-	        PrintUtil.printLine('-', 120);
+			System.out.printf("%s | %s | %s | %s | %s%n", PrintUtil.padCenter("사번", 6), PrintUtil.padCenter("이름", 8),
+					PrintUtil.padCenter("자격증명", 20), PrintUtil.padCenter("발급기관", 20), PrintUtil.padCenter("발급일", 10));
+			PrintUtil.printLine('-', 120);
 
-	        for (int i = startIndex; i < endIndex; i++) {
-	            HistoryDTO d = list.get(i);
+			for (int i = startIndex; i < endIndex; i++) {
+				HistoryDTO d = list.get(i);
 
-	            System.out.printf("%s | %s | %s | %s | %s%n",
-	                    PrintUtil.padRight(d.getEmpNo(), 6),
-	                    PrintUtil.padRight(d.getEmpNm(), 8),
-	                    PrintUtil.padRight(d.getCertNm(), 20),
-	                    PrintUtil.padRight(d.getIssueOrgNm(), 20),
-	                    PrintUtil.padRight(d.getIssueDt(), 10)
-	            );
-	        }
-	        PrintUtil.printLine('=', 120);
-	        System.out.print("[n: 다음, p: 이전, q: 종료] ➤ ");
-	        String cmd = br.readLine();
-	        if (cmd == null) cmd = "";
-	        cmd = cmd.trim().toLowerCase();
+				System.out.printf("%s | %s | %s | %s | %s%n", PrintUtil.padRight(d.getEmpNo(), 6),
+						PrintUtil.padRight(d.getEmpNm(), 8), PrintUtil.padRight(d.getCertNm(), 20),
+						PrintUtil.padRight(d.getIssueOrgNm(), 20), PrintUtil.padRight(d.getIssueDt(), 10));
+			}
+			PrintUtil.printLine('=', 120);
+			System.out.print("[n: 다음, p: 이전, q: 종료] ➤ ");
+			String cmd = br.readLine();
+			if (cmd == null)
+				cmd = "";
+			cmd = cmd.trim().toLowerCase();
 
-	        if ("n".equals(cmd)) {
-	            if (page < totalPage) page++;
-	            else System.out.println("마지막 페이지입니다.\n");
-	        } else if ("p".equals(cmd)) {
-	            if (page > 1) page--;
-	            else System.out.println("첫 페이지입니다.\n");
-	        } else if ("q".equals(cmd)) {
-	            break;
-	        }
-	    }
+			if ("n".equals(cmd)) {
+				if (page < totalPage)
+					page++;
+				else
+					System.out.println("마지막 페이지입니다.\n");
+			} else if ("p".equals(cmd)) {
+				if (page > 1)
+					page--;
+				else
+					System.out.println("첫 페이지입니다.\n");
+			} else if ("q".equals(cmd)) {
+				break;
+			}
+		}
 	}
 
 	// ==================== 공통 : 직급 이력 페이징 ====================
 	private void printGradeHistoryPaged(List<HistoryDTO> list) throws IOException {
-	    if (list == null || list.isEmpty()) {
-	        System.out.println("등록된 직급 이력이 없습니다.\n");
-	        return;
-	    }
+		if (list == null || list.isEmpty()) {
+			System.out.println("등록된 직급 이력이 없습니다.\n");
+			return;
+		}
 
-	    final int pageSize = 10;
-	    int total = list.size();
-	    int totalPage = (total + pageSize - 1) / pageSize;
-	    int page = 1;
+		final int pageSize = 10;
+		int total = list.size();
+		int totalPage = (total + pageSize - 1) / pageSize;
+		int page = 1;
 
-	    while (true) {
-	        int startIndex = (page - 1) * pageSize;
-	        int endIndex = Math.min(startIndex + pageSize, total);
+		while (true) {
+			int startIndex = (page - 1) * pageSize;
+			int endIndex = Math.min(startIndex + pageSize, total);
 
-	        System.out.printf("페이지 %d / %d   (총 %d건)   [조회범위: %d ~ %d]%n",
-	                page, totalPage, total, startIndex + 1, endIndex);
-	        PrintUtil.printLine('=', 120);
+			System.out.printf("페이지 %d / %d   (총 %d건)   [조회범위: %d ~ %d]%n", page, totalPage, total, startIndex + 1,
+					endIndex);
+			PrintUtil.printLine('=', 120);
 
-	        System.out.printf("%s | %s | %s | %s | %s | %s%n",
-	                PrintUtil.padCenter("시작일", 10),
-	                PrintUtil.padCenter("사번", 6),
-	                PrintUtil.padCenter("이름", 8),
-	                PrintUtil.padCenter("직급", 6),
-	                PrintUtil.padCenter("종료일", 10),
-	                PrintUtil.padCenter("부서", 12)
-	        );
-	        PrintUtil.printLine('-', 120);
+			System.out.printf("%s | %s | %s | %s | %s | %s%n", PrintUtil.padCenter("시작일", 10),
+					PrintUtil.padCenter("사번", 6), PrintUtil.padCenter("이름", 8), PrintUtil.padCenter("직급", 6),
+					PrintUtil.padCenter("종료일", 10), PrintUtil.padCenter("부서", 12));
+			PrintUtil.printLine('-', 120);
 
-	        for (int i = startIndex; i < endIndex; i++) {
-	            HistoryDTO d = list.get(i);
+			for (int i = startIndex; i < endIndex; i++) {
+				HistoryDTO d = list.get(i);
 
-	            System.out.printf("%s | %s | %s | %s | %s | %s%n",
-	                    PrintUtil.padRight(d.getStartDt(), 10),
-	                    PrintUtil.padRight(d.getEmpNo(), 6),
-	                    PrintUtil.padRight(d.getEmpNm(), 8),
-	                    PrintUtil.padRight(d.getGradeNm(), 6),
-	                    PrintUtil.padRight(d.getEndDt(), 10),
-	                    PrintUtil.padRight(d.getDeptNm(), 12)
-	            );
-	        }
-	        PrintUtil.printLine('=', 120);
-	        System.out.print("[n: 다음, p: 이전, q: 종료] ➤ ");
-	        String cmd = br.readLine();
-	        if (cmd == null) cmd = "";
-	        cmd = cmd.trim().toLowerCase();
+				System.out.printf("%s | %s | %s | %s | %s | %s%n", PrintUtil.padRight(d.getStartDt(), 10),
+						PrintUtil.padRight(d.getEmpNo(), 6), PrintUtil.padRight(d.getEmpNm(), 8),
+						PrintUtil.padRight(d.getGradeNm(), 6), PrintUtil.padRight(d.getEndDt(), 10),
+						PrintUtil.padRight(d.getDeptNm(), 12));
+			}
+			PrintUtil.printLine('=', 120);
+			System.out.print("[n: 다음, p: 이전, q: 종료] ➤ ");
+			String cmd = br.readLine();
+			if (cmd == null)
+				cmd = "";
+			cmd = cmd.trim().toLowerCase();
 
-	        if ("n".equals(cmd)) {
-	            if (page < totalPage) page++;
-	            else System.out.println("마지막 페이지입니다.\n");
-	        } else if ("p".equals(cmd)) {
-	            if (page > 1) page--;
-	            else System.out.println("첫 페이지입니다.\n");
-	        } else if ("q".equals(cmd)) {
-	            break;
-	        }
-	    }
+			if ("n".equals(cmd)) {
+				if (page < totalPage)
+					page++;
+				else
+					System.out.println("마지막 페이지입니다.\n");
+			} else if ("p".equals(cmd)) {
+				if (page > 1)
+					page--;
+				else
+					System.out.println("첫 페이지입니다.\n");
+			} else if ("q".equals(cmd)) {
+				break;
+			}
+
+		}
 	}
+
+//	private String getFirstTwoWords(String addr) {
+//		if (addr == null)
+//			return "";
+//		String[] parts = addr.trim().split("\\s+");
+//
+//		if (parts.length >= 2) {
+//			return parts[0] + " " + parts[1];
+//		} else {
+//			return addr;
+//		}
+//
+//	}
 
 }
