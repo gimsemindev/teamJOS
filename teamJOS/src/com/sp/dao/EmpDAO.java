@@ -8,6 +8,7 @@ import com.sp.model.DeptMoveDTO;
 import com.sp.model.EmployeeDTO;
 import com.sp.model.HistoryDTO;
 import com.sp.model.PromotionDTO;
+import com.sp.model.RetireDTO;
 import com.sp.model.RewardDTO;
 
 /**
@@ -45,7 +46,7 @@ public interface EmpDAO {
     int updatePromotion(PromotionDTO promotion) throws SQLException;
 
     /** EMP_UPD_008 : 퇴직신청결재 */
-    int updateRetireApproval(String empNo, String status) throws SQLException;
+    int updateRetireApproval(int retireSeq) throws SQLException;
 
     /** EMP_INS_009 : 경력등록 */
     int insertCareer(CareerDTO career) throws SQLException;
@@ -104,6 +105,10 @@ public interface EmpDAO {
 	/** csv 파일 로드 */
 	void loadEmployeeInfo();
 	
-
+	/** 퇴직 신청 리스트 */
+	List <RetireDTO> listRetire();
+	
+	/** 퇴직 신청 */
+	int insertRetire(RetireDTO dto) throws SQLException;
 }
 

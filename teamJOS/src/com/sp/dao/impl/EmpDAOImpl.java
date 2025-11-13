@@ -2,6 +2,7 @@ package com.sp.dao.impl;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,6 +16,7 @@ import com.sp.model.DeptMoveDTO;
 import com.sp.model.EmployeeDTO;
 import com.sp.model.HistoryDTO;
 import com.sp.model.PromotionDTO;
+import com.sp.model.RetireDTO;
 import com.sp.model.RewardDTO;
 import com.sp.util.DBConn;
 import com.sp.util.DBUtil;
@@ -171,34 +173,27 @@ public class EmpDAOImpl implements EmpDAO{
 	
 	// 퇴직 신청 결재 메소드
 	@Override
-	public int updateRetireApproval(String empNo, String status) throws SQLException{
-		PreparedStatement pstmt = null;
-//		String sqlselect;
-		String sqlupdate;
+	public int updateRetireApproval(int retireSeq) throws SQLException{
+		int result = 0;
+		CallableStatement cstmt = null;
+		String sql;
 		
 		try {
-//			sqlselect = " SELECT * FROM 퇴직신청테이블 WHERE 조건 ";
+			sql = """
+					CALL SP_APPROVE_RETIRE_SUSI(?)
+					""";
 			
-//			pstmt = conn.prepareStatement(sqlselect);
+			cstmt = conn.prepareCall(sql);
+			cstmt.setInt(1, retireSeq);
 			
-//			pstmt.executeQuery();
-			
-			sqlupdate = " UPDATE TB_EMP SET EMP_STAT_CD = ? WHERE EMP_NO = ?";
-			
-			pstmt = conn.prepareStatement(sqlupdate);
-			pstmt.setString(1, status);
-			pstmt.setString(2, empNo);
-			
-			pstmt.executeUpdate();
-			
+			result = 1;
 		} catch (SQLException e) {
 			throw e;
 		} finally {
-			DBUtil.close(pstmt);
+			DBUtil.close(cstmt);
 		}
-		return 0;
+		return result;
 	}
-
 	// 경력 추가 메소드
 	@Override
 	public int insertCareer(CareerDTO career) throws SQLException{
@@ -858,6 +853,18 @@ public class EmpDAOImpl implements EmpDAO{
 	                try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
 	                try { if (conn != null) conn.close(); } catch (Exception e) {}
 	            }	
+	}
+
+	@Override
+	public List<RetireDTO> listRetire() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int insertRetire(RetireDTO dto) throws SQLException {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
