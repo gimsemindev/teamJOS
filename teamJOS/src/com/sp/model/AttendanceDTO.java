@@ -8,19 +8,21 @@ public class AttendanceDTO {
     private String checkOut;        // CHECK_OUT TIMESTAMP
     private String workHours;       // WORK_HOURS NUMBER(5,2)
     private String atdStatusCd;     // ATD_STATUS_CD CHAR(2)
+    private String regDt;
 
     
     public AttendanceDTO() {
     }
 
     // 모든 필드를 초기화하는 생성자
-    public AttendanceDTO(String atdNo, String empNo, String checkIn, String checkOut, String workHours, String atdStatusCd) {
+    public AttendanceDTO(String atdNo, String empNo, String checkIn, String checkOut, String workHours, String atdStatusCd, String regDt) {
         this.atdNo = atdNo;
         this.empNo = empNo;
         this.checkIn = checkIn;
         this.checkOut = checkOut;
         this.workHours = workHours;
         this.atdStatusCd = atdStatusCd;
+        this.regDt = regDt;
     }
 
     // Getter / Setter
@@ -72,7 +74,14 @@ public class AttendanceDTO {
         this.atdStatusCd = atdStatusCd;
     }
 
-    
+	public String getRegDt() {
+		return regDt;
+	}
+
+	public void setRegDt(String regDt) {
+		this.regDt = regDt;
+	}
+
     
 }
 

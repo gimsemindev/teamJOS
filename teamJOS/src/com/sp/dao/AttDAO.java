@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.sp.model.AnnualLeaveDTO;
 import com.sp.model.AttendanceDTO;
+import com.sp.model.HistoryDTO;
 import com.sp.model.VacationDTO;
 
 /**
@@ -27,10 +28,10 @@ import com.sp.model.VacationDTO;
 public interface AttDAO {
 
     /** ATT_INS_001 */
-    int insertAttendanceIn(AttendanceDTO att) throws SQLException;
+    String insertAttendanceIn(AttendanceDTO att) throws SQLException;
 
     /** ATT_INS_002 */
-    int insertAttendanceOut(AttendanceDTO att) throws SQLException;
+    String insertAttendanceOut(AttendanceDTO att) throws SQLException;
 
     /** ATT_INS_008 */
     int insertVacation(VacationDTO vacation) throws SQLException;
@@ -42,8 +43,10 @@ public interface AttDAO {
     int updateVacation(VacationDTO vacation) throws SQLException;
 
     /** ATT_UPD_010 */
-    int updateAttendance(AttendanceDTO att) throws SQLException;
+    String updateAttendance(AttendanceDTO att) throws SQLException;
     
+    /** ATT_SLT_001 */ // 근태정보조회 테이블
+    List<AttendanceDTO> selectAttendance(String date) throws SQLException;
     
     List<VacationDTO> listVaction();
 
