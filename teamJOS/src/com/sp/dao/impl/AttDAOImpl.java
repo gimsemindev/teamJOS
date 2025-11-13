@@ -16,6 +16,8 @@ import com.sp.util.DBConn;
 import com.sp.util.DBUtil;
 import com.sp.util.LoginInfo;
 
+import oracle.jdbc.OracleTypes;
+
 public class AttDAOImpl implements AttDAO{
 	private Connection conn = DBConn.getConnection();
 	private LoginInfo loginInfo;
@@ -29,17 +31,57 @@ public class AttDAOImpl implements AttDAO{
 	}
 	
 	
-	@Override
-	public int insertAttendanceIn(AttendanceDTO att) throws SQLException{
-		// TODO Auto-generated method stub
-		return 0;
-	}
+	// 출근 시간 입력 메소드
+		@Override
+		public String insertAttendanceIn(AttendanceDTO att) throws SQLException{
+			CallableStatement cstmt = null;
+			String msg = null;
+			String sql;
+			
+			try {
+				sql = "CALL SP_INSERT_CHECKIN(?, ?) ";
+				
+				cstmt= conn.prepareCall(sql);
+				cstmt.setString(1, att.getEmpNo());
+				cstmt.registerOutParameter(2, OracleTypes.VARCHAR);
+				cstmt.execute();
+				
+				msg = cstmt.getString(2);
+				
+			} catch (Exception e) {
+				throw e;
+			} finally {
+				DBUtil.close(cstmt);
+			}
+			return msg;
+		}
 
-	@Override
-	public int insertAttendanceOut(AttendanceDTO att) throws SQLException{
-		// TODO Auto-generated method stub
-		return 0;
-	}
+
+		// 퇴근 시간 입력 메소드
+		@Override
+		public String insertAttendanceOut(AttendanceDTO att) throws SQLException{
+			CallableStatement cstmt = null;
+		    String msg = null;
+		    String sql;
+		    
+		    try {
+		        sql = "CALL SP_INSERT_CHECKOUT(?, ?)";
+		        cstmt = conn.prepareCall(sql);
+		        cstmt.setString(1, att.getEmpNo());
+		        cstmt.registerOutParameter(2, OracleTypes.VARCHAR);
+		        cstmt.execute();
+
+		        msg = cstmt.getString(2);
+
+		    } catch (Exception e) {
+		        throw e;
+		    } finally {
+		        DBUtil.close(cstmt);
+		    }
+			
+			return msg;
+		}
+
 
 	@Override
 	public int insertVacation(VacationDTO vacation) throws SQLException{
@@ -68,8 +110,6 @@ public class AttDAOImpl implements AttDAO{
 		
 		return result;
 	}
-	
-	
 	
 	@Override
 	public int updateVacationApprove(int vacationSeq) throws SQLException{
@@ -104,24 +144,72 @@ public class AttDAOImpl implements AttDAO{
 		return 0;
 	}
 
-	@Override
-	public int updateAttendance(AttendanceDTO att) throws SQLException{
-		int result = 0;
-		PreparedStatement pstmt = null;
-		String sql;
-		
-		try {
-			sql = "UPDATE TB_ATD SET " + att.getAtdNo() + " = ? WHERE EMP_NO = ? ";
-			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, att.getAtdStatusCd());
-			pstmt.setString(2, att.getEmpNo());
-			result = pstmt.executeUpdate();
+	// 근태 수정 메소드
+		@Override
+		public String updateAttendance(AttendanceDTO att) throws SQLException{
+			CallableStatement cstmt = null;
+			String sql;
+			String msg = null;
 			
-		} catch (Exception e) {
-			e.printStackTrace();
+			try {
+				sql = "CALL SP_UPDATE_ATD_COLUMN(?, ?, ?, ?)";
+				cstmt = conn.prepareCall(sql);
+				cstmt.setString(1, att.getEmpNo());
+				cstmt.setString(2, att.getAtdNo());
+				cstmt.setString(3, att.getAtdStatusCd());
+				cstmt.registerOutParameter(4, OracleTypes.VARCHAR);
+				cstmt.execute();
+				
+				msg = cstmt.getString(4);
+			} catch (Exception e) {
+				throw e;
+			} finally {
+				DBUtil.close(cstmt);
+			}
+			return msg;
 		}
-		return result;
-	}
+		
+		// 근태정보조회 메소드
+		@Override
+		public List<AttendanceDTO> selectAttendance(String date) throws SQLException {
+			List<AttendanceDTO> list = new ArrayList<>();
+			AttendanceDTO att = null;
+			CallableStatement cstmt = null;
+			ResultSet rs = null;
+			String sql;
+			try {
+				sql = "CALL SP_SELECT_ATD_BY_DATE(?, ?) ";
+				
+				cstmt = conn.prepareCall(sql);
+				
+				cstmt.setString(1, date);
+				cstmt.registerOutParameter(2, OracleTypes.CURSOR);
+				cstmt.execute();
+				
+				rs = (ResultSet) cstmt.getObject(2);
+				
+				while (rs.next()) {
+					
+					att = new AttendanceDTO();
+					att.setEmpNo(rs.getString("EMP_NO"));
+					att.setAtdNo(rs.getString("EMP_NM"));
+					att.setCheckIn(rs.getString("CHECK_IN"));
+					att.setCheckOut(rs.getString("CHECK_OUT"));
+					att.setWorkHours(rs.getString("WORK_HOURS"));
+					att.setAtdStatusCd(rs.getString("STATUS_NM"));
+					att.setRegDt(rs.getString("REG_DT"));
+
+					list.add(att);
+				}
+			} catch (SQLException e) {
+				throw e;
+			} finally {
+				DBUtil.close(rs);
+				DBUtil.close(cstmt);
+			}
+			return list;
+		}
+
 
 	@Override
 	public List<AttendanceDTO> selectAllWorkTime() {
