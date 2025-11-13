@@ -20,10 +20,20 @@ import com.sp.model.RetireDTO;
 import com.sp.model.RewardDTO;
 import com.sp.util.DBConn;
 import com.sp.util.DBUtil;
+import com.sp.util.LoginInfo;
 
 public class EmpDAOImpl implements EmpDAO{
 	private Connection conn = DBConn.getConnection();
-
+	private LoginInfo loginInfo;
+	
+	public EmpDAOImpl() {
+		
+	}
+	
+	public EmpDAOImpl(LoginInfo loginInfo) {
+		this.loginInfo = loginInfo;
+	}
+	
 	// 사원 등록 메소드
 	@Override
 	public int insertEmployee(EmployeeDTO emp) throws SQLException{
@@ -857,14 +867,72 @@ public class EmpDAOImpl implements EmpDAO{
 
 	@Override
 	public List<RetireDTO> listRetire() {
-		// TODO Auto-generated method stub
-		return null;
+		List<RetireDTO> list = new ArrayList<RetireDTO>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;
+		
+		try {
+			sql = """
+					SELECT RETIRE_SEQ, EMP_NO, REG_DT, APPROVER_YN, RETIRE_MEMO 
+				      FROM TB_EMP_RETIRE
+					 WHERE APPROVER_YN = 'N'
+			      ORDER BY RETIRE_SEQ ASC
+					""";
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				RetireDTO dto = new RetireDTO();
+				
+				dto.setRetireSeq(rs.getInt("RETIRE_SEQ"));
+				dto.setEmpNo(rs.getString("EMP_NO"));
+				dto.setRegDt(rs.getString("APPROVER_YN"));
+				dto.setRetireMemo(rs.getString("RETIRE_MEMO"));
+				
+				list.add(dto);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(pstmt);
+			DBUtil.close(rs);
+		}
+		
+		
+		return list;
 	}
 
 	@Override
 	public int insertRetire(RetireDTO dto) throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
+		int result = 0;
+		PreparedStatement pstmt = null;
+		String sql;
+		
+		try {
+			sql = """
+					INSERT INTO TB_EMP_RETIRE(RETIRE_SEQ, EMP_NO, REG_DT, APPROVER_YN, RETIRE_MEMO) 
+						VALUES (RETIRE_SEQ_SQ.NEXTVAL, ?, TO_TIMESTAMP(?, 'YYYY-MM-DD HH24:MI:SS'), 'N', ?)
+					""";
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, loginInfo.loginMember().getMemberId());
+			pstmt.setString(2, dto.getRegDt());
+			pstmt.setString(3, dto.getRetireMemo());
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			throw e;
+		} finally {
+			DBUtil.close(pstmt);
+		}
+		
+		return result;
 	}
 
 }

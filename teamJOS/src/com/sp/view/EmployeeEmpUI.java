@@ -7,12 +7,15 @@ import java.sql.SQLException;
 import java.util.List;
 
 import com.sp.dao.EmpDAO;
+import com.sp.dao.impl.EmpDAOImpl;
 import com.sp.model.EmployeeDTO;
 import com.sp.model.HistoryDTO;
 import com.sp.model.LoginDTO;
+import com.sp.model.RetireDTO;
 import com.sp.util.InputValidator;
 import com.sp.util.LoginInfo;
 import com.sp.util.PrintUtil;
+
 
 public class EmployeeEmpUI {
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -22,23 +25,22 @@ public class EmployeeEmpUI {
 	private LoginInfo loginInfo;
 
 	public EmployeeEmpUI(EmpDAO empDao, LoginInfo loginInfo) {
-		this.empDao = empDao;
 		this.loginInfo = loginInfo;
-//		this.loginDTO = loginInfo.getLoginDTO();
+		this.empDao = new EmpDAOImpl(this.loginInfo);
 	}
 
 	/** 메인 메뉴 */
 	public void menu() {
 		int ch;
 		System.out.println("\n[사원관리]");
-		System.out.println("==========================================================================");
+		System.out.println("======================================================================================");
 		System.out.println("                         [ 사원 - 내 정보 관리 메뉴 ]");
 		try {
 			do {
 				System.out.println("""
-						==========================================================================
-						  1. 내정보조회     2. 내정보수정     3. 직급이동이력조회     4. 이력조회     5. 상위메뉴
-						==========================================================================""");
+						======================================================================================
+						  1. 내정보조회     2. 내정보수정     3. 직급이동이력조회     4. 이력조회     5.퇴직신청     6. 상위메뉴
+						======================================================================================""");
 
 				System.out.print("선택 ➤ ");
 				ch = Integer.parseInt(br.readLine());
@@ -49,7 +51,8 @@ public class EmployeeEmpUI {
 				case 2 -> updateMyInfo();
 				case 3 -> selectMyGradeHistory();
 				case 4 -> selectMyAllHistory();
-				case 5 -> {
+				case 5 -> insertRetire();
+				case 6 -> {
 					System.out.println("상위 메뉴로 돌아갑니다.");
 					return;
 				}
@@ -243,4 +246,28 @@ public class EmployeeEmpUI {
 			e.printStackTrace();
 		}
 	}
+	
+	private void insertRetire() {
+		System.out.println("\n[퇴직신청]");
+		RetireDTO dto = new RetireDTO();
+		
+		try {
+			System.out.print("퇴직일자 ? ");
+			dto.setRegDt(br.readLine());
+			
+			System.out.print("퇴직사유 ? ");
+			dto.setRetireMemo(br.readLine());
+			
+			empDao.insertRetire(dto);
+			
+			System.out.println("퇴직 신청 완료!");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
 }

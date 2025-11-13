@@ -13,6 +13,7 @@ import com.sp.model.DeptMoveDTO;
 import com.sp.model.EmployeeDTO;
 import com.sp.model.HistoryDTO;
 import com.sp.model.PromotionDTO;
+import com.sp.model.RetireDTO;
 import com.sp.model.RewardDTO;
 import com.sp.util.InputValidator;
 import com.sp.util.LoginInfo;
@@ -493,9 +494,73 @@ public class AdminEmpUI {
 
     /** 6. 사원관리 - 재직결재 (현재는 화면만 제공) */
     protected void updateRetireApprovalInfo() {
-        PrintUtil.printTitle("관리자 - 사원관리 - 재직결재");
-        System.out.println("※ 재직/퇴직 결재 기능은 아직 구현되지 않았습니다.");
-        System.out.println("  (퇴직 신청/승인 프로시저와 연동 후 구현 예정)\n");
+        PrintUtil.printTitle("관리자 - 사원관리 - 퇴직결재");
+        
+        final String RESET  = "\u001B[0m";
+		final String GREEN  = "\u001B[32m";
+		final String YELLOW = "\u001B[33m";
+		final String CYAN   = "\u001B[36m";
+		final String GRAY   = "\u001B[90m";
+
+		System.out.println(CYAN + "\n╔════════════════════════════════════════╗" + RESET);
+		System.out.println(CYAN + "║       🗓️  관리자 - 퇴직 승인 관리            ║" + RESET);
+		System.out.println(CYAN + "╚════════════════════════════════════════╝" + RESET);
+        
+        String input;
+		int retireSeq;
+		
+		try {
+			List<RetireDTO> list = empDao.listRetire();
+			
+			PrintUtil.printLine('─', 64);
+			System.out.println(YELLOW + " 미승인 퇴직 신청 (총 " + list.size() + "건)" + RESET);
+			PrintUtil.printLine('─', 64);
+            // 헤더 출력
+            System.out.printf("%s\t | %s\t | %s\t | %s\t | %s\t\n",
+            		PrintUtil.padCenter("번호", 8),
+            		PrintUtil.padCenter("사번", 8),
+            		PrintUtil.padCenter("퇴직일", 12),
+            		PrintUtil.padCenter("신청사유", 8),
+            		PrintUtil.padCenter("승인상태", 8)
+            		
+            		);
+            
+			PrintUtil.printLine('-', 64);
+
+
+			if (list.isEmpty()) {
+				System.out.println(CYAN + "👉 현재 미승인된 퇴직 신청이 없습니다." + RESET);
+				PrintUtil.printLine('-', 64);
+				return;
+			}
+			
+			for(RetireDTO dto : list) {
+				System.out.printf("%s\t | %s\t | %s\t | %s\t | %s\t\n",
+						PrintUtil.padCenter(Integer.toString(dto.getRetireSeq()), 8),
+	            		PrintUtil.padCenter(dto.getEmpNo(), 8),
+	            		PrintUtil.padCenter(dto.getRegDt(),  12),
+	            		PrintUtil.padCenter(dto.getRetireMemo() != null && dto.getRetireMemo().length() > 18 ? dto.getRetireMemo().substring(0, 15) + "..." : dto.getRetireMemo(), 8),
+	            		PrintUtil.padCenter(dto.getApproverYn(), 8));
+			}
+			PrintUtil.printLine('-', 64);
+			
+			System.out.print(GREEN + "👉 승인하실 퇴직 신청 번호를 입력하세요 (취소: Enter) : " + RESET);
+			input = br.readLine();
+            
+            if (input == null || input.trim().isEmpty()) {
+                System.out.println(GRAY + "취소되었습니다." + RESET);
+                return;
+            }
+
+			retireSeq = Integer.parseInt(input.trim());
+			
+			empDao.updateRetireApproval(retireSeq); 
+			
+			System.out.println(GREEN + "\n✅ 퇴직 신청 번호 " + retireSeq + " 승인 완료." + RESET);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
     }
 
     /** 7. 사원관리 - 경력등록 */
