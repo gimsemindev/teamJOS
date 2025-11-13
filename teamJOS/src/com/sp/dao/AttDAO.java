@@ -45,12 +45,15 @@ public interface AttDAO {
     /** ATT_UPD_010 */
     String updateAttendance(AttendanceDTO att) throws SQLException;
     
-    /** ATT_SLT_001 */ // 근태정보조회 테이블
-    List<AttendanceDTO> selectAttendance(String date) throws SQLException;
+    /** ATT_SLT_001 */ // 전체 근태정보조회 테이블(관리자)
+    List<AttendanceDTO> selectAttendanceAll(String date) throws SQLException;
+    
+    /** ATT_SLT_002 */ // 근태정보조회 테이블(일반 사용자)
+    AttendanceDTO selectAttendance(AttendanceDTO att) throws SQLException;
     
     List<VacationDTO> listVaction();
 
-    /** ATT_SEL_004 */
+    /** ATT_SEL_004 */ //
     List<AttendanceDTO> selectAllWorkTime();
 
     /** ATT_SEL_005 */

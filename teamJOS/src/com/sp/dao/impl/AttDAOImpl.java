@@ -169,16 +169,16 @@ public class AttDAOImpl implements AttDAO{
 			return msg;
 		}
 		
-		// 근태정보조회 메소드
+		// 근태정보조회 메소드(관리자)
 		@Override
-		public List<AttendanceDTO> selectAttendance(String date) throws SQLException {
+		public List<AttendanceDTO> selectAttendanceAll(String date) throws SQLException {
 			List<AttendanceDTO> list = new ArrayList<>();
 			AttendanceDTO att = null;
 			CallableStatement cstmt = null;
 			ResultSet rs = null;
 			String sql;
 			try {
-				sql = "CALL SP_SELECT_ATD_BY_DATE(?, ?) ";
+				sql = "CALL SP_SELECT_ATD_BY_DATE_ALL(?, ?) ";
 				
 				cstmt = conn.prepareCall(sql);
 				
@@ -210,6 +210,38 @@ public class AttDAOImpl implements AttDAO{
 			return list;
 		}
 
+	// 근태정보조회 메소드(일반사용자)
+	@Override
+	public AttendanceDTO selectAttendance(AttendanceDTO att) throws SQLException {
+		CallableStatement cstmt = null;
+		List<AttendanceDTO> list = new ArrayList<>();
+		ResultSet rs = null;
+		String sql;
+		
+		try {
+			sql = "CALL SP_SELECT_ATD_BY_DATE_ALL(?, ?, ?) ";
+			cstmt = conn.prepareCall(sql);
+			cstmt.setString(1, att.getEmpNo());
+			cstmt.setString(2, att.getRegDt());
+			cstmt.registerOutParameter(3, OracleTypes.CURSOR);
+			cstmt.execute();
+			
+			rs = (ResultSet) cstmt.getObject(3);
+			
+			if (rs.next()) {
+				att = new AttendanceDTO();
+				att.setEmpNo(rs.getString("EMP_NO"));
+				att.setAtdNo(rs.getString("EMP_NM"));
+				att.setCheckIn(rs.getString("CHECK_IN"));
+				att.setCheckOut(rs.getString("CHECK_OUT"));
+				att.setWorkHours(rs.getString("WORK_HOURS"));
+				att.setAtdStatusCd(rs.getString("STATUS_NM"));
+				att.setRegDt(rs.getString("REG_DT"));
+			}
+		} catch (Exception e) {
+		}
+		return att;
+	}
 
 	@Override
 	public List<AttendanceDTO> selectAllWorkTime() {
@@ -391,5 +423,7 @@ public class AttDAOImpl implements AttDAO{
 		
 		return list;
 	}
+
+	
 
 }

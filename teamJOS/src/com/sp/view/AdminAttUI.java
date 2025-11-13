@@ -41,7 +41,7 @@ public class AdminAttUI {
         	try {
         		
         		do {
-        			System.out.print("1.출근시간입력 2.퇴근시간입력 3.근태정보수정 4.근태조회 5.휴가승인 6.근무시간조회 7.연차조회 8.메뉴로돌아가기 => ");
+        			System.out.print("1.출근시간입력 2.퇴근시간입력 3.근태정보수정 4.근태조회 5.휴가승인 6.연차조회 7.메뉴로돌아가기 => ");
         			
         			input = br.readLine();
                     
@@ -51,9 +51,9 @@ public class AdminAttUI {
                     }
                     ch = Integer.parseInt(input);
         			
-        		} while(ch < 1 || ch > 8);
+        		} while(ch < 1 || ch > 7);
         		
-        		if(ch==8) return; // 5.메뉴화면으로
+        		if(ch==7) return; // 5.메뉴화면으로
         		
         		switch(ch) {
         		case 1: insertCheckInInfo(); break; // 1. 출근시간 입력
@@ -61,8 +61,8 @@ public class AdminAttUI {
         		case 3: updateAttendanceInfo(); break; // 3.근태정보수정 // ATT_UPD_010
         		case 4: selectAttendanceInfo(); break; // 4. 근태정보조회
         		case 5: updateVacationApproveInfo(); break; // 5.휴가승인 // ATT_UPD_003
-        		case 6: manageWorkTimeSearch(); break; // 6.근무시간조회 (하위 메뉴로 위임)
-        		case 7: deptCommonUI.selectAllAnnualLeave(); break; // 7.연차조회 (전체조회) // ATT_SEL_006
+//        		case 6: manageWorkTimeSearch(); break; // 6.근무시간조회 (하위 메뉴로 위임)
+        		case 6: deptCommonUI.selectAllAnnualLeave(); break; // 7.연차조회 (전체조회) // ATT_SEL_006
         		
         		}
         		
@@ -180,7 +180,7 @@ public class AdminAttUI {
 			System.out.println("조회할 날짜 ? ex.2025-10-10 ");
 			String date = (br.readLine());
 			
-			List<AttendanceDTO> list = attDao.selectAttendance(date);
+			List<AttendanceDTO> list = attDao.selectAttendanceAll(date);
 			
 			/*
 			for(AttendanceDTO dto : list) {
@@ -309,7 +309,7 @@ public class AdminAttUI {
 			System.out.println(RED + "❌ 알 수 없는 오류가 발생했습니다: " + e.getMessage() + RESET);
 		}
 	}
-
+/*
 	// WBS의 4레벨 메뉴(3.근무시간조회) 처리를 위한 별도 메서드
     private void manageWorkTimeSearch() {
         int ch;
@@ -329,6 +329,7 @@ public class AdminAttUI {
             e.printStackTrace();
         }
     }
+*/
     
     protected String checkEmpNo(boolean mustExist) throws IOException, SQLException {
 		String empNo;
