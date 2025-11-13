@@ -4,6 +4,7 @@ public class BoardDTO {
     
     private int boardNo;         // BOARD_ NUMBER(10)
     private String empNo;           // EMP_NO CHAR(5)
+    private String empNm;           // EMP_NM VARCHAR2(50
     private String title;           // TITLE VARCHAR2(200)
     private String content;         // CONTENT VARCHAR2(600)
     private String regDtm;          // REG_DTM TIMESTAMP
@@ -14,9 +15,10 @@ public class BoardDTO {
     }
 
     // 모든 필드를 초기화하는 생성자
-    public BoardDTO(int boardNo, String empNo, String title, String content, String regDtm, String updateDtm) {
+    public BoardDTO(int boardNo, String empNo, String empNm, String title, String content, String regDtm, String updateDtm) {
         this.boardNo = boardNo;
         this.empNo = empNo;
+        this.setEmpNm(empNm);
         this.title = title;
         this.content = content;
         this.regDtm = regDtm;
@@ -71,6 +73,14 @@ public class BoardDTO {
     public void setUpdateDtm(String updateDtm) {
         this.updateDtm = updateDtm;
     }
+
+	public String getEmpNm() {
+		return empNm;
+	}
+
+	public void setEmpNm(String empNm) {
+		this.empNm = empNm;
+	}
 
     
 }

@@ -178,8 +178,17 @@ public class BoardDAOImpl implements BoardDAO{
 		String sql;
 		
 		try {
-			sql = "SELECT BOARD_SEQ, EMP_NO, TITLE, CONTENT, REG_DTM, UPDATE_DTM "
-			    + " FROM tb_board WHERE BOARD_SEQ = ?";
+			sql = """
+				  SELECT B.BOARD_SEQ
+				       , E.EMP_NM || '[' || B.EMP_NO || ']' AS EMP_NO
+				       , B.TITLE
+				       , B.CONTENT
+				       , B.REG_DTM
+				       , B.UPDATE_DTM 
+			        FROM TB_BOARD B
+                    LEFT JOIN TB_EMP E
+                      ON B.EMP_NO = E.EMP_NO
+			       WHERE B.BOARD_SEQ = ? """;
 			
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setInt(1, boardSeq);
@@ -221,8 +230,14 @@ public class BoardDAOImpl implements BoardDAO{
 			          FROM (
 			                SELECT ROWNUM rn, A.*
 			                  FROM (
-			                        SELECT BOARD_SEQ, EMP_NO, TITLE, REG_DTM, UPDATE_DTM
-			                          FROM tb_board
+			                        SELECT B.BOARD_SEQ
+                                         , E.EMP_NM || '[' || B.EMP_NO || ']' AS EMP_NO
+                                         , B.TITLE
+                                         , B.REG_DTM
+                                         , B.UPDATE_DTM
+			                          FROM TB_BOARD B
+                                      LEFT JOIN TB_EMP E
+                                        ON B.EMP_NO = E.EMP_NO
 			                         ORDER BY BOARD_SEQ DESC
 			                       ) A
 			                 WHERE ROWNUM <= ?

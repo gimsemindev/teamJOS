@@ -117,7 +117,7 @@ public class BoardCommonUI {
 		        System.out.printf("%s \t| %s \t| %s | %s \t\n",
 		                PrintUtil.padCenter("번호", 8),
 		                PrintUtil.padCenter("제목", 30),
-		                PrintUtil.padCenter("작성자", 10),
+		                PrintUtil.padCenter("작성자", 13),
 		                PrintUtil.padCenter("작성일", 12)
 		        );
 	            PrintUtil.printLine('=', 70);	            
@@ -162,21 +162,19 @@ public class BoardCommonUI {
 	                	page++;
 	                }
 	            }
-      
-                int boardNo;
-                                
-                try {
-                    boardNo = Integer.parseInt(cmd);
-                    if(Integer.parseInt(cmd) > 0) {
-                    	viewPostDetail(boardNo);
-                    }
-                    
-                } catch (NumberFormatException e) {
-                    System.out.println("[오류] 숫자를 입력해야 합니다.");
-                    continue;
-                }   
-	        }	        
-	        
+	            else {
+	            	int boardNo;
+	            	try {
+	            		boardNo = Integer.parseInt(cmd);
+	            		if(Integer.parseInt(cmd) > 0) {
+	            			viewPostDetail(boardNo);
+	            			}
+	            		} catch (NumberFormatException e) {
+	            			System.out.println("[오류] 숫자를 입력해야 합니다.");
+	            			continue;
+	            		}  
+	            	}
+	             }	        
         } catch (Exception e) {
             System.out.println("\n[오류] 게시글 조회 중 예외 발생: " + e.getMessage());
         }
@@ -196,7 +194,7 @@ public class BoardCommonUI {
             System.out.println("           [ " + boardNo + "번 게시글 상세 보기 ]");
             System.out.println("--------------------------------------------------");
             System.out.println(" > 글번호: " + dto.getBoardNo());
-            System.out.println(" > 제  목: " + dto.getTitle());
+            System.out.println(" > 제 목: " + dto.getTitle());
             System.out.println(" > 작성자: " + dto.getEmpNo());
             System.out.println(" > 작성일: " + dto.getRegDtm());
             
