@@ -195,6 +195,7 @@ public class EmpDAOImpl implements EmpDAO{
 			
 			cstmt = conn.prepareCall(sql);
 			cstmt.setInt(1, retireSeq);
+			cstmt.execute();
 			
 			result = 1;
 		} catch (SQLException e) {
@@ -889,7 +890,8 @@ public class EmpDAOImpl implements EmpDAO{
 				
 				dto.setRetireSeq(rs.getInt("RETIRE_SEQ"));
 				dto.setEmpNo(rs.getString("EMP_NO"));
-				dto.setRegDt(rs.getString("APPROVER_YN"));
+				dto.setRegDt(rs.getString("REG_DT"));
+				dto.setApproverYn(rs.getNString("APPROVER_YN"));
 				dto.setRetireMemo(rs.getString("RETIRE_MEMO"));
 				
 				list.add(dto);
