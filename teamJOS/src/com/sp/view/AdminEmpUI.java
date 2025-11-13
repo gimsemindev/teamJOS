@@ -338,9 +338,9 @@ public class AdminEmpUI {
             EmployeeDTO deptInfo = empDao.selectDeptName(empNo);
 
             PrintUtil.printSection("현재 부서 정보");
-            System.out.printf("사원명        : %s%n", emp != null ? emp.getEmpNm() : "");
+            System.out.printf("사원명 : %s%n", emp != null ? emp.getEmpNm() : "");
             System.out.printf("현재 부서코드 : %s%n", deptInfo != null ? deptInfo.getDeptCd() : "");
-            System.out.printf("현재 부서명   : %s%n", deptInfo != null ? deptInfo.getDeptNm() : "");
+            System.out.printf("현재 부서명 : %s%n", deptInfo != null ? deptInfo.getDeptNm() : "");
             PrintUtil.printLine('-', 70);
 
             // 이동할 부서 선택
@@ -389,9 +389,9 @@ public class AdminEmpUI {
             EmployeeDTO emp = empDao.selectByEmpNo(empNo);
 
             PrintUtil.printSection("현재 정보");
-            System.out.printf("사원명     : %s%n", emp != null ? emp.getEmpNm() : "");
-            System.out.printf("현재 직급  : %s%n", emp != null ? emp.getGradeNm() : "");
-            System.out.printf("현재 부서명: %s%n", emp != null ? emp.getDeptNm() : "");
+            System.out.printf("사원명 : %s%n", emp != null ? emp.getEmpNm() : "");
+            System.out.printf("현재 직급 : %s%n", emp != null ? emp.getGradeNm() : "");
+            System.out.printf("현재 부서명 : %s%n", emp != null ? emp.getDeptNm() : "");
             PrintUtil.printLine('-', 70);
 
             // 직급 목록 출력
@@ -456,7 +456,7 @@ public class AdminEmpUI {
         }
     }
 
-    /** 5. 사원관리 - 정보조회 (사번, 이름, 전체 + 페이징) */
+    /** 5. 사원관리 - 정보조회 */
     private void manageEmployeeSearch() {
         PrintUtil.printTitle("관리자  -  사원관리  -  정보조회");
         try {
@@ -510,8 +510,6 @@ public class AdminEmpUI {
             e.printStackTrace();
         }
     }
-
-    /** 6. 사원관리 - 재직결재 */
 
     /** 6. 사원관리 - 재직결재 */
     protected void updateRetireApprovalInfo() {
@@ -580,7 +578,6 @@ public class AdminEmpUI {
 			System.out.println(GREEN + "\n✅ 퇴직 신청 번호 " + retireSeq + " 승인 완료." + RESET);
 			
 		} catch (Exception e) {
-			// TODO: handle exception
 		}
     }
 
@@ -657,7 +654,7 @@ public class AdminEmpUI {
         }
     }
 
-    /** 9. 사원관리 - 이력조회 (경력/자격/직급 + 페이징) */
+    /** 9. 사원관리 - 이력조회 */
     protected void selectHistoryInfo() {
         PrintUtil.printTitle("관리자  -  사원관리  -  이력조회");
         try {
@@ -733,7 +730,7 @@ public class AdminEmpUI {
 
     // ==================== 공통 출력 유틸 ====================
 
-    /** 사원 목록 페이징 출력 (DeptUI 스타일 유사) */
+    /** 사원 목록 페이징 출력 */
     private void printEmployeeList(List<EmployeeDTO> list) throws IOException {
         final int rowsPerPage = 15;
         int total = list.size();
