@@ -22,11 +22,11 @@ import com.sp.util.LoginInfo;
 
 
 public class MainUI {
-    final String RESET  = "\u001B[0m";
-    final String CYAN   = "\u001B[36m";
-    final String GREEN  = "\u001B[32m";
-    final String YELLOW = "\u001B[33m";
-    final String GRAY   = "\u001B[90m";
+	final String RESET  = "\u001B[0m";
+	final String CYAN   = "\u001B[36m";
+	final String GREEN  = "\u001B[32m";
+	final String YELLOW = "\u001B[33m";
+	final String GRAY   = "\u001B[90m";
 	
 	private BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	private LoginInfo login = new LoginInfo();

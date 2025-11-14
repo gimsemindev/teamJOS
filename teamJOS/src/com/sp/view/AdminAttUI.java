@@ -15,6 +15,8 @@ import com.sp.util.LoginInfo;
 import com.sp.util.PrintUtil;
 import com.sp.view.common.DeptCommonUI;
 
+import com.sp.view.MainUI;
+
 
 public class AdminAttUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -32,7 +34,7 @@ public class AdminAttUI {
     public void menu() {
         int ch;
         String input;
-        
+
         System.out.println("\n[관리자 - 근태관리]");
         while(true) {
         	
