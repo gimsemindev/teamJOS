@@ -11,7 +11,7 @@ import com.sp.dao.impl.EmpDAOImpl;
 import com.sp.exception.UserQuitException;
 import com.sp.model.EmployeeDTO;
 import com.sp.model.HistoryDTO;
-import com.sp.model.LoginDTO;
+//import com.sp.model.LoginDTO;
 import com.sp.model.RetireDTO;
 import com.sp.util.InputValidator;
 import com.sp.util.LoginInfo;
@@ -20,8 +20,8 @@ import com.sp.util.PrintUtil;
 public class EmployeeEmpUI {
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	private EmpDAO empDao;
-	private LoginDTO loginDTO;
-	private Object careerList;
+//	private LoginDTO loginDTO;
+//	private Object careerList;
 	private LoginInfo loginInfo;
 
 	public EmployeeEmpUI(EmpDAO empDao, LoginInfo loginInfo) {
@@ -84,59 +84,49 @@ public class EmployeeEmpUI {
 				return;
 			}
 
-			// 컬럼 폭(내용 폭만) : 합계 124, 구분자 " | " 12개 * 3 = 36 → 총 160
-			final int W_EMP_NO   = 7;
-			final int W_NAME     = 6;
-			final int W_RRN      = 18;
-			final int W_ADDR     = 30;
-			final int W_HIRE     = 10;
-			final int W_DEPT     = 10;
-			final int W_GRADE    = 6;
-			final int W_STAT     = 4;
-			final int W_CNTR     = 4;
-			final int W_EMAIL    = 12;
-			final int W_PWD      = 8;
-			final int W_REG_DT   = 13;
-			final int W_LEVEL    = 9;
+			// null 처리 + 주소 앞 두 단어만
+			String regDt = dto.getRegDt() == null ? "-" : dto.getRegDt();
+			String level = dto.getLevelCode() == null ? "-" : dto.getLevelCode();
+			String addr = getFirstTwoWords(dto.getEmpAddr()); // 주소 앞 두 단어만
 
-			PrintUtil.printLine('=', 160);
-			System.out.println(PrintUtil.padCenter("사원 - 내 정보 조회", 160));
-			PrintUtil.printLine('=', 160);
+			PrintUtil.printLine('=', 200);
+			System.out.println(PrintUtil.padCenter("사원 - 내 정보 조회", 200));
+			PrintUtil.printLine('=', 200);
 
-			// 헤더
-			System.out.printf("%s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s%n",
-					PrintUtil.padCenter("사번", W_EMP_NO),
-					PrintUtil.padCenter("이름", W_NAME),
-					PrintUtil.padCenter("주민번호", W_RRN),
-					PrintUtil.padCenter("주소", W_ADDR),
-					PrintUtil.padCenter("입사일", W_HIRE),
-					PrintUtil.padCenter("부서명", W_DEPT),
-					PrintUtil.padCenter("직급", W_GRADE),
-					PrintUtil.padCenter("재직", W_STAT),
-					PrintUtil.padCenter("계약", W_CNTR),
-					PrintUtil.padCenter("이메일", W_EMAIL),
-					PrintUtil.padCenter("비밀번호", W_PWD),
-					PrintUtil.padCenter("등록일", W_REG_DT),
-					PrintUtil.padCenter("권한", W_LEVEL));
-			PrintUtil.printLine('-', 160);
+			// ───── 헤더 (한글 폭 기준 정렬) ─────
+			System.out.printf("%s\t| %s\t| %s\t | %s\t | %s\t | %s\t | %s\t | %s\t | %s\t | %s\t | %s\t | %s\t | %s%n",
+					PrintUtil.padCenterDisplay("사번", 6), 
+					PrintUtil.padCenterDisplay("이름", 8),
+					PrintUtil.padCenterDisplay("주민번호", 16), 
+					PrintUtil.padCenterDisplay("주소", 22),
+					PrintUtil.padCenterDisplay("입사일", 10), 
+					PrintUtil.padCenterDisplay("부서명", 10),
+					PrintUtil.padCenterDisplay("직급", 8), 
+					PrintUtil.padCenterDisplay("재직", 4),
+					PrintUtil.padCenterDisplay("계약", 4), 
+					PrintUtil.padCenterDisplay("이메일", 16),
+					PrintUtil.padCenterDisplay("비밀번호", 8), 
+					PrintUtil.padCenterDisplay("등록일", 10),
+					PrintUtil.padCenterDisplay("권한", 8));
+			PrintUtil.printLine('-', 200);
 
-			// 데이터 1행
-			System.out.printf("%s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s%n",
-					PrintUtil.padRight(dto.getEmpNo(), W_EMP_NO),
-					PrintUtil.padRight(dto.getEmpNm(), W_NAME),
-					PrintUtil.padRight(dto.getRrn(), W_RRN),
-					PrintUtil.padRight(dto.getEmpAddr(), W_ADDR),
-					PrintUtil.padRight(dto.getHireDt(), W_HIRE),
-					PrintUtil.padRight(dto.getDeptNm(), W_DEPT),
-					PrintUtil.padRight(dto.getGradeNm(), W_GRADE),
-					PrintUtil.padRight(dto.getEmpStatNm(), W_STAT),
-					PrintUtil.padRight(dto.getContractTpNm(), W_CNTR),
-					PrintUtil.padRight(dto.getEmail(), W_EMAIL),
-					PrintUtil.padRight(dto.getPwd(), W_PWD),
-					PrintUtil.padRight(dto.getRegDt(), W_REG_DT),
-					PrintUtil.padRight(dto.getLevelCode(), W_LEVEL));
+			// ───── 데이터 1행 (목록이랑 동일 포맷) ─────
+			System.out.printf("%s\t| %s\t | %s\t | %s\t | %s\t | %s\t | %s\t | %s\t | %s\t | %s\t | %s\t | %s\t | %s%n",
+					PrintUtil.padRightDisplay(dto.getEmpNo(), 6), 
+					PrintUtil.padRightDisplay(dto.getEmpNm(), 8),
+					PrintUtil.padRightDisplay(dto.getRrn(), 12), 
+					PrintUtil.padRightDisplay(addr, 24),
+					PrintUtil.padRightDisplay(dto.getHireDt(), 10), 
+					PrintUtil.padRightDisplay(dto.getDeptNm(), 10),
+					PrintUtil.padRightDisplay(dto.getGradeNm(), 8), 
+					PrintUtil.padRightDisplay(dto.getEmpStatNm(), 6),
+					PrintUtil.padRightDisplay(dto.getContractTpNm(), 4), 
+					PrintUtil.padRightDisplay(dto.getEmail(), 16),
+					PrintUtil.padRightDisplay(dto.getPwd(), 8), 
+					PrintUtil.padRightDisplay(regDt, 10),
+					PrintUtil.padRightDisplay(level, 8));
 
-			PrintUtil.printLine('=', 160);
+			PrintUtil.printLine('=', 200);
 			System.out.println();
 
 		} catch (Exception e) {
@@ -205,98 +195,158 @@ public class EmployeeEmpUI {
 	}
 
 	/** 3. 직급(진급) 이력 조회 */
-	private void selectMyGradeHistory() {
-		System.out.println("\n[사원 - 직급(진급) 이력 조회]");
-		try {
-			String empNo = loginInfo.loginMember().getMemberId();
-			List<HistoryDTO> list = empDao.selectGradeHis(empNo);
+	  private void selectMyGradeHistory() {
+	        System.out.println("\n[사원 - 직급(진급) 이력 조회]");
+	        try {
+	            String empNo = loginInfo.loginMember().getMemberId();
+	            List<HistoryDTO> list = empDao.selectGradeHis(empNo);
 
-			if (list == null || list.isEmpty()) {
-				System.out.println("진급 이력이 없습니다.\n");
-				return;
-			}
+	            if (list == null || list.isEmpty()) {
+	                System.out.println("진급 이력이 없습니다.\n");
+	                return;
+	            }
 
-			PrintUtil.printLine('-', 70);
-			System.out.println(PrintUtil.padCenter("진급일자", 15) + PrintUtil.padCenter("이전 직급", 15)
-					+ PrintUtil.padCenter("신규 직급", 15) + PrintUtil.padCenter("진급 사유", 25));
-			PrintUtil.printLine('-', 70);
+	            // 컬럼 폭
+	            final int W_DATE   = 15; // 진급일자
+	            final int W_OLD    = 15; // 이전 직급
+	            final int W_NEW    = 15; // 신규 직급
+	            final int W_REASON = 25; // 진급 사유
 
-			for (HistoryDTO dto : list) {
-				System.out.println(PrintUtil.padCenter(dto.getStartDt(), 15) + // 진급일자
-						PrintUtil.padCenter(dto.getDeptNm(), 15) + // 이전 직급명
-						PrintUtil.padCenter(dto.getGradeNm(), 15) + // 신규 직급명
-						PrintUtil.padCenter(dto.getDetails(), 25) // 진급 사유
-				);
-			}
+	            PrintUtil.printLine('=', 80);
+	            System.out.printf("%s\t| %s\t| %s\t| %s%n",
+	                    PrintUtil.padCenterDisplay("진급일자",  W_DATE),
+	                    PrintUtil.padCenterDisplay("이전 직급", W_OLD),
+	                    PrintUtil.padCenterDisplay("신규 직급", W_NEW),
+	                    PrintUtil.padCenterDisplay("진급 사유", W_REASON));
+	            PrintUtil.printLine('-', 80);
 
-			PrintUtil.printLine('-', 70);
+	            for (HistoryDTO dto : list) {
+	                System.out.printf("%s\t| %s\t| %s\t| %s%n",
+	                        PrintUtil.padRightDisplay(dto.getStartDt(), W_DATE),   // 진급일자
+	                        PrintUtil.padRightDisplay(dto.getDeptNm(),  W_OLD),    // 이전 직급명(지금 이렇게 쓰고 있었음)
+	                        PrintUtil.padRightDisplay(dto.getGradeNm(), W_NEW),    // 신규 직급명
+	                        PrintUtil.padRightDisplay(dto.getDetails(), W_REASON)  // 진급 사유
+	                );
+	            }
 
-		} catch (Exception e) {
-			System.out.println("예상치 못한 오류가 발생했습니다.");
-			e.printStackTrace();
-		}
-	}
+	            PrintUtil.printLine('=', 80);
 
-	/** 4. 전체 이력 조회 */
-	private void selectMyAllHistory() {
-		System.out.println("\n[사원 - 전체 이력 조회]");
+	        } catch (Exception e) {
+	            System.out.println("예상치 못한 오류가 발생했습니다.");
+	            e.printStackTrace();
+	        }
+	    }
 
-		try {
-			String empNo = loginInfo.loginMember().getMemberId();
-			List<HistoryDTO> careerList = empDao.selectCareerHis(empNo);
+	  /** 4. 전체 이력 조회 */
+		private void selectMyAllHistory() {
+			System.out.println("\n[사원 - 전체 이력 조회]");
 
-			if (careerList != null && !careerList.isEmpty()) {
-				PrintUtil.printSection("경력이력");
-				PrintUtil.printLine('-', 80);
-				System.out.println(PrintUtil.padCenter("시작일자", 15) + PrintUtil.padCenter("종료일자", 15)
-						+ PrintUtil.padCenter("부서명", 20) + PrintUtil.padCenter("상세내용", 25));
-				PrintUtil.printLine('-', 80);
-				PrintUtil.printLine('-', 80);
+			final int LINE_WIDTH = 120;
 
-				for (HistoryDTO dto : careerList) {
-					System.out.println(PrintUtil.padCenter(dto.getStartDt(), 15)
-							+ PrintUtil.padCenter(dto.getEndDt(), 15) + PrintUtil.padCenter(dto.getDeptNm(), 20)
-							+ PrintUtil.padCenter(dto.getDetails(), 25));
+			try {
+				String empNo = loginInfo.loginMember().getMemberId();
+
+				// ==================== 경력 이력 ====================
+				List<HistoryDTO> careerList = empDao.selectCareerHis(empNo);
+
+				if (careerList != null && !careerList.isEmpty()) {
+
+					final int W_STRT = 12; // 시작일자
+					final int W_END = 12; // 종료일자
+					final int W_DEPT = 25; // 부서명(또는 회사명)
+					final int W_DETAIL = 45; // 상세내용
+
+					PrintUtil.printLine('=', LINE_WIDTH);
+					System.out.println(PrintUtil.padCenter(" [ 경력 이력 ] ", LINE_WIDTH));
+					PrintUtil.printLine('=', LINE_WIDTH);
+
+					// 헤더
+					System.out.printf("%s | %s | %s | %s%n", 
+							PrintUtil.padCenterDisplay("시작일자", W_STRT),
+							PrintUtil.padCenterDisplay("종료일자", W_END), 
+							PrintUtil.padCenterDisplay("부서명", W_DEPT),
+							PrintUtil.padCenterDisplay("상세내용", W_DETAIL));
+					PrintUtil.printLine('-', LINE_WIDTH);
+
+					// 데이터
+					for (HistoryDTO dto : careerList) {
+						System.out.printf("%s | %s | %s | %s%n", 
+								PrintUtil.padRightDisplay(dto.getStartDt(), W_STRT),
+								PrintUtil.padRightDisplay(dto.getEndDt(), W_END),
+								PrintUtil.padRightDisplay(dto.getDeptNm(), W_DEPT),
+								PrintUtil.padRightDisplay(dto.getDetails(), W_DETAIL));
+					}
+					PrintUtil.printLine('=', LINE_WIDTH);
+					System.out.println();
+				} else {
+					System.out.println("등록된 경력 이력이 없습니다.");
 				}
-				PrintUtil.printLine('-', 80);
-			} else {
-				System.out.println("등록된 경력이력이 없습니다.");
-			}
-			List<HistoryDTO> certList = empDao.selectCertHis(empNo);
 
-			if (certList != null && !certList.isEmpty()) {
-				PrintUtil.printSection("자격증 이력");
-				PrintUtil.printLine('-', 80);
-				System.out.println(PrintUtil.padCenter("등록일자", 15) + PrintUtil.padCenter("자격증", 25)
-						+ PrintUtil.padCenter("상세내용", 25));
-				PrintUtil.printLine('-', 80);
+				// ==================== 자격증 이력 ====================
+				List<HistoryDTO> certList = empDao.selectCertHis(empNo);
 
-				for (HistoryDTO dto : certList) {
-					System.out.println(PrintUtil.padCenter(dto.getRegDt(), 15)
-							+ PrintUtil.padCenter(dto.getGradeNm(), 25) + PrintUtil.padCenter(dto.getDetails(), 25));
+				if (certList != null && !certList.isEmpty()) {
 
+					final int W_REG = 12; // 등록일자
+					final int W_CERT = 25; // 자격증명
+					final int W_DETAIL = 45; // 상세내용
+
+					PrintUtil.printLine('=', LINE_WIDTH);
+					System.out.println(PrintUtil.padCenter(" [ 자격증 이력 ] ", LINE_WIDTH));
+					PrintUtil.printLine('=', LINE_WIDTH);
+
+					// 헤더
+					System.out.printf("%s | %s | %s%n", 
+							PrintUtil.padCenterDisplay("등록일자", W_REG),
+							PrintUtil.padCenterDisplay("자격증", W_CERT), 
+							PrintUtil.padCenterDisplay("상세내용", W_DETAIL));
+					PrintUtil.printLine('-', LINE_WIDTH);
+
+					// 데이터
+					for (HistoryDTO dto : certList) {
+						System.out.printf("%s | %s | %s%n", 
+								PrintUtil.padRightDisplay(dto.getRegDt(), W_REG),
+								PrintUtil.padRightDisplay(dto.getGradeNm(), W_CERT),
+								PrintUtil.padRightDisplay(dto.getDetails(), W_DETAIL));
+					}
+					PrintUtil.printLine('=', LINE_WIDTH);
+					System.out.println();
+				} else {
+					System.out.println("등록된 자격증이 없습니다.");
 				}
-				PrintUtil.printLine('-', 80);
-			} else {
-				System.out.println("등록된 자격증이 없습니다.");
-			}
-			EmployeeDTO empInfo = empDao.selectByEmpNo(empNo);
-			if (empInfo != null) {
-				PrintUtil.printSection("기본 사원 정보");
-				System.out.printf("사원번호: %s | 이름: %s | 부서: %s | 직급: %s%n", empInfo.getEmpNo(), empInfo.getEmpNm(),
-						empInfo.getDeptNm(), empInfo.getGradeNm());
-				System.out.printf("입사일자: %s | 계약구분: %s%n", empInfo.getHireDt(), empInfo.getContractTpNm());
-				PrintUtil.printLine('-', 80);
-			}
 
-			System.out.println("\n이력 조회가 완료되었습니다.\n");
+				// ==================== 기본 사원 정보 ====================
+				EmployeeDTO empInfo = empDao.selectByEmpNo(empNo);
+				if (empInfo != null) {
 
-		} catch (Exception e) {
-			e.printStackTrace();
+					final int INFO_WIDTH = 120;
+					PrintUtil.printLine('=', INFO_WIDTH);
+					System.out.println(PrintUtil.padCenter(" [ 기본 사원 정보 ] ", INFO_WIDTH));
+					PrintUtil.printLine('=', INFO_WIDTH);
+
+					// 1행 : 사번 / 이름 / 부서 / 직급
+					System.out.printf("%s | %s | %s | %s%n",
+							PrintUtil.padRightDisplay("사원번호: " + empInfo.getEmpNo(), 28),
+							PrintUtil.padRightDisplay("이름: " + empInfo.getEmpNm(), 20),
+							PrintUtil.padRightDisplay("부서: " + empInfo.getDeptNm(), 30),
+							PrintUtil.padRightDisplay("직급: " + empInfo.getGradeNm(), 20));
+
+					// 2행 : 입사일자 / 계약구분
+					System.out.printf("%s | %s%n", PrintUtil.padRightDisplay("입사일자: " + empInfo.getHireDt(), 28),
+							PrintUtil.padRightDisplay("계약구분: " + empInfo.getContractTpNm(), 30));
+
+					PrintUtil.printLine('=', INFO_WIDTH);
+				}
+
+				System.out.println("\n이력 조회가 완료되었습니다.\n");
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
-	}
-
-	private void insertRetire() {
+	  
+	  /** 5. 퇴직 신청 */
+	  private void insertRetire() {
 		System.out.println("\n[퇴직신청]");
 		RetireDTO dto = new RetireDTO();
 
@@ -325,4 +375,15 @@ public class EmployeeEmpUI {
 		}
 	}
 
+	// 주소에서 앞의 두 단어(시/도 + 시/군/구)만 반환
+	private String getFirstTwoWords(String addr) {
+		if (addr == null)
+			return "";
+		String[] parts = addr.trim().split("\\s+"); // ← 역슬래시 두 개
+		if (parts.length >= 2) {
+			return parts[0] + " " + parts[1];
+		} else {
+			return addr.trim();
+		}
+	}
 }
