@@ -31,6 +31,7 @@ public class EmpDAOImpl implements EmpDAO{
 	}
 	
 	public EmpDAOImpl(LoginInfo loginInfo) {
+		this.conn = DBConn.getConnection();
 		this.loginInfo = loginInfo;
 	}
 	
@@ -44,8 +45,8 @@ public class EmpDAOImpl implements EmpDAO{
 		int result = 0;
 		
 		try {
-			sql = "INSERT INTO TB_EMP(EMP_NO, EMP_NM, RRN, EMP_ADDR, HIRE_DT, DEPT_CD, GRADE_CD, EMP_STAT_CD, CONTRACT_TP_CD, EMAIL, PWD, LEVEL_CODE) "
-		               + " VALUES(?, ?, ?, ?, SYSDATE, ?, ?, 'A', ?, ?, ?, ?)";
+			sql = "INSERT INTO TB_EMP(EMP_NO, EMP_NM, RRN, EMP_ADDR, HIRE_DT, DEPT_CD, GRADE_CD, EMP_STAT_CD, CONTRACT_TP_CD, EMAIL, PWD, REG_DT, LEVEL_CODE) "
+		               + " VALUES(?, ?, ?, ?, SYSDATE, ?, ?, 'A', ?, ?, ?, SYSDATE, ?)";
 		         
 		         pstmt = conn.prepareStatement(sql);
 		         pstmt.setString(1, emp.getEmpNo());
@@ -177,6 +178,7 @@ public class EmpDAOImpl implements EmpDAO{
 		} finally {
 			DBUtil.close(pstmt);
 			DBUtil.close(pstmt2);
+			DBUtil.close(pstmt3);
 		}
 		return result;
 	}
@@ -688,7 +690,7 @@ public class EmpDAOImpl implements EmpDAO{
 
 	    try {
 	        sql = " SELECT e.DEPT_CD, d.DEPT_NM, e.GRADE_CD, e.EMP_NM "
-	        		+ " FROM TB_EMP e, JOIN TB_DEPT d ON e.DEPT_CD = d.DEPT_CD"
+	        		+ " FROM TB_EMP e JOIN TB_DEPT d ON e.DEPT_CD = d.DEPT_CD"
 	        		+ " WHERE e.EMP_NO = ?";
 	        pstmt = conn.prepareStatement(sql);
 	        pstmt.setString(1, empNo);
@@ -862,8 +864,8 @@ public class EmpDAOImpl implements EmpDAO{
 	                try { if (conn != null) conn.rollback(); } catch (Exception ex) {}
 	            } finally {
 	                try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
-	                try { if (conn != null) conn.close(); } catch (Exception e) {}
-	            }	
+	                try { if (conn != null) ; } catch (Exception e) {}
+	            }
 	}
 
 	@Override

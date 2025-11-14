@@ -15,194 +15,204 @@ import com.sp.util.LoginInfo;
 import com.sp.util.PrintUtil;
 import com.sp.view.common.DeptCommonUI;
 
-import com.sp.view.MainUI;
-
+import static com.sp.util.PrintUtil.*;
 
 public class AdminAttUI {
-    BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-    private EmpDAO empDao = new EmpDAOImpl();
-    private AttDAO attDao;
-    private LoginInfo loginInfo;
-    private DeptCommonUI deptCommonUI;
-    
-    public AdminAttUI(AttDAO attDao, LoginInfo loginInfo) {
-        this.attDao = attDao;
-        this.loginInfo = loginInfo;
-        this.deptCommonUI = new DeptCommonUI(this.loginInfo);
-    }
-    
-    public void menu() {
-        int ch;
-        String input;
+	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+	private EmpDAO empDao = new EmpDAOImpl();
+	private AttDAO attDao;
+	private LoginInfo loginInfo;
+	private DeptCommonUI deptCommonUI;
 
-        System.out.println("\n[관리자 - 근태관리]");
-        while(true) {
-        	
-        	try {
-        		
-        		do {
-        			System.out.print("1.출근시간입력 2.퇴근시간입력 3.근태정보수정 4.근태조회 5.휴가승인 6.연차조회 7.메뉴로돌아가기 => ");
-        			
-        			input = br.readLine();
-                    
-                    if(input == null || input.trim().isEmpty()) {
-                    	ch = 0;
-                    	continue;
-                    }
-                    ch = Integer.parseInt(input);
-        			
-        		} while(ch < 1 || ch > 7);
-        		
-        		if(ch==7) return; // 5.메뉴화면으로
-        		
-        		switch(ch) {
-        		case 1: insertCheckInInfo(); break; // 1. 출근시간 입력
-        		case 2: insertCheckOutInfo(); break; // 2. 퇴근시간 입력
-        		case 3: updateAttendanceInfo(); break; // 3.근태정보수정 // ATT_UPD_010
-        		case 4: selectAttendanceInfo(); break; // 4. 근태정보조회
-        		case 5: updateVacationApproveInfo(); break; // 5.휴가승인 // ATT_UPD_003
-        		case 6: deptCommonUI.selectAllAnnualLeave(); break; // 6.연차조회 (전체조회) // ATT_SEL_006
-        		}
-        		
-        	} catch (Exception e) {
-        		e.printStackTrace();
-        	}
-        }
-    }
-    
+	public AdminAttUI(AttDAO attDao, LoginInfo loginInfo) {
+		this.attDao = attDao;
+		this.loginInfo = loginInfo;
+		this.deptCommonUI = new DeptCommonUI(this.loginInfo);
+	}
+
+	public void menu() {
+		int ch;
+		String input;
+
+		System.out.println();
+
+		while (true) {
+
+			try {
+
+				do {
+					printTitle("🏢 [관리자 - 근태관리]");
+					printMenu(YELLOW, "① 출근 시간 입력", "② 퇴근 시간 입력", "③ 근태 정보 수정", "④ 근태 조회", "⑤ 휴가 승인", "⑥ 연차 조회",
+							"⑦ 상위 메뉴로 돌아가기" + PrintUtil.RESET);
+
+					input = br.readLine();
+
+					if (input == null || input.trim().isEmpty()) {
+						ch = 0;
+						continue;
+					}
+					ch = Integer.parseInt(input);
+
+				} while (ch < 1 || ch > 7);
+
+				if (ch == 7)
+					return; // 5.메뉴화면으로
+
+				switch (ch) {
+				case 1:
+					insertCheckInInfo();
+					break; // 1. 출근시간 입력
+				case 2:
+					insertCheckOutInfo();
+					break; // 2. 퇴근시간 입력
+				case 3:
+					updateAttendanceInfo();
+					break; // 3.근태정보수정 // ATT_UPD_010
+				case 4:
+					selectAttendanceInfo();
+					break; // 4. 근태정보조회
+				case 5:
+					updateVacationApproveInfo();
+					break; // 5.휴가승인 // ATT_UPD_003
+				case 6:
+					deptCommonUI.selectAllAnnualLeave();
+					break; // 6.연차조회 (전체조회) // ATT_SEL_006
+				}
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
 	// 출근 시간 입력
-    protected void insertCheckInInfo() {
-    	System.out.println("[관리자 - 근태관리 - 출근시간입력]");
-    	AttendanceDTO att = new AttendanceDTO();
-    	String empNo = loginInfo.loginMember().getMemberId();
-    	att.setEmpNo(empNo);
-    	
-    	try {
-			System.out.println("출근 시간을 입력하시겠습니까? [ Y | N ] ");
+	protected void insertCheckInInfo() {
+		PrintUtil.printTitle("[관리자 - 근태관리 - 출근시간입력]");
+		AttendanceDTO att = new AttendanceDTO();
+		String empNo = loginInfo.loginMember().getMemberId();
+		att.setEmpNo(empNo);
+
+		try {
+			printLine(GREEN, "❓ 출근 시간을 입력하시겠습니까? [ Y | N ] ");
 			String ch = br.readLine();
 			ch = ch.toUpperCase();
-			
+
 			switch (ch) {
 			case "Y": {
-				String msg = attDao.insertAttendanceIn(att); 
-				System.out.println(msg);
+				String msg = attDao.insertAttendanceIn(att);
+				msg = "📢 " + msg;
+				printLineln(MAGENTA, msg);
 				break;
 			}
-			case "N": System.out.println("출근 입력을 취소했습니다."); return;
-			default: System.out.println("Y | N 만 입력 가능합니다."); break;
+			case "N":
+				printLineln(MAGENTA, "📢 출근 입력을 취소하였습니다.");
+				return;
+			default:
+				printLineln(MAGENTA, "📢 Y | N 만 입력 가능합니다.");
+				break;
 			}
 		} catch (Exception e) {
 		}
 	}
-    
-    // 퇴근 시간 입력
-    protected void insertCheckOutInfo() {
-    	System.out.println("[관리자 - 근태관리 - 퇴근시간입력]");
-    	AttendanceDTO att = new AttendanceDTO();
-    	String empNo = loginInfo.loginMember().getMemberId();
-    	att.setEmpNo(empNo);
-    	
-    	try {
-    		System.out.println("퇴근 시간을 입력하시겠습니까? [ Y | N ] ");
-            String ch = br.readLine().toUpperCase();
 
-            switch (ch) {
-                case "Y": {
-                    String msg = attDao.insertAttendanceOut(att);
-                    System.out.println(msg);
-                    break;
-                }
-                case "N":
-                    System.out.println("퇴근 입력을 취소했습니다.");
-                    return;
-                default:
-                    System.out.println("Y | N 만 입력 가능합니다.");
-                    break;
-            }
+	// 퇴근 시간 입력
+	protected void insertCheckOutInfo() {
+		printTitle("[관리자 - 근태관리 - 퇴근 시간 입력]");
+		AttendanceDTO att = new AttendanceDTO();
+		String empNo = loginInfo.loginMember().getMemberId();
+		att.setEmpNo(empNo);
+
+		try {
+			printLine(GREEN, "❓ 퇴근 시간을 입력하시겠습니까? [ Y | N ] ");
+			String ch = br.readLine().toUpperCase();
+
+			switch (ch) {
+			case "Y": {
+				String msg = attDao.insertAttendanceOut(att);
+				msg = "📢 " + msg;
+				printLineln(MAGENTA, msg);
+				break;
+			}
+			case "N":
+				printLineln(MAGENTA, "📢 퇴근 입력을 취소하였습니다.");
+				return;
+			default:
+				printLineln(MAGENTA, "📢 Y | N 만 입력 가능합니다.");
+				break;
+			}
 		} catch (Exception e) {
-			
 		}
 	}
-    
-    // 근태 정보 수정
-    protected void updateAttendanceInfo() {
-    	System.out.println("[관리자 - 근태관리 - 근태정보수정]");
-    	AttendanceDTO att = new AttendanceDTO();
-    	
-    	try {
-    		att.setEmpNo(checkEmpNo(true));
-    		
-    		System.out.println("조회할 날짜 ? ex.2025-10-10 ");
+
+	// 근태 정보 수정
+	protected void updateAttendanceInfo() {
+
+		AttendanceDTO att = new AttendanceDTO();
+
+		try {
+			att.setEmpNo(checkEmpNo(true));
+			printTitle("[관리자 - 근태관리 - 근태정보수정]");
+			printLine(PrintUtil.GREEN, null);
+			printLine(GREEN, "❓ 조회할 날짜 (ex.2025-10-10) : ");
 			att.setRegDt(br.readLine());
+
+			printLine(CYAN, "❓ 수정할 항목 ? ");
+			printMenu(YELLOW, " ① 출근일시", " ② 출근일시", " ③ 상위 메뉴로 돌아가기");
+
+			int ch = Integer.parseInt(br.readLine());
+			if (ch == 3)
+				return;
+
+			String col = switch (ch) {
+				case 1 -> "CHECK_IN";
+				case 2 -> "CHECK_OUT";
+				default -> null;
+			};
+
+			if (col == null) {
+				printLineln(MAGENTA, "📢 잘못된 입력입니다\n");
+				return;
+			}
+
+			att.setAtdNo(col);
+
+			boolean canUpdate = attDao.checkAtdColumnIsNull(att);
+
+			if (!canUpdate) {
+				printLineln(MAGENTA, "❌ 해당 근태는 수정할 수 없습니다.\\n");
+				return; // 상위 메뉴로
+			}
 			
-    		
-			System.out.println("""
-				=====================================================
-				            [수정할 항목 선택]
-				1.출근일시 | 2.퇴근일시 | 3.상위메뉴
-				=====================================================
-				""");
+			printLine(GREEN, "❓ 변경할 값 입력(ex.2025-11-11 09:00:00) : ");
+			att.setAtdStatusCd(br.readLine());
 
-		System.out.print("선택 ➤ ");
-		int ch = Integer.parseInt(br.readLine());
-		if (ch == 3)
-			return;
+			String msg = attDao.updateAttendance(att);
+			msg = "📢 " + msg; 
+			printLineln(MAGENTA, msg);
+			System.out.println();
 
-		String col = switch (ch) {
-		case 1 -> "CHECK_IN";
-		case 2 -> "CHECK_OUT";
-		default -> null;
-		};
-		
-		if (col == null) {
-			System.out.println("잘못된 입력입니다\n");
-			return;
-		}
-		
-		att.setAtdNo(col);
-		
-		boolean canUpdate = attDao.checkAtdColumnIsNull(att);
-		
-		if (!canUpdate) {
-            System.out.println("이미 값이 있어 수정할 수 없습니다.\n");
-            return;     // 상위 메뉴로
-        }
-
-		System.out.print("변경할 값 입력 ➤ ");
-		att.setAtdStatusCd(br.readLine());
-		
-		String msg = attDao.updateAttendance(att);
-		
-		System.out.println("\n" + msg + "\n");
-		
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-    	
-    }
-    
-    // 근태 정보 조회
-    protected void selectAttendanceInfo() {
-    	System.out.println("[관리자 - 근태관리 - 근태정보조회]");
-    	try {
-			System.out.println("조회할 날짜 ? ex.2025-10-10 ");
+
+	}
+
+	// 근태 정보 조회
+	protected void selectAttendanceInfo() {
+		try {
+			printTitle("[관리자 - 근태관리 - 근태정보조회]");
+			printLine(GREEN, " ❓ 조회할 날짜 (ex.2025-10-10) : ");
 			String date = (br.readLine());
-			
+
 			List<AttendanceDTO> list = attDao.selectAttendanceAll(date);
-			
+
 			/*
-			for(AttendanceDTO dto : list) {
-				System.out.printf("%s %s %s %s %.1f %s %s\n",
-				        dto.getEmpNo(),
-				        dto.getAtdNo(),
-				        dto.getCheckIn(),
-				        dto.getCheckOut(),
-				        dto.getWorkHours(),
-				        dto.getAtdStatusCd(),
-				        dto.getRegDt());
-			}*/
-			
-			for(AttendanceDTO att : list) {
+			 * for(AttendanceDTO dto : list) { System.out.printf("%s %s %s %s %.1f %s %s\n",
+			 * dto.getEmpNo(), dto.getAtdNo(), dto.getCheckIn(), dto.getCheckOut(),
+			 * dto.getWorkHours(), dto.getAtdStatusCd(), dto.getRegDt()); }
+			 */
+
+			for (AttendanceDTO att : list) {
 				System.out.print(att.getEmpNo() + "\t");
 				System.out.print(att.getAtdNo() + "\t");
 				System.out.print(att.getCheckIn() + "\t");
@@ -212,25 +222,14 @@ public class AdminAttUI {
 				System.out.println(att.getRegDt());
 			}
 			
-			System.out.println("조회 완료되었습니다.");
+			printLineln(MAGENTA, "📢 조회 완료되었습니다.");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
 	}
-    
-    protected void updateVacationApproveInfo() {
-		// ANSI Escape Codes (색상 상수)
-		final String RESET  = "\u001B[0m";
-		final String GREEN  = "\u001B[32m";
-		final String YELLOW = "\u001B[33m";
-		final String CYAN   = "\u001B[36m";
-		final String RED    = "\u001B[31m";
-		final String GRAY   = "\u001B[90m";
 
-		System.out.println(CYAN + "\n╔════════════════════════════════════════╗" + RESET);
-		System.out.println(CYAN + "║       🗓️  관리자 - 휴가 승인 관리            ║" + RESET);
-		System.out.println(CYAN + "╚════════════════════════════════════════╝" + RESET);
+	protected void updateVacationApproveInfo() {
+		printTitle("🗓️  관리자 - 휴가 승인 관리 ");
 
 		String input;
 		int vacationSeq;
@@ -239,112 +238,99 @@ public class AdminAttUI {
 			// 1. 미승인 휴가 목록 조회 및 출력
 			List<VacationDTO> list = attDao.listVaction();
 			
+			String msg = " 미승인 휴가 신청 (총 " + list.size() + "건)";
 			
-			PrintUtil.printLine('─', 100);
-			System.out.println(YELLOW + " 미승인 휴가 신청 (총 " + list.size() + "건)" + RESET);
-			PrintUtil.printLine('─', 100);
-            // 헤더 출력
-            System.out.printf("%s\t | %s\t | %s\t | %s\t | %s\t | %s\t\n",
-            		PrintUtil.padCenter("번호", 12),
-            		PrintUtil.padCenter("사번", 8),
-            		PrintUtil.padCenter("시작일", 12),
-            		PrintUtil.padCenter("종료일", 12),
-            		PrintUtil.padCenter("신청사유", 8),
-            		PrintUtil.padCenter("승인상태", 8)
-            		
-            		);
-            
-			PrintUtil.printLine('-', 100);
+			printSection(msg);
+			
+			// 헤더 출력
+			System.out.printf("%s\t | %s\t | %s\t | %s\t | %s\t | %s\t\n", PrintUtil.padCenter("번호", 12),
+					PrintUtil.padCenter("사번", 8), PrintUtil.padCenter("시작일", 12), PrintUtil.padCenter("종료일", 12),
+					PrintUtil.padCenter("신청사유", 8), PrintUtil.padCenter("승인상태", 8)
 
+			);
+
+			PrintUtil.printLine('─', 100);
 
 			if (list.isEmpty()) {
-				System.out.println(CYAN + "👉 현재 미승인된 휴가 신청이 없습니다." + RESET);
-				PrintUtil.printLine('-', 100);
+				printLine(MAGENTA, "📢 현재 미승인된 휴가 신청이 없습니다.");
+				PrintUtil.printLine('─', 100);
 				return;
 			}
-            
+
 			// 목록 출력
-			for(VacationDTO dto : list) {
+			for (VacationDTO dto : list) {
 				System.out.printf("%s\t | %s\t | %s\t | %s\t | %s\t | %s\t\n",
 						PrintUtil.padCenter(Integer.toString(dto.getVacationSeq()), 12),
-	            		PrintUtil.padCenter(dto.getEmpNo(), 8),
-	            		PrintUtil.padCenter(dto.getStartDt(),  12),
-	            		PrintUtil.padCenter(dto.getEndDt(),12),
-	            		PrintUtil.padCenter(dto.getVacationMemo() != null && dto.getVacationMemo().length() > 18 ? dto.getVacationMemo().substring(0, 15) + "..." : dto.getVacationMemo(), 8),
-	            		PrintUtil.padCenter(dto.getApproverYn(), 8));
+						PrintUtil.padCenter(dto.getEmpNo(), 8), PrintUtil.padCenter(dto.getStartDt(), 12),
+						PrintUtil.padCenter(dto.getEndDt(), 12),
+						PrintUtil.padCenter(dto.getVacationMemo() != null && dto.getVacationMemo().length() > 18
+								? dto.getVacationMemo().substring(0, 15) + "..."
+								: dto.getVacationMemo(), 8),
+						PrintUtil.padCenter(dto.getApproverYn(), 8));
 			}
 			PrintUtil.printLine('-', 100);
-			
-			// 2. 승인 번호 입력
-			System.out.print(GREEN + "👉 승인하실 휴가 신청 번호를 입력하세요 (취소: Enter) : " + RESET);
-			input = br.readLine();
-            
-            if (input == null || input.trim().isEmpty()) {
-                System.out.println(GRAY + "취소되었습니다." + RESET);
-                return;
-            }
 
-            // NumberFormatException 처리
+			// 2. 승인 번호 입력
+			printLine(GREEN, "👉 승인하실 휴가 신청 번호를 입력하세요 (취소: Enter) : ");
+			input = br.readLine();
+
+			if (input == null || input.trim().isEmpty()) {
+				printLineln(MAGENTA, "📢 취소되었습니다.");
+				return;
+			}
+
+			// NumberFormatException 처리
 			vacationSeq = Integer.parseInt(input.trim());
-			
+
 			// 3. DAO 호출 (updateVacationApprove: 프로시저 호출)
-			attDao.updateVacationApprove(vacationSeq); 
-			
-			System.out.println(GREEN + "\n✅ 휴가 신청 번호 " + vacationSeq + " 승인 및 연차 차감 완료." + RESET);
-			
+			attDao.updateVacationApprove(vacationSeq);
+			msg = "\n✅ 휴가 신청 번호 " + vacationSeq + " 승인 및 연차 차감 완료.";
+			printLineln(MAGENTA, msg);
 		} catch (NumberFormatException e) {
-			System.out.println(RED + "❌ 입력 오류: 휴가 번호는 숫자로만 입력해야 합니다." + RESET);
+			printLineln(RED, "❌ 입력 오류: 휴가 번호는 숫자로만 입력해야 합니다.");
 		} catch (SQLException e) {
 			// PL/SQL 프로시저에서 발생한 에러 코드 처리 (-20000 대 오류)
-			if(e.getErrorCode() == 20001) {
-				System.out.println(RED + "❌ 승인 실패: 입력하신 번호에 해당하는 휴가 신청번호가 없거나 연차 정보가 없습니다." + RESET);
+			if (e.getErrorCode() == 20001) {
+				printLineln(RED, "❌ 승인 실패: 입력하신 번호에 해당하는 휴가 신청번호가 없거나 연차 정보가 없습니다.");
 			} else if (e.getErrorCode() == 20003) {
-                // 잔여 연차 부족 상세 메시지 출력
-                String errorDetail = e.getMessage().substring(e.getMessage().indexOf(":") + 1).trim();
-				System.out.println(RED + "❌ 승인 실패: 잔여 연차가 부족합니다. (" + errorDetail + ")" + RESET);
+				// 잔여 연차 부족 상세 메시지 출력
+				String errorDetail = e.getMessage().substring(e.getMessage().indexOf(":") + 1).trim();
+				String msg = "❌ 승인 실패: 잔여 연차가 부족합니다. (" + errorDetail + ")";
+				printLineln(RED, msg);
 			} else if (e.getErrorCode() == 20099) {
-				System.out.println(RED + "❌ 승인 실패: 시스템 오류로 승인 중 오류가 발생했습니다." + RESET);
+				printLineln(RED, "❌ 승인 실패: 시스템 오류로 승인 중 오류가 발생했습니다.");
 			} else {
-				System.out.println(RED + "❌ DB 오류 발생 (코드: " + e.getErrorCode() + "): " + e.getMessage() + RESET);
-			}	
+				String msg = "❌ DB 오류 발생 (코드: " + e.getErrorCode() + "): " + e.getMessage();
+				printLineln(RED, msg);
+			}
 		} catch (IOException e) {
-			System.out.println(RED + "❌ 입출력 오류가 발생했습니다." + RESET);
+			printLineln(RED, "❌ 입출력 오류가 발생했습니다.");
 		} catch (Exception e) {
-			System.out.println(RED + "❌ 알 수 없는 오류가 발생했습니다: " + e.getMessage() + RESET);
+			String msg = "❌ 알 수 없는 오류가 발생했습니다: " + e.getMessage();
+			printLineln(RED, msg);
 		}
 	}
-/*
-	// WBS의 4레벨 메뉴(3.근무시간조회) 처리를 위한 별도 메서드
-    private void manageWorkTimeSearch() {
-        int ch;
-        System.out.println("\n[관리자 - 근태관리 - 근무시간조회]");
-        try {
-            do {
-                System.out.print("1.전체조회 2.사번조회 3.상위메뉴로돌아가기 => ");
-                ch = Integer.parseInt(br.readLine());
-            } while(ch < 1 || ch > 3);
+	/*
+	 * // WBS의 4레벨 메뉴(3.근무시간조회) 처리를 위한 별도 메서드 private void manageWorkTimeSearch() {
+	 * int ch; System.out.println("\n[관리자 - 근태관리 - 근무시간조회]"); try { do {
+	 * System.out.print("1.전체조회 2.사번조회 3.상위메뉴로돌아가기 => "); ch =
+	 * Integer.parseInt(br.readLine()); } while(ch < 1 || ch > 3);
+	 * 
+	 * switch (ch) { case 1: attDao.selectAllWorkTime(); break; // ATT_SEL_004 case
+	 * 2: attDao.selectWorkTimeByEmp(0); break; // ATT_SEL_005 case 3: return; } }
+	 * catch (Exception e) { e.printStackTrace(); } }
+	 */
 
-            switch (ch) {
-            case 1: attDao.selectAllWorkTime(); break; // ATT_SEL_004
-            case 2: attDao.selectWorkTimeByEmp(0); break; // ATT_SEL_005
-            case 3: return;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-*/
-    
-    // 사원 번호 입력받는 메소드(통합)
-    protected String checkEmpNo(boolean mustExist) throws IOException, SQLException {
+	// 사원 번호 입력받는 메소드(통합)
+	protected String checkEmpNo(boolean mustExist) throws IOException, SQLException {
 		String empNo;
 		while (true) {
-			System.out.print("사원번호(ex. 00001): ");
+			printLine(GREEN, "👉 사원번호(ex. 00001) : ");
 			empNo = br.readLine();
 
 			// 형식검증
 			if (!empNo.matches("^\\d{5}$")) {
-				System.out.println("잘못된 형식입니다. 숫자 5자리로 입력해주세요.");
+				printLineln(MAGENTA, "📢 잘못된 형식입니다. 숫자 5자리로 입력해주세요.");
 				continue;
 			}
 
@@ -352,12 +338,12 @@ public class AdminAttUI {
 			boolean exists = empDao.selectByEmpNo(empNo) != null;
 
 			if (mustExist && !exists) {
-				System.out.println("존재하지 않는 사원번호입니다.");
+				printLineln(MAGENTA, "📢 존재하지 않는 사원번호입니다.");
 				continue;
 			}
 
 			if (!mustExist && exists) {
-				System.out.println("이미 존재하는 사원번호입니다.");
+				printLineln(MAGENTA, "📢 이미 존재하는 사원번호입니다.");
 				continue;
 			}
 			break;

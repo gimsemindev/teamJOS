@@ -1,6 +1,16 @@
 package com.sp.util;
 
 public class PrintUtil {
+	
+	public static final String RESET = "\u001B[0m";
+	public static final String BLUE = "\u001B[34m";     // 파란색
+	public static final String YELLOW = "\u001B[33m";   // 노란색
+	public static final String GREEN = "\u001B[32m";    // 초록색
+	public static final String CYAN = "\u001B[36m";     // 청록색
+	public static final String GRAY = "\u001B[90m";	 	// 회색
+	public static final String MAGENTA = "\u001B[35m";
+	public static final String LIGHT_YELLOW = "\u001B[93m";
+	public static final String RED        = "\u001B[31m";
 
 	// 한글은 2칸, 영어/숫자는 1칸 폭으로 계산
 	public static int getDisplayWidth(String text) {
@@ -66,19 +76,26 @@ public class PrintUtil {
 	public static void printLine(char ch, int length) {
 		System.out.println(String.valueOf(ch).repeat(length));
 	}
+	
+    // 컬러 라인 반복 출력
+    public static void printLine(char ch, int length, String color) {
+        System.out.print(color);
+        System.out.print(String.valueOf(ch).repeat(length));
+        System.out.println(RESET);
+    }
 
 	// 프로그램 상단 구분 (큰 제목)
 	public static void printTitle(String title) {
-		printLine('=', 65);
-		System.out.println(padCenter(title, 65));
-		printLine('=', 65);
+		printLine('═', 65, CYAN);
+		System.out.println(YELLOW + padCenter(title, 65) + RESET);
+		printLine('═', 65, CYAN);
 	}
 
 	// 세부 항복 구분 (소 제목)
 	public static void printSection(String section) {
-		printLine('-', 65);
-		System.out.println(padCenter("[ " + section + " ]", 65));
-		printLine('-', 65);
+		printLine('─', 65, CYAN);
+		System.out.println(padCenter(YELLOW + "[ " + section + " ]", 65) + RESET);
+		printLine('─', 65, CYAN);
 	}
 
 	// 표 형태의 데이터 출력 시 헤더 부분 출력
@@ -87,7 +104,7 @@ public class PrintUtil {
 			System.out.print(padRight(h, 12));
 		}
 		System.out.println();
-		printLine('-', 70);
+		printLine('─', 70);
 	}
 
 	// 표 형태 출력용 데이터 행
@@ -98,6 +115,30 @@ public class PrintUtil {
 		System.out.println();
 
 	}
+	
+	public static void printMenu(String color, String... items) {
+	    // 상단 라인
+		printLine('─', 65, GRAY);
+
+	    // 메뉴 항목 출력
+	    for (int i = 0; i < items.length; i++) {
+	        System.out.println(color + String.format("   %s", items[i]) + RESET);
+	    }
+
+	    // 하단 라인
+	    printLine('─', 65, GRAY);
+	    
+	    System.out.print(GREEN + "👉 메뉴 선택 : " + RESET);
+	}
+	
+	public static void printLine(String color, String str) {
+		System.out.print(color + str + RESET);
+	}
+	
+	public static void printLineln(String color, String str) {
+		System.out.println("\n" + color + str + RESET);
+	}
+
 	
 
 	// 표시 폭 기준 오른쪽 패딩
