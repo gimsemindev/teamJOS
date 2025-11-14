@@ -21,8 +21,8 @@ import com.sp.util.PrintUtil;
 import com.sp.view.common.DeptCommonUI;
 
 /**
- * 관리자 - 사원관리 UI 1. 정보등록 2. 정보수정 3. 부서이동 4. 진급관리 5. 정보조회 6. 재직결재 7. 경력등록 8.
- * 자격증등록 9. 이력조회 10. 일괄등록(CSV) 11. 상위메뉴
+ * 관리자 - 사원관리 UI 1. 정보등록 2. 정보수정 3. 부서이동 4. 진급관리 5. 정보조회 6. 재직결재 7. 경력등록 8.자격증등록
+ * 9. 이력조회 10. 일괄등록(CSV) 11. 상위메뉴
  */
 public class AdminEmpUI {
 
@@ -490,11 +490,11 @@ public class AdminEmpUI {
 					System.out.println(line);
 					System.out.println();
 
-
 					System.out.println("사번: " + dto.getEmpNo());
 					System.out.println("이름: " + dto.getEmpNm());
 					System.out.println("주민번호: " + dto.getRrn());
-					System.out.println("주소: " + dto.getEmpAddr());
+					// 주소는 첫 두 단어까지만 출력
+					System.out.println("주소: " + getFirstTwoWords(dto.getEmpAddr()));
 					System.out.println("입사일자: " + dto.getHireDt());
 					System.out.println("부서명: " + dto.getDeptNm());
 					System.out.println("직급: " + dto.getGradeNm());
@@ -769,7 +769,6 @@ public class AdminEmpUI {
 			System.out.println("조회 결과가 없습니다.\n");
 			return;
 		}
-		
 
 		final int pageSize = 15; // 한 페이지에 15명
 		int total = list.size();
@@ -780,24 +779,28 @@ public class AdminEmpUI {
 			int startIndex = (page - 1) * pageSize;
 			int endIndex = Math.min(startIndex + pageSize, total);
 
-			System.out.printf("페이지 %d / %d   (총 %d건)   [조회범위: %d ~ %d]%n", page, totalPage, total, startIndex + 1,
-					endIndex);
+			System.out.println();
+			PrintUtil.printLine('=', 120);
+			System.out.printf("▶ 사원 정보 목록  |  페이지 %d / %d  |  총 %d건  |  조회범위: %d ~ %d%n", page, totalPage, total,
+					startIndex + 1, endIndex);
 			PrintUtil.printLine('=', 120);
 
-			// 120칸 안에 맞추도록 폭 조정
-			System.out.printf("%s | %s | %s | %s | %s | %s | %s | %s | %s | %s%n", PrintUtil.padCenter("사번", 6),
+			// 헤더
+			System.out.printf(" %s │ %s │ %s │ %s │ %s │ %s │ %s │ %s │ %s │ %s%n", PrintUtil.padCenter("사번", 6),
 					PrintUtil.padCenter("이름", 6), PrintUtil.padCenter("주민번호", 13), PrintUtil.padCenter("주소", 18),
 					PrintUtil.padCenter("입사일", 10), PrintUtil.padCenter("부서명", 10), PrintUtil.padCenter("직급", 6),
 					PrintUtil.padCenter("재직", 4), PrintUtil.padCenter("계약", 4), PrintUtil.padCenter("이메일", 16));
 			PrintUtil.printLine('-', 120);
 
+			// 내용
 			for (int i = startIndex; i < endIndex; i++) {
 				EmployeeDTO d = list.get(i);
 
 				String empNo = cut(d.getEmpNo(), 6);
 				String empNm = cut(d.getEmpNm(), 6);
 				String rrn = cut(d.getRrn(), 13);
-				String addr = cut(d.getEmpAddr(), 18);
+				// 주소는 첫 두 단어만 잘라서 사용
+				String addr = cut(getFirstTwoWords(d.getEmpAddr()), 18);
 				String hireDt = cut(d.getHireDt(), 10);
 				String deptNm = cut(d.getDeptNm(), 10);
 				String gradeNm = cut(d.getGradeNm(), 6);
@@ -805,36 +808,36 @@ public class AdminEmpUI {
 				String cntrNm = cut(d.getContractTpNm(), 4);
 				String email = cut(d.getEmail(), 16);
 
-				System.out.printf("%s | %s | %s | %s | %s | %s | %s | %s | %s | %s%n", PrintUtil.padRight(empNo, 6),
+				System.out.printf(" %s │ %s │ %s │ %s │ %s │ %s │ %s │ %s │ %s │ %s%n", PrintUtil.padRight(empNo, 6),
 						PrintUtil.padRight(empNm, 6), PrintUtil.padRight(rrn, 13), PrintUtil.padRight(addr, 18),
 						PrintUtil.padRight(hireDt, 10), PrintUtil.padRight(deptNm, 10), PrintUtil.padRight(gradeNm, 6),
 						PrintUtil.padRight(statNm, 4), PrintUtil.padRight(cntrNm, 4), PrintUtil.padRight(email, 16));
 			}
 
 			PrintUtil.printLine('=', 120);
-			System.out.print("[n: 다음, p: 이전, q: 종료] ➤ ");
+			System.out.print("   [p: 이전]  [n: 다음]  [q: 종료] ➤ ");
 			String cmd = br.readLine();
 			if (cmd == null)
 				cmd = "";
 			cmd = cmd.trim().toLowerCase();
 
 			if ("n".equals(cmd)) {
-				if (page < totalPage)
+				if (page < totalPage) {
 					page++;
-				else
+				} else {
 					System.out.println("마지막 페이지입니다.\n");
+				}
 			} else if ("p".equals(cmd)) {
-				if (page > 1)
+				if (page > 1) {
 					page--;
-				else
+				} else {
 					System.out.println("첫 페이지입니다.\n");
+				}
 			} else if ("q".equals(cmd)) {
 				break;
 			}
-		// 주민등록번호 공백 2개 전까지만 보이게 출력
-			
+			// 여기서 다시 while 처음으로 → 다음/이전 페이지 출력
 		}
-		
 	}
 
 	// 한글/영문 폭 기준으로 문자열을 잘라주는 헬퍼
@@ -870,8 +873,9 @@ public class AdminEmpUI {
 			int startIndex = (page - 1) * pageSize;
 			int endIndex = Math.min(startIndex + pageSize, total);
 
-			System.out.printf("페이지 %d / %d   (총 %d건)   [조회범위: %d ~ %d]%n", page, totalPage, total, startIndex + 1,
-					endIndex);
+			System.out.println();
+			System.out.printf("▶ 경력 이력 목록 | 페이지 %d / %d | 총 %d건 | 조회범위: %d~%d%n", page, totalPage, total,
+					startIndex + 1, endIndex);
 			PrintUtil.printLine('=', 120);
 
 			System.out.printf("%s | %s | %s | %s | %s | %s%n", PrintUtil.padCenter("사번", 6),
@@ -926,8 +930,9 @@ public class AdminEmpUI {
 			int startIndex = (page - 1) * pageSize;
 			int endIndex = Math.min(startIndex + pageSize, total);
 
-			System.out.printf("페이지 %d / %d   (총 %d건)   [조회범위: %d ~ %d]%n", page, totalPage, total, startIndex + 1,
-					endIndex);
+			System.out.println();
+			System.out.printf("▶ 자격증 이력 목록 | 페이지 %d / %d | 총 %d건 | 조회범위: %d~%d%n", page, totalPage, total,
+					startIndex + 1, endIndex);
 			PrintUtil.printLine('=', 120);
 
 			System.out.printf("%s | %s | %s | %s | %s%n", PrintUtil.padCenter("사번", 6), PrintUtil.padCenter("이름", 8),
@@ -980,8 +985,9 @@ public class AdminEmpUI {
 			int startIndex = (page - 1) * pageSize;
 			int endIndex = Math.min(startIndex + pageSize, total);
 
-			System.out.printf("페이지 %d / %d   (총 %d건)   [조회범위: %d ~ %d]%n", page, totalPage, total, startIndex + 1,
-					endIndex);
+			System.out.println();
+			System.out.printf("▶ 직급 이력 목록 | 페이지 %d / %d | 총 %d건 | 조회범위: %d~%d%n", page, totalPage, total,
+					startIndex + 1, endIndex);
 			PrintUtil.printLine('=', 120);
 
 			System.out.printf("%s | %s | %s | %s | %s | %s%n", PrintUtil.padCenter("시작일", 10),
@@ -998,6 +1004,7 @@ public class AdminEmpUI {
 						PrintUtil.padRight(d.getDeptNm(), 12));
 			}
 			PrintUtil.printLine('=', 120);
+
 			System.out.print("[n: 다음, p: 이전, q: 종료] ➤ ");
 			String cmd = br.readLine();
 			if (cmd == null)
@@ -1017,21 +1024,19 @@ public class AdminEmpUI {
 			} else if ("q".equals(cmd)) {
 				break;
 			}
-
 		}
 	}
 
-//	private String getFirstTwoWords(String addr) {
-//		if (addr == null)
-//			return "";
-//		String[] parts = addr.trim().split("\\s+");
-//
-//		if (parts.length >= 2) {
-//			return parts[0] + " " + parts[1];
-//		} else {
-//			return addr;
-//		}
-//
-//	}
+	private String getFirstTwoWords(String addr) {
+		if (addr == null)
+			return "";
+		String[] parts = addr.trim().split("\\s+");
+
+		if (parts.length >= 2) {
+			return parts[0] + " " + parts[1];
+		} else {
+			return addr;
+		}
+	}
 
 }
