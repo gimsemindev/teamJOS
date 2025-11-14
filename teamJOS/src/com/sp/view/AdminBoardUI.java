@@ -10,7 +10,8 @@ import com.sp.view.common.BoardCommonUI;
 public class AdminBoardUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private BoardDAO boardDao;
-    private LoginInfo loginInfo;
+    @SuppressWarnings("unused")
+	private LoginInfo loginInfo;
     private BoardCommonUI boardCommonUI;
     
     public AdminBoardUI(BoardDAO boardDao, LoginInfo loginInfo) {
