@@ -83,7 +83,7 @@ public class BoardCommonUI {
             System.out.println("\n[오류] 게시글 수정 중 예외 발생: " + e.getMessage());
         }
     }    
-	
+	/** BOARD_LIS_004  */
     public void viewPostsList() {
 
         try {
