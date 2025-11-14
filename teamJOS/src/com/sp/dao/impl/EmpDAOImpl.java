@@ -778,8 +778,7 @@ public class EmpDAOImpl implements EmpDAO{
 	@Override
 	public boolean isEmailExists(String email) {
 	    String sql = "SELECT COUNT(*) FROM TB_EMP WHERE EMAIL = ?";
-	    try (Connection conn = DBConn.getConnection();
-	         PreparedStatement pstmt = conn.prepareStatement(sql)) {
+	    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
 	        pstmt.setString(1, email);
 	        ResultSet rs = pstmt.executeQuery();
