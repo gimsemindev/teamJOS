@@ -94,7 +94,7 @@ public class MainUI {
                 System.out.println();
                 System.out.println(CYAN + "╔════════════════════════════════════════╗" + RESET);
                 System.out.println(CYAN + "║                                        ║" + RESET);
-                System.out.println(CYAN + "║   🏢  " + YELLOW + " teamJOS 인사관리 시스템" + CYAN + "              ║" + RESET);
+                System.out.println(CYAN + "║   🏢  " + YELLOW + " teamJOS 인사관리 시스템" + CYAN + "             ║" + RESET);
                 System.out.println(CYAN + "║                                        ║" + RESET);
                 System.out.println(CYAN + "╚════════════════════════════════════════╝" + RESET);
 
