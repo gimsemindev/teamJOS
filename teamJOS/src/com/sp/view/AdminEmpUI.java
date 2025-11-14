@@ -178,7 +178,7 @@ public class AdminEmpUI {
 			dto.setEmpStatCd("A");
 			PrintUtil.printSection("사원 상태");
 			System.out.println("신규 등록 사원은 기본적으로 재직 상태(A)로 설정됩니다.");
-			System.out.print("계속 진행하려면 엔터를 눌러주세요. ");
+			System.out.print("계속 진행하려면 엔터를 눌러주세요. [Enter] ");
 			br.readLine();
 			System.out.println();
 
