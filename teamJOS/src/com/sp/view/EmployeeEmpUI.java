@@ -8,6 +8,7 @@ import java.util.List;
 
 import com.sp.dao.EmpDAO;
 import com.sp.dao.impl.EmpDAOImpl;
+import com.sp.exception.UserQuitException;
 import com.sp.model.EmployeeDTO;
 import com.sp.model.HistoryDTO;
 import com.sp.model.LoginDTO;
@@ -15,7 +16,6 @@ import com.sp.model.RetireDTO;
 import com.sp.util.InputValidator;
 import com.sp.util.LoginInfo;
 import com.sp.util.PrintUtil;
-
 
 public class EmployeeEmpUI {
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -42,8 +42,10 @@ public class EmployeeEmpUI {
 						  1. 내정보조회     2. 내정보수정     3. 직급이동이력조회     4. 이력조회     5.퇴직신청     6. 상위메뉴
 						======================================================================================""");
 
-				System.out.print("선택 ➤ ");
-				ch = Integer.parseInt(br.readLine());
+				System.out.print("선택 [q: 상위메뉴] ➤ ");
+				String s = br.readLine();
+				InputValidator.isUserExit(s);
+				ch = Integer.parseInt(s);
 				System.out.println();
 
 				switch (ch) {
@@ -61,6 +63,9 @@ public class EmployeeEmpUI {
 
 			} while (ch != 5);
 
+		} catch (UserQuitException e) {
+			System.out.println("\n사원 - 내 정보 관리 메뉴를 종료합니다.\n");
+			return;
 		} catch (Exception e) {
 			System.out.println("오류가 발생했습니다: " + e.getMessage());
 			e.printStackTrace();
@@ -79,21 +84,60 @@ public class EmployeeEmpUI {
 				return;
 			}
 
+			// 컬럼 폭(내용 폭만) : 합계 124, 구분자 " | " 12개 * 3 = 36 → 총 160
+			final int W_EMP_NO   = 7;
+			final int W_NAME     = 6;
+			final int W_RRN      = 18;
+			final int W_ADDR     = 30;
+			final int W_HIRE     = 10;
+			final int W_DEPT     = 10;
+			final int W_GRADE    = 6;
+			final int W_STAT     = 4;
+			final int W_CNTR     = 4;
+			final int W_EMAIL    = 12;
+			final int W_PWD      = 8;
+			final int W_REG_DT   = 13;
+			final int W_LEVEL    = 9;
+
+			PrintUtil.printLine('=', 160);
+			System.out.println(PrintUtil.padCenter("사원 - 내 정보 조회", 160));
+			PrintUtil.printLine('=', 160);
+
+			// 헤더
+			System.out.printf("%s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s%n",
+					PrintUtil.padCenter("사번", W_EMP_NO),
+					PrintUtil.padCenter("이름", W_NAME),
+					PrintUtil.padCenter("주민번호", W_RRN),
+					PrintUtil.padCenter("주소", W_ADDR),
+					PrintUtil.padCenter("입사일", W_HIRE),
+					PrintUtil.padCenter("부서명", W_DEPT),
+					PrintUtil.padCenter("직급", W_GRADE),
+					PrintUtil.padCenter("재직", W_STAT),
+					PrintUtil.padCenter("계약", W_CNTR),
+					PrintUtil.padCenter("이메일", W_EMAIL),
+					PrintUtil.padCenter("비밀번호", W_PWD),
+					PrintUtil.padCenter("등록일", W_REG_DT),
+					PrintUtil.padCenter("권한", W_LEVEL));
 			PrintUtil.printLine('-', 160);
-			System.out.print(dto.getEmpNo() + "\t");
-			System.out.print(dto.getEmpNm() + "\t");
-			System.out.print(dto.getRrn() + "\t");
-			System.out.print(dto.getEmpAddr() + "\t");
-			System.out.print(dto.getHireDt() + "\t");
-			System.out.print(dto.getDeptNm() + "\t");
-			System.out.print(dto.getGradeNm() + "\t");
-			System.out.print(dto.getEmpStatNm() + "\t");
-			System.out.print(dto.getContractTpNm() + "\t");
-			System.out.print(dto.getEmail() + "\t");
-			System.out.print(dto.getPwd() + "\t");
-			System.out.print(dto.getRegDt() + "\t");
-			System.out.println(dto.getLevelCode());
-			PrintUtil.printLine('-', 160);
+
+			// 데이터 1행
+			System.out.printf("%s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s | %s%n",
+					PrintUtil.padRight(dto.getEmpNo(), W_EMP_NO),
+					PrintUtil.padRight(dto.getEmpNm(), W_NAME),
+					PrintUtil.padRight(dto.getRrn(), W_RRN),
+					PrintUtil.padRight(dto.getEmpAddr(), W_ADDR),
+					PrintUtil.padRight(dto.getHireDt(), W_HIRE),
+					PrintUtil.padRight(dto.getDeptNm(), W_DEPT),
+					PrintUtil.padRight(dto.getGradeNm(), W_GRADE),
+					PrintUtil.padRight(dto.getEmpStatNm(), W_STAT),
+					PrintUtil.padRight(dto.getContractTpNm(), W_CNTR),
+					PrintUtil.padRight(dto.getEmail(), W_EMAIL),
+					PrintUtil.padRight(dto.getPwd(), W_PWD),
+					PrintUtil.padRight(dto.getRegDt(), W_REG_DT),
+					PrintUtil.padRight(dto.getLevelCode(), W_LEVEL));
+
+			PrintUtil.printLine('=', 160);
+			System.out.println();
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -109,12 +153,14 @@ public class EmployeeEmpUI {
 			System.out.println("""
 					=====================================================
 					                   [수정할 항목 선택]
-							 1.주소 | 2.이메일 | 3.비밀번호 | 4.상위메뉴
+					         1.주소 | 2.이메일 | 3.비밀번호 | 4.상위메뉴
 					=====================================================
 					""");
 
-			System.out.print("선택 ➤ ");
-			int ch = Integer.parseInt(br.readLine());
+			System.out.print("선택 [q: 돌아가기] ➤ ");
+			String s = br.readLine();
+			InputValidator.isUserExit(s);
+			int ch = Integer.parseInt(s);
 			if (ch == 4)
 				return;
 
@@ -130,8 +176,9 @@ public class EmployeeEmpUI {
 				return;
 			}
 
-			System.out.print("변경할 값 입력 ➤ ");
+			System.out.print("변경할 값 입력([q: 돌아가기]) ➤ ");
 			String val = br.readLine();
+			InputValidator.isUserExit(val);
 
 			if (col.equals("EMAIL") && !InputValidator.isValidEmail(val)) {
 				System.out.println("잘못된 이메일 형식입니다.");
@@ -145,6 +192,8 @@ public class EmployeeEmpUI {
 			empDao.updateEmployee(empNo, col, val);
 			System.out.println("\n내 정보 수정이 완료되었습니다.\n");
 
+		} catch (UserQuitException e) {
+			System.out.println("\n수정을 취소하고 상위 메뉴로 돌아갑니다.\n");
 		} catch (IOException e) {
 			System.out.println("입력 오류가 발생하였습니다.");
 			e.printStackTrace();
@@ -246,21 +295,27 @@ public class EmployeeEmpUI {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void insertRetire() {
 		System.out.println("\n[퇴직신청]");
 		RetireDTO dto = new RetireDTO();
-		
+
 		try {
-			System.out.print("퇴직일자 ? ");
-			dto.setRegDt(br.readLine());
-			
-			System.out.print("퇴직사유 ? ");
-			dto.setRetireMemo(br.readLine());
-			
+			System.out.print("퇴직일자 ? [q: 취소] ➤ ");
+			String regDt = br.readLine();
+			InputValidator.isUserExit(regDt);
+			dto.setRegDt(regDt);
+
+			System.out.print("퇴직사유 ? [q: 취소] ➤ ");
+			String memo = br.readLine();
+			InputValidator.isUserExit(memo);
+			dto.setRetireMemo(memo);
+
 			empDao.insertRetire(dto);
-			
+
 			System.out.println("퇴직 신청 완료!");
+		} catch (UserQuitException e) {
+			System.out.println("\n퇴직 신청을 취소했습니다.\n");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -269,5 +324,5 @@ public class EmployeeEmpUI {
 			e.printStackTrace();
 		}
 	}
-	
+
 }

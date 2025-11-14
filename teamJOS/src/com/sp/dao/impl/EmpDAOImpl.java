@@ -427,7 +427,7 @@ public class EmpDAOImpl implements EmpDAO{
 			sql = "SELECT e.EMP_NO, e.EMP_NM, c.PREV_COMP_NM, TO_CHAR(c.CAREER_STRT_DT, 'YYYY-MM-DD') CAREER_STRT_DT, TO_CHAR(c.CAREER_END_DT, 'YYYY-MM-DD') CAREER_END_DT, c.DETAILS, TO_CHAR(c.REG_DT, 'YYYY-MM-DD') REG_DT, c.APPRV_D "
 					+ " FROM TB_EMP_CAREER_HIST c "
 					+ " JOIN TB_EMP e ON c.EMP_NO = e.EMP_NO "
-					+ " WHERE c.EMP_NP = ?";
+					+ " WHERE c.EMP_NO = ?";
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, empNo);
 			

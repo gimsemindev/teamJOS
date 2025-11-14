@@ -95,5 +95,49 @@ public class PrintUtil {
 	    
 	}
 	
-	
-}
+	// 표시 폭 기준 오른쪽 패딩
+	public static String padRightDisplay(String s, int width) {
+	    if (s == null) s = "";
+	    if (getDisplayWidth(s) > width) {
+	        s = cutDisplay(s, width);
+	    }
+	    int dw = getDisplayWidth(s);
+	    StringBuilder sb = new StringBuilder(s);
+	    for (int i = dw; i < width; i++) {
+	        sb.append(' ');
+	    }
+	    return sb.toString();
+	}
+
+	// 표시 폭 기준 가운데 정렬
+	public static String padCenterDisplay(String s, int width) {
+	    if (s == null) s = "";
+	    if (getDisplayWidth(s) > width) {
+	        s = cutDisplay(s, width);
+	    }
+	    int dw = getDisplayWidth(s);
+	    if (dw >= width) return s;
+
+	    int left = (width - dw) / 2;
+	    int right = width - dw - left;
+
+	    StringBuilder sb = new StringBuilder();
+	    for (int i = 0; i < left; i++) sb.append(' ');
+	    sb.append(s);
+	    for (int i = 0; i < right; i++) sb.append(' ');
+	    return sb.toString();
+	}
+
+	// 한글/영문 폭 계산해서 잘라내기
+	public static String cutDisplay(String s, int maxWidth) {
+	    if (s == null) return "";
+	    int w = 0;
+	    StringBuilder sb = new StringBuilder();
+	    for (char c : s.toCharArray()) {
+	        int cw = getDisplayWidth(String.valueOf(c));
+	        if (w + cw > maxWidth) break;
+	        sb.append(c);
+	        w += cw;
+	    }
+	    return sb.toString();
+	}}
