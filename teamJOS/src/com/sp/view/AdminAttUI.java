@@ -29,8 +29,6 @@ public class AdminAttUI {
         this.deptCommonUI = new DeptCommonUI(this.loginInfo);
     }
     
-    
-    
     public void menu() {
         int ch;
         String input;
@@ -61,9 +59,7 @@ public class AdminAttUI {
         		case 3: updateAttendanceInfo(); break; // 3.근태정보수정 // ATT_UPD_010
         		case 4: selectAttendanceInfo(); break; // 4. 근태정보조회
         		case 5: updateVacationApproveInfo(); break; // 5.휴가승인 // ATT_UPD_003
-//        		case 6: manageWorkTimeSearch(); break; // 6.근무시간조회 (하위 메뉴로 위임)
-        		case 6: deptCommonUI.selectAllAnnualLeave(); break; // 7.연차조회 (전체조회) // ATT_SEL_006
-        		
+        		case 6: deptCommonUI.selectAllAnnualLeave(); break; // 6.연차조회 (전체조회) // ATT_SEL_006
         		}
         		
         	} catch (Exception e) {
@@ -134,6 +130,10 @@ public class AdminAttUI {
     	try {
     		att.setEmpNo(checkEmpNo(true));
     		
+    		System.out.println("조회할 날짜 ? ex.2025-10-10 ");
+			att.setRegDt(br.readLine());
+			
+    		
 			System.out.println("""
 				=====================================================
 				            [수정할 항목 선택]
@@ -158,13 +158,20 @@ public class AdminAttUI {
 		}
 		
 		att.setAtdNo(col);
+		
+		boolean canUpdate = attDao.checkAtdColumnIsNull(att);
+		
+		if (!canUpdate) {
+            System.out.println("이미 값이 있어 수정할 수 없습니다.\n");
+            return;     // 상위 메뉴로
+        }
 
 		System.out.print("변경할 값 입력 ➤ ");
 		att.setAtdStatusCd(br.readLine());
-
-		attDao.updateAttendance(att);
 		
-		System.out.println("\n수정이 완료되었습니다.\n");
+		String msg = attDao.updateAttendance(att);
+		
+		System.out.println("\n" + msg + "\n");
 		
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -175,7 +182,6 @@ public class AdminAttUI {
     // 근태 정보 조회
     protected void selectAttendanceInfo() {
     	System.out.println("[관리자 - 근태관리 - 근태정보조회]");
-    	AttendanceDTO att = new AttendanceDTO();
     	try {
 			System.out.println("조회할 날짜 ? ex.2025-10-10 ");
 			String date = (br.readLine());
@@ -194,23 +200,19 @@ public class AdminAttUI {
 				        dto.getRegDt());
 			}*/
 			
-			for(AttendanceDTO dto : list) {
-				System.out.print(dto.getEmpNo() + "\t");
-				System.out.print(dto.getAtdNo() + "\t");
-				System.out.print(dto.getCheckIn() + "\t");
-				System.out.print(dto.getCheckOut() + "\t");
-				System.out.print(dto.getWorkHours() + "\t");
-				System.out.print(dto.getAtdStatusCd() + "\t");
-				System.out.println(dto.getRegDt());
+			for(AttendanceDTO att : list) {
+				System.out.print(att.getEmpNo() + "\t");
+				System.out.print(att.getAtdNo() + "\t");
+				System.out.print(att.getCheckIn() + "\t");
+				System.out.print(att.getCheckOut() + "\t");
+				System.out.print(att.getWorkHours() + "\t");
+				System.out.print(att.getAtdStatusCd() + "\t");
+				System.out.println(att.getRegDt());
 			}
 			
 			System.out.println("조회 완료되었습니다.");
-			
-//			String empNo = loginInfo.loginMember().getMemberId();
-			
-			
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}
 		
 	}
@@ -331,6 +333,7 @@ public class AdminAttUI {
     }
 */
     
+    // 사원 번호 입력받는 메소드(통합)
     protected String checkEmpNo(boolean mustExist) throws IOException, SQLException {
 		String empNo;
 		while (true) {

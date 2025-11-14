@@ -39,20 +39,26 @@ public class AttDAOImpl implements AttDAO{
 			String sql;
 			
 			try {
+				// CHECK_IN이 NULL이면 SYSDATE 입력하는 프로시저 호출
+				// 오전 9시 이후로 입력되는 경우 지각으로 처리됨.
+				// CHECK_IN 내용이 이미 있는 경우 입력되지 않음.
 				sql = "CALL SP_INSERT_CHECKIN(?, ?) ";
 				
 				cstmt= conn.prepareCall(sql);
-				cstmt.setString(1, att.getEmpNo());
-				cstmt.registerOutParameter(2, OracleTypes.VARCHAR);
+				cstmt.setString(1, att.getEmpNo()); // 사원번호
+				cstmt.registerOutParameter(2, OracleTypes.VARCHAR); // 리턴메시지
 				cstmt.execute();
 				
+				// 프로시저 실행 후 리턴메시지 받아옴
 				msg = cstmt.getString(2);
+				System.out.println(msg);
 				
 			} catch (Exception e) {
 				throw e;
 			} finally {
 				DBUtil.close(cstmt);
 			}
+			// 프로시저에서 받아온 리턴메시지 UI로 리턴
 			return msg;
 		}
 
@@ -65,12 +71,16 @@ public class AttDAOImpl implements AttDAO{
 		    String sql;
 		    
 		    try {
+		    	// CHECK_OUT에 SYSDATE 입력 후 근무시간 계산하여 입력하는 프로시저 호출
+		    	// CHECK_OUT은 계속 갱신 가능하며, 새로 입력 시 근무시간도 새로 계산됨
+		    	// CHECK_IN이 NULL일 경우에는 입력되지 않음.
 		        sql = "CALL SP_INSERT_CHECKOUT(?, ?)";
 		        cstmt = conn.prepareCall(sql);
-		        cstmt.setString(1, att.getEmpNo());
-		        cstmt.registerOutParameter(2, OracleTypes.VARCHAR);
+		        cstmt.setString(1, att.getEmpNo()); // 사원번호
+		        cstmt.registerOutParameter(2, OracleTypes.VARCHAR); // 리턴메시지
 		        cstmt.execute();
 
+		        // 프로시저 실행 후 리턴메시지 받아옴
 		        msg = cstmt.getString(2);
 
 		    } catch (Exception e) {
@@ -78,7 +88,7 @@ public class AttDAOImpl implements AttDAO{
 		    } finally {
 		        DBUtil.close(cstmt);
 		    }
-			
+		    // 프로시저에서 받아온 리턴메시지 UI로 리턴
 			return msg;
 		}
 
@@ -152,24 +162,50 @@ public class AttDAOImpl implements AttDAO{
 			String msg = null;
 			
 			try {
-				sql = "CALL SP_UPDATE_ATD_COLUMN(?, ?, ?, ?)";
+				// 프로시저 호출
+				sql = "CALL SP_UPDATE_ATD_COLUMN(?, ?, ?, ?, ?)";
 				cstmt = conn.prepareCall(sql);
-				cstmt.setString(1, att.getEmpNo());
-				cstmt.setString(2, att.getAtdNo());
-				cstmt.setString(3, att.getAtdStatusCd());
-				cstmt.registerOutParameter(4, OracleTypes.VARCHAR);
-				cstmt.execute();
 				
-				msg = cstmt.getString(4);
+				cstmt.setString(1, att.getEmpNo()); // 사원번호
+				cstmt.setString(2, att.getRegDt()); // 변경할 날짜 
+				cstmt.setString(3, att.getAtdNo()); // 변경할 컬럼 명
+				cstmt.setString(4, att.getAtdStatusCd()); // 새로운 값
+				cstmt.registerOutParameter(5, OracleTypes.VARCHAR); // 리턴메시지
+				cstmt.execute();
+				msg = cstmt.getString(5);
 			} catch (Exception e) {
 				throw e;
 			} finally {
 				DBUtil.close(cstmt);
 			}
+			// 프로시저에서 받아온 리턴메시지 UI로 리턴
 			return msg;
 		}
 		
-		// 근태정보조회 메소드(관리자)
+		// 근무시간 수정 시 수정이 가능한지 확인하는 메소드
+		@Override
+		public boolean checkAtdColumnIsNull(AttendanceDTO att) throws SQLException {
+			PreparedStatement pstmt = null;
+		    ResultSet rs = null;
+		    String sql;
+		    try {
+		    	// CHECK_IN 또는 CHECK_OUT이 NULL이 맞는지 확인하는 sql
+		    	sql = "SELECT COUNT(*) FROM TB_ATD WHERE EMP_NO = ? AND REG_DT = ? AND " + att.getAtdNo() + " IS NULL";
+		        pstmt = conn.prepareStatement(sql);
+		        pstmt.setString(1, att.getEmpNo()); // 사원번호
+		        pstmt.setString(2, att.getRegDt()); // 수정을 원하는 날짜
+
+		        rs = pstmt.executeQuery();
+		        rs.next();
+
+		        return rs.getInt(1) > 0;   // NULL이면 true, 아니면 false
+		    } finally {
+		        DBUtil.close(rs);
+		        DBUtil.close(pstmt);
+		    }
+		}
+		
+		// 근태 정보 조회 메소드(관리자)
 		@Override
 		public List<AttendanceDTO> selectAttendanceAll(String date) throws SQLException {
 			List<AttendanceDTO> list = new ArrayList<>();
@@ -178,12 +214,13 @@ public class AttDAOImpl implements AttDAO{
 			ResultSet rs = null;
 			String sql;
 			try {
+				// 원하는 날짜의 전체 사원 근태 정보를 조회하는 프로시저 호출
 				sql = "CALL SP_SELECT_ATD_BY_DATE_ALL(?, ?) ";
 				
 				cstmt = conn.prepareCall(sql);
 				
-				cstmt.setString(1, date);
-				cstmt.registerOutParameter(2, OracleTypes.CURSOR);
+				cstmt.setString(1, date); // 조회 날짜
+				cstmt.registerOutParameter(2, OracleTypes.CURSOR); // 조회 결과
 				cstmt.execute();
 				
 				rs = (ResultSet) cstmt.getObject(2);
@@ -191,13 +228,13 @@ public class AttDAOImpl implements AttDAO{
 				while (rs.next()) {
 					
 					att = new AttendanceDTO();
-					att.setEmpNo(rs.getString("EMP_NO"));
-					att.setAtdNo(rs.getString("EMP_NM"));
-					att.setCheckIn(rs.getString("CHECK_IN"));
-					att.setCheckOut(rs.getString("CHECK_OUT"));
-					att.setWorkHours(rs.getString("WORK_HOURS"));
-					att.setAtdStatusCd(rs.getString("STATUS_NM"));
-					att.setRegDt(rs.getString("REG_DT"));
+					att.setEmpNo(rs.getString("EMP_NO")); // 사원번호
+					att.setAtdNo(rs.getString("EMP_NM")); // 사원이름
+					att.setCheckIn(rs.getString("CHECK_IN")); // 출근시간
+					att.setCheckOut(rs.getString("CHECK_OUT")); // 퇴근시간
+					att.setWorkHours(rs.getString("WORK_HOURS")); // 근무시간
+					att.setAtdStatusCd(rs.getString("STATUS_NM")); // 근태상태
+					att.setRegDt(rs.getString("REG_DT")); // 등록일자
 
 					list.add(att);
 				}
@@ -210,19 +247,19 @@ public class AttDAOImpl implements AttDAO{
 			return list;
 		}
 
-	// 근태정보조회 메소드(일반사용자)
+	// 근태 정보 조회 메소드(일반사용자)
 	@Override
 	public AttendanceDTO selectAttendance(AttendanceDTO att) throws SQLException {
 		CallableStatement cstmt = null;
-		List<AttendanceDTO> list = new ArrayList<>();
 		ResultSet rs = null;
 		String sql;
 		
 		try {
+			// 원하는 날짜의 자신의 근태 정보를 조회하는 프로시저 호출
 			sql = "CALL SP_SELECT_ATD_BY_DATE_ALL(?, ?, ?) ";
 			cstmt = conn.prepareCall(sql);
-			cstmt.setString(1, att.getEmpNo());
-			cstmt.setString(2, att.getRegDt());
+			cstmt.setString(1, att.getEmpNo()); // 사원번호
+			cstmt.setString(2, att.getRegDt()); // 날짜
 			cstmt.registerOutParameter(3, OracleTypes.CURSOR);
 			cstmt.execute();
 			
@@ -230,29 +267,17 @@ public class AttDAOImpl implements AttDAO{
 			
 			if (rs.next()) {
 				att = new AttendanceDTO();
-				att.setEmpNo(rs.getString("EMP_NO"));
-				att.setAtdNo(rs.getString("EMP_NM"));
-				att.setCheckIn(rs.getString("CHECK_IN"));
-				att.setCheckOut(rs.getString("CHECK_OUT"));
-				att.setWorkHours(rs.getString("WORK_HOURS"));
-				att.setAtdStatusCd(rs.getString("STATUS_NM"));
-				att.setRegDt(rs.getString("REG_DT"));
+				att.setEmpNo(rs.getString("EMP_NO")); // 사원번호
+				att.setAtdNo(rs.getString("EMP_NM")); // 사원이름
+				att.setCheckIn(rs.getString("CHECK_IN")); // 출근일시
+				att.setCheckOut(rs.getString("CHECK_OUT")); // 퇴근일시
+				att.setWorkHours(rs.getString("WORK_HOURS")); // 근무시간
+				att.setAtdStatusCd(rs.getString("STATUS_NM")); // 근태상태
+				att.setRegDt(rs.getString("REG_DT")); // 등록일자
 			}
 		} catch (Exception e) {
 		}
 		return att;
-	}
-
-	@Override
-	public List<AttendanceDTO> selectAllWorkTime() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<AttendanceDTO> selectWorkTimeByEmp(int empNo) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@Override
@@ -423,6 +448,8 @@ public class AttDAOImpl implements AttDAO{
 		
 		return list;
 	}
+
+	
 
 	
 

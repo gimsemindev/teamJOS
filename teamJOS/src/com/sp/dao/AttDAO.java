@@ -5,7 +5,6 @@ import java.util.List;
 
 import com.sp.model.AnnualLeaveDTO;
 import com.sp.model.AttendanceDTO;
-import com.sp.model.HistoryDTO;
 import com.sp.model.VacationDTO;
 
 /**
@@ -45,19 +44,16 @@ public interface AttDAO {
     /** ATT_UPD_010 */
     String updateAttendance(AttendanceDTO att) throws SQLException;
     
-    /** ATT_SLT_001 */ // 전체 근태정보조회 테이블(관리자)
+    /** ATT_SLT_001 */ // CHECK_IN, CEHCK_OUT이 NULL인지 확인하는 메소드
+    boolean checkAtdColumnIsNull(AttendanceDTO att) throws SQLException;
+    
+    /** ATT_SLT_002 */ // 전체 근태정보조회 테이블(관리자)
     List<AttendanceDTO> selectAttendanceAll(String date) throws SQLException;
     
-    /** ATT_SLT_002 */ // 근태정보조회 테이블(일반 사용자)
+    /** ATT_SLT_003 */ // 근태정보조회 테이블(일반 사용자)
     AttendanceDTO selectAttendance(AttendanceDTO att) throws SQLException;
     
     List<VacationDTO> listVaction();
-
-    /** ATT_SEL_004 */ //
-    List<AttendanceDTO> selectAllWorkTime();
-
-    /** ATT_SEL_005 */
-    List<AttendanceDTO> selectWorkTimeByEmp(int empNo);
 
     /** ATT_SEL_006 */
     List<AnnualLeaveDTO> selectAllAnnualLeave(int start, int end);
