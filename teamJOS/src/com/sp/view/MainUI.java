@@ -20,8 +20,28 @@ import com.sp.model.LoginDTO;
 import com.sp.util.DBConn;
 import com.sp.util.LoginInfo;
 
-
+/**
+ * <h2>MainUI (프로그램 메인 UI)</h2>
+ *
+ * <p>로그인 상태에 따라 게스트/사원/관리자 메뉴를 구분하여 보여주는  
+ * 프로그램 진입점 역할의 UI 클래스입니다.</p>
+ *
+ * <ul>
+ *   <li>게스트 모드: 로그인 / 종료</li>
+ *   <li>사원 모드: 사원/부서/근태/게시판 기능</li>
+ *   <li>관리자 모드: 사원/부서/근태/권한/게시판 관리 기능</li>
+ * </ul>
+ *
+ * <p>필요한 DAO 객체들을 초기화하고  
+ * 각 화면 기능을 AdminUI / EmployeeUI 에 위임합니다.</p>
+ *
+ * <p><b>프로젝트명:</b> teamJOS 인사관리 프로젝트</p>
+  * <p><b>작성자:</b> 황선호</p>
+ * <p><b>작성일:</b> 2025-11-16</p>
+ * <p><b>버전:</b> 0.9</p> 
+ */
 public class MainUI {
+
 	final String RESET  = "\u001B[0m";
 	final String CYAN   = "\u001B[36m";
 	final String GREEN  = "\u001B[32m";
@@ -31,7 +51,6 @@ public class MainUI {
 	private BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	private LoginInfo login = new LoginInfo();
 
-
     // DAO 초기화
     private EmpDAO empDao = new EmpDAOImpl();
     private DeptDAO deptDao = new DeptDAOImpl();
@@ -40,31 +59,35 @@ public class MainUI {
     private BoardDAO boardDao = new BoardDAOImpl();
     private LoginDAO loginDao = new LoginDAOImpl();
 
-    // UI 초기화
+    // UI 초기화 (DI)
     public AdminUI adminUI = null;
     public EmployeeUI employeeUI = null;
     
-    
-    // MainUI.java 내부 권한 레벨 상수 
-    private static final int AUTH_LEVEL_ADMIN = 3; // 관리자 레벨
-    private static final int AUTH_LEVEL_EMPLOYEE = 1; // 일반 사원 레벨
+    // 권한 레벨 상수
+    private static final int AUTH_LEVEL_ADMIN = 3;
+    private static final int AUTH_LEVEL_EMPLOYEE = 1;
     
     /**
-     * 프로그램 시작점
+     * <h3>프로그램 실행 메인 루프</h3>
+     *
+     * <p>로그인된 사용자의 권한(role)에 따라  
+     * 게스트 → 사원메뉴 → 관리자메뉴 순으로 분기합니다.</p>
      */
     public void menu() {
         while (true) {
-            LoginDTO member = login.loginMember();
-            
-            if (member == null) {
-                menuGuest(); 
-                continue; 
-            }
-            adminUI= new AdminUI(empDao, deptDao, attDao, authDao,boardDao, login);
-            employeeUI = new EmployeeUI(empDao, deptDao, attDao, boardDao, login);
-            int authLevel; 
-            try {
 
+            LoginDTO member = login.loginMember();
+
+            if (member == null) {
+                menuGuest();
+                continue;
+            }
+
+            adminUI = new AdminUI(empDao, deptDao, attDao, authDao, boardDao, login);
+            employeeUI = new EmployeeUI(empDao, deptDao, attDao, boardDao, login);
+
+            int authLevel;
+            try {
                 authLevel = Integer.parseInt(member.getRole());
             } catch (NumberFormatException e) {
                 System.out.println(GRAY + "경고: 알 수 없는 권한 정보입니다. 로그아웃 처리합니다." + RESET);
@@ -72,11 +95,11 @@ public class MainUI {
                 continue;
             }
 
-            if (authLevel == AUTH_LEVEL_ADMIN) {  // 관리자 (레벨 3)
+            if (authLevel == AUTH_LEVEL_ADMIN) {
                 menuAdmin();
-            } else if (authLevel == AUTH_LEVEL_EMPLOYEE) { // 일반 사원 (레벨 1)
+            } else if (authLevel == AUTH_LEVEL_EMPLOYEE) {
                 menuEmployee();
-            } else { // 정의되지 않은 권한
+            } else {
                 System.out.println(GRAY + "정의되지 않은 권한 레벨(" + member.getRole() + ")입니다. 로그아웃 처리합니다." + RESET);
                 login.logout();
             }
@@ -84,11 +107,18 @@ public class MainUI {
     }
 
     /**
-     * 게스트(비로그인) 메뉴
+     * <h3>게스트(비로그인) 메뉴</h3>
+     *
+     * <p>로그인 전 사용자에게 보여지는 초기 화면입니다.</p>
+     * <ul>
+     *   <li>1. 로그인</li>
+     *   <li>2. 종료</li>
+     * </ul>
      */
     private void menuGuest() {
         int ch = 0;
         String input;
+
         do {
             try {
                 System.out.println();
@@ -106,9 +136,9 @@ public class MainUI {
                 
                 input = br.readLine();
                 
-                if(input == null || input.trim().isEmpty()) {
-                	ch = 0;
-                	continue;
+                if (input == null || input.trim().isEmpty()) {
+                    ch = 0;
+                    continue;
                 }
                 ch = Integer.parseInt(input);
 
@@ -119,7 +149,7 @@ public class MainUI {
 
         switch (ch) {
             case 1:
-                loginProcess();  // ✅ 로그인 기능을 MainUI 내부에서 수행
+                loginProcess();
                 break;
             case 2:
                 DBConn.close();
@@ -131,7 +161,10 @@ public class MainUI {
     }
 
     /**
-     * 로그인 절차 (MainUI 내부)
+     * <h3>로그인 처리</h3>
+     *
+     * <p>사번(ID), 비밀번호 입력 후  
+     * loginDao.login() 을 통해 인증을 수행합니다.</p>
      */
     private void loginProcess() {
     	try {
@@ -140,7 +173,6 @@ public class MainUI {
 			System.out.print("비밀번호: ");
 			String pw = br.readLine();
 
-			
 			LoginDTO member = loginDao.login(empNo, pw);
 
 			if (member != null) {
@@ -156,8 +188,18 @@ public class MainUI {
 			System.err.println("로그인 중 알 수 없는 오류 발생: " + e.getMessage());
 		}
 	}
+
     /**
-     * 일반 사원 메뉴
+     * <h3>일반 사원 메뉴</h3>
+     *
+     * <p>사원 모드에서 접근 가능한 기능:</p>
+     * <ul>
+     *   <li>사원관리</li>
+     *   <li>부서관리</li>
+     *   <li>근태관리</li>
+     *   <li>게시판</li>
+     *   <li>로그아웃</li>
+     * </ul>
      */
     private void menuEmployee() {
         int ch = 0;
@@ -176,7 +218,7 @@ public class MainUI {
         			
         			input = br.readLine();
                     
-                    if(input == null || input.trim().isEmpty()) {
+                    if (input == null || input.trim().isEmpty()) {
                     	ch = 0;
                     	continue;
                     }
@@ -211,7 +253,17 @@ public class MainUI {
     }
 
     /**
-     * 관리자 메뉴
+     * <h3>관리자 메뉴</h3>
+     *
+     * <p>관리자가 사용할 수 있는 기능:</p>
+     * <ul>
+     *   <li>사원관리</li>
+     *   <li>부서관리</li>
+     *   <li>근태관리</li>
+     *   <li>권한관리</li>
+     *   <li>게시판관리</li>
+     *   <li>로그아웃</li>
+     * </ul>
      */
     private void menuAdmin() {
         int ch = 0;
@@ -227,7 +279,7 @@ public class MainUI {
 
         			input = br.readLine();
                     
-                    if(input == null || input.trim().isEmpty()) {
+                    if (input == null || input.trim().isEmpty()) {
                     	ch = 0;
                     	continue;
                     }

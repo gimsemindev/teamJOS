@@ -15,11 +15,38 @@ import com.sp.util.DBConn;
 import com.sp.util.DBUtil;
 import com.sp.util.FileDownloadUtil;
 
-
+/**
+ * <h2>DeptDAOImpl (부서 관리 DAO 구현체)</h2>
+ *
+ * <p>DeptDAO 인터페이스를 구현한 클래스로, 부서 정보 및 부서 소속 직원 정보에 대한
+ * CRUD 및 조회 기능을 실제 데이터베이스와 연동하여 처리합니다.</p>
+ *
+ * <ul>
+ *   <li>부서 등록, 수정, 삭제</li>
+ *   <li>부서 단건 및 전체 조회</li>
+ *   <li>부서 소속 직원을 페이징 조회</li>
+ *   <li>계층형 조직도 기반의 하위 부서 조회</li>
+ *   <li>부서별 인원수 및 비율 통계 조회</li>
+ *   <li>CSV 파일 생성</li>
+ * </ul>
+ *
+ * <p><b>Service ID 범위:</b> DEPT_INS_001 ~ DEPT_SEL_010</p>
+ * <p><b>프로젝트명:</b> teamJOS 인사관리 프로젝트</p>
+ * <p><b>작성자:</b> 김세민</p>
+ * <p><b>작성일:</b> 2025-11-16</p>
+ * <p><b>버전:</b> 0.9</p>
+ */
 public class DeptDAOImpl implements DeptDAO{
 
 	private Connection conn = DBConn.getConnection();
 	
+	/**
+	 * DEPT_INS_001 : 신규 부서를 등록합니다.
+	 *
+	 * @param dept 등록할 부서 정보 DTO
+	 * @return insert 결과 건수
+	 * @throws SQLException SQL 실행 실패 시
+	 */
 	@Override	
     public int insertDept(DeptDTO dept) throws SQLException {
         int result = 0;
@@ -58,13 +85,19 @@ public class DeptDAOImpl implements DeptDAO{
     }	
 	
 	
+	/**
+	 * DEPT_UPD_002 : 부서 정보를 수정합니다.
+	 *
+	 * @param dept 수정할 부서 정보 DTO
+	 * @return update 결과 건수
+	 * @throws SQLException SQL 실행 실패 시
+	 */
 	@Override
 	public int updateDept(DeptDTO dept) throws SQLException{
         int result = 0;
         PreparedStatement pstmt = null;
         String sql;
 
-        // UPDATE 테이블명 SET 컬럼=값, 컬럼=값 WHERE 조건
         try {                        
             sql = """   
             	  UPDATE /** DEPT_UPD_002 */ TB_DEPT 
@@ -91,6 +124,11 @@ public class DeptDAOImpl implements DeptDAO{
         return result;
 	}
 
+	/**
+	 * DEPT_SEL_003 : 전체 부서를 트리 구조(조직도) 형태로 조회합니다.
+	 *
+	 * @return 전체 부서 목록
+	 */
 	@Override
 	public List<DeptDTO> selectAllDept() {
 		List<DeptDTO> list = new ArrayList<>();
@@ -98,8 +136,6 @@ public class DeptDAOImpl implements DeptDAO{
 		ResultSet rs = null;
 		String sql;
 
-		// member1과 member2를 id를 기준으로 LEFT OUTER JOIN 하여 전체 레코드 반환
-		
 		try {
 			sql = """
 				  SELECT /* DEPT_SEL_003 */ 
@@ -137,6 +173,12 @@ public class DeptDAOImpl implements DeptDAO{
 		return list;
 	}
 
+	/**
+	 * DEPT_SEL_006 : 부서 코드를 기준으로 단일 부서 상세 정보를 조회합니다.
+	 *
+	 * @param deptCd 조회할 부서 코드
+	 * @return 부서 정보 DTO (없으면 null)
+	 */
 	@Override
 	public DeptDTO selectOneByDeptCd(String deptCd) {
 		DeptDTO dto = null;
@@ -144,7 +186,6 @@ public class DeptDAOImpl implements DeptDAO{
         ResultSet rs = null;
         String sql;
        
-        // SELECT 컬럼, 컬럼 FROM 테이블 [WHERE 조건][ORDER BY 컬럼 DESC|ASC]
         try {
         	sql = """
         		  SELECT /* DEPT_SEL_006 */ 
@@ -182,6 +223,11 @@ public class DeptDAOImpl implements DeptDAO{
         return dto;
 	}
 	
+	/**
+	 * DEPT_SEL_008 : 전체 사원 수를 조회합니다.
+	 *
+	 * @return 전체 직원 수
+	 */
 	@Override
 	public int selectDeptMemberCount() {
         int result = 0;
@@ -209,6 +255,13 @@ public class DeptDAOImpl implements DeptDAO{
 	}
 	
 	
+	/**
+	 * DEPT_SEL_005 : 부서 소속 사원을 페이징하여 조회합니다.
+	 *
+	 * @param start 조회 시작 번호
+	 * @param end   조회 종료 번호
+	 * @return 조회된 사원 목록
+	 */
 	@Override
 	public List<DeptMemberDTO> selectDeptMember(int start, int end) {
 	    
@@ -286,6 +339,13 @@ public class DeptDAOImpl implements DeptDAO{
 	    return list;		
 	}
 
+	/**
+	 * DEPT_SEL_007 : 특정 부서 기준으로 해당 부서와 모든 하위 부서를 조회합니다.
+	 *
+	 * @param deptCd 조회 기준 부서 코드
+	 * @return 하위 부서 포함 전체 리스트
+	 * @throws SQLException SQL 오류 발생 시
+	 */
 	@Override
 	public List<DeptDTO> selectDeptWithAllChildren(String deptCd) throws SQLException {
 		List<DeptDTO> list = new ArrayList<>();
@@ -329,6 +389,13 @@ public class DeptDAOImpl implements DeptDAO{
 	    return list;
 	}
 	
+	/**
+	 * DEPT_DEL_004 : 특정 부서 및 모든 하위 부서를 비활성화(USE_YN='N') 처리합니다.
+	 *
+	 * @param deptCd 비활성화할 루트 부서 코드
+	 * @return update 결과 건수
+	 * @throws SQLException SQL 오류 발생 시
+	 */
 	@Override
 	public int deleteDept(String deptCd) throws SQLException{
         int result = 0;
@@ -356,6 +423,11 @@ public class DeptDAOImpl implements DeptDAO{
 		return result;
 		}
 
+	/**
+	 * DEPT_DEL_009 : 부서 및 사원 정보를 CSV 파일로 생성합니다.
+	 *
+	 * @throws Exception CSV 파일 생성 실패 시
+	 */
 	@Override	
 	public void makeCSVFile() throws Exception {
 		String sql;
@@ -390,7 +462,6 @@ public class DeptDAOImpl implements DeptDAO{
 	           WHERE E.USE_YN = 'Y'
 	           ORDER BY D.DEPT_CD, E.GRADE_CD DESC """;
 		
-        // DB 컬럼명 ↔ DTO 필드명 매핑
         Map<String, String> columnMapping = Map.of(
                 "deptCd"      , "DEPT_CD",
                 "deptNm"      , "DEPT_NM",
@@ -411,6 +482,11 @@ public class DeptDAOImpl implements DeptDAO{
 		
 	}
 	
+	/**
+	 * DEPT_SEL_010 : 부서별 인원 수 및 전체 대비 비율(%)을 조회합니다.
+	 *
+	 * @return 부서별 인원수 및 비율이 포함된 리스트
+	 */
 	public List<DeptDTO> selectDeptMemberCountRatio() {
 		List<DeptDTO> list = new ArrayList<>();
 		PreparedStatement pstmt = null;
@@ -448,8 +524,7 @@ public class DeptDAOImpl implements DeptDAO{
                   ORDER BY ROOT_DEPT_CD""";	
 	    	
 	    	pstmt = conn.prepareStatement(sql);
-		 
-	        rs = pstmt.executeQuery();
+			rs = pstmt.executeQuery();
 	        
 	        while (rs.next()) {
 	            DeptDTO dto = new DeptDTO();

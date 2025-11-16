@@ -15,19 +15,54 @@ import com.sp.util.LoginInfo;
 import com.sp.util.PrintUtil;
 import com.sp.view.common.DeptCommonUI;
 
+/**
+ * <h2>AdminDeptUI (관리자 부서 관리 UI)</h2>
+ *
+ * <p>관리자 메뉴에서 부서 관련 기능을 제어하는 콘솔 기반 UI 클래스입니다.</p>
+ *
+ * <ul>
+ *   <li>부서 등록 (DEPT_INS_001)</li>
+ *   <li>부서 수정 (DEPT_UPD_002)</li>
+ *   <li>부서 조회 (DEPT_SEL_003)</li>
+ *   <li>부서 삭제 (DEPT_DEL_004)</li>
+ *   <li>부서별 소속 인원 조회 (DEPT_SEL_005)</li>
+ *   <li>전사 인원 현황 CSV 다운로드 (DEPT_SEL_009)</li>
+ *   <li>본부 부서 소속 인원 통계 조회 (DEPT_SEL_010)</li>
+ * </ul>
+ *
+ * <p>사용자 입력 검증, 예외 처리, 콘솔 출력 구조를 관리하며  
+ * DeptDAO, DeptCommonUI 를 통해 실제 로직과 연동됩니다.</p>
+ *
+ * <p><b>프로젝트명:</b> teamJOS 인사관리 프로젝트</p>
+ * <p><b>작성자:</b> 황선호, 김세민</p>
+ * <p><b>작성일:</b> 2025-11-16</p>
+ * <p><b>버전:</b> 0.9</p> 
+ */
 public class AdminDeptUI {
+
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	private DeptDAO deptDao = new DeptDAOImpl();
 	private DeptCommonUI deptCommonUI = null;
 	private LoginInfo loginInfo;
 	
-	
+	/**
+	 * AdminDeptUI 생성자
+	 *
+	 * @param deptDao   부서 DAO
+	 * @param loginInfo 로그인 사용자 정보
+	 */
 	public AdminDeptUI(DeptDAO deptDao, LoginInfo loginInfo) {
 		this.deptDao = deptDao;
 		this.loginInfo = loginInfo;
 		this.deptCommonUI = new DeptCommonUI(this.loginInfo);
 	}
 
+	/**
+	 * 관리자 부서관리 메인 메뉴 화면을 출력하고 사용자 입력을 처리합니다.
+	 *
+	 * <p>1~8번까지의 기능을 선택하여 부서 등록/수정/조회/삭제 및  
+	 * 부서 인원 통계 기능을 실행합니다.</p>
+	 */
 	public void menu() {
 		int ch;
 		String input;
@@ -59,7 +94,7 @@ public class AdminDeptUI {
 					break; // DEPT_UPD_002
 				case 3:
 					deptCommonUI.selectAllDept();
-					break; // DEPT_SEL_003 (기존 코드의 selectDeptByNo(0)은 selectAllDept로 수정)
+					break; // DEPT_SEL_003
 				case 4:
 					deleteDept();
 					break; // DEPT_DEL_004
@@ -68,12 +103,12 @@ public class AdminDeptUI {
 					break; // DEPT_SEL_005
 				case 6:
 					makeCSVFile();
-					break;
+					break; // DEPT_SEL_009
 				case 7:
 					selectDeptMemberCountRatio();
-					break;
+					break; // DEPT_SEL_010
 				case 8:
-					return; // 6.메뉴화면으로
+					return; 
 				}
 				
 			} catch (Exception e) {
@@ -82,6 +117,14 @@ public class AdminDeptUI {
 		}
 	}
 
+	/**
+	 * 부서 등록 기능 (DEPT_INS_001)
+	 *
+	 * <p>부서코드, 부서명, 내선번호, 상위부서코드, 사용여부를 입력받아  
+	 * 신규 부서를 생성합니다.</p>
+	 *
+	 * <p>입력 검증 및 q 입력 시 중단 기능을 포함합니다.</p>
+	 */
 	public void insertDept() {
 		System.out.println("\n[부서 등록]");
 
@@ -93,16 +136,13 @@ public class AdminDeptUI {
 
 				String deptCd = br.readLine().trim();
 
-				// 부서코드 필수 값 : null 이나 공백은 허용안됨
 				if (deptCd.isEmpty()) {
 					System.out.println("부서코드는 필수 입력사항입니다. 다시 입력하세요.\n");
 					continue;
 				}
 
-				// 사용자가 q를 입력하면 루프를 빠져나간다.
 				InputValidator.isUserExit(deptCd);
 
-				// 부서코드는 영문 D로 시작하는 5자리 문자여야함
 				if (!InputValidator.isValidDeptCode(deptCd)) {
 					continue;
 				}
@@ -115,27 +155,20 @@ public class AdminDeptUI {
 					continue;
 				}
 
-				// 사용자가 q를 입력하면 루프를 빠져나간다.
 				InputValidator.isUserExit(deptNm);
 
 				System.out.print("내선번호를 입력(미배정시 엔터) [예: 1111, 입력중단: q]: ");
 				String extNo = br.readLine().trim();
-
-				// 사용자가 q를 입력하면 루프를 빠져나간다.
 				InputValidator.isUserExit(extNo);
 
 				System.out.print("상위부서코드 입력(미배정시 엔터) [예: D10000, 입력중단:q]: ");
 				String superDeptCd = br.readLine().trim();
-
-				// 사용자가 q를 입력하면 루프를 빠져나간다.
 				InputValidator.isUserExit(superDeptCd);
 
 				System.out.print("사용여부 입력 [예: Y 또는 N, 입력중단:q] : ");
 				String useYn = br.readLine().trim();
 				if (useYn.isEmpty())
 					useYn = "Y";
-
-				// 사용자가 q를 입력하면 루프를 빠져나간다.
 				InputValidator.isUserExit(useYn);
 
 				dto.setDeptCd(deptCd);
@@ -154,11 +187,9 @@ public class AdminDeptUI {
 		} catch (UserQuitException e) {
 			System.out.println(e.getMessage());
 		} catch (SQLIntegrityConstraintViolationException e) {
-			// 기본키 중복, NOT NULL 제약 위반등
 			if (e.getErrorCode() == 1) {
 				System.out.println("에러-부서코드 중복으로 추가가 불가능합니다.");
 			} else if (e.getErrorCode() == 1400) {
-				// INSERT - NOT NULL 제약 위반
 				System.out.println("에러-필수 입력사항을 입력하지 않았습니다.");
 			} else {
 				System.out.println(e.toString());
@@ -170,6 +201,12 @@ public class AdminDeptUI {
 		}
 	}
 
+	/**
+	 * 부서 수정 기능 (DEPT_UPD_002)
+	 *
+	 * <p>기존 부서를 조회하여 정보(부서명/내선/상위부서/사용여부)를 변경합니다.</p>
+	 * <p>입력 중단(q), 기존 값 유지(p) 기능을 포함합니다.</p>
+	 */
 	public void updateDept() {
 	    System.out.println("\n부서 정보 수정...");
 	    String deptCd;
@@ -178,7 +215,6 @@ public class AdminDeptUI {
 	        System.out.print("수정할 부서코드 ? ");
 	        deptCd = br.readLine();
 
-	        // null 또는 공백만 입력했는지 확인
 	        if (deptCd == null || deptCd.trim().isEmpty()) {
 	            System.out.println("부서코드는 필수 입력사항입니다.");
 	            return;
@@ -193,7 +229,6 @@ public class AdminDeptUI {
 	        DeptDTO updDTO = new DeptDTO();
 	        updDTO.setDeptCd(dto.getDeptCd());
 
-	        // 기존 부서 정보 출력
 	        PrintUtil.printLine('=', 131);
 	        System.out.printf("%s | %s \t| %s | %s | %s | %s \n",
 	                PrintUtil.padCenter("부서코드", 14),
@@ -217,13 +252,11 @@ public class AdminDeptUI {
 
 	        while (true) {
 
-	            // 부서명 입력
 	            System.out.print("수정 부서명을 입력 [예: 마케팅부, 현재유지:p, 입력중단:q]: ");
 	            String deptNm = br.readLine();
 	            if (deptNm == null) deptNm = "";
 	            deptNm = deptNm.trim();
-
-	            InputValidator.isUserExit(deptNm); // q 입력 시 예외 발생
+	            InputValidator.isUserExit(deptNm);
 
 	            if (deptNm.equalsIgnoreCase("p")) {
 	                updDTO.setDeptNm(dto.getDeptNm());
@@ -234,12 +267,10 @@ public class AdminDeptUI {
 	                updDTO.setDeptNm(deptNm);
 	            }
 
-	            // 선번호 입력
 	            System.out.print("수정 내선번호를 입력 [예: 1111, 현재유지:p, 입력중단:q]: ");
 	            String extNo = br.readLine();
 	            if (extNo == null) extNo = "";
 	            extNo = extNo.trim();
-
 	            InputValidator.isUserExit(extNo);
 
 	            if (extNo.equalsIgnoreCase("p")) {
@@ -248,12 +279,10 @@ public class AdminDeptUI {
 	                updDTO.setExtNo(extNo);
 	            }
 
-	            // 상위부서코드 입력
 	            System.out.print("수정 상위부서코드 입력 [예: D10000, 현재유지:p, 입력중단:q]: ");
 	            String superDeptCd = br.readLine();
 	            if (superDeptCd == null) superDeptCd = "";
 	            superDeptCd = superDeptCd.trim();
-
 	            InputValidator.isUserExit(superDeptCd);
 
 	            if (superDeptCd.equalsIgnoreCase("p")) {
@@ -270,7 +299,6 @@ public class AdminDeptUI {
 	            String useYn = br.readLine();
 	            if (useYn == null) useYn = "";
 	            useYn = useYn.trim();
-
 	            InputValidator.isUserExit(useYn);
 
 	            if (useYn.isEmpty()) {
@@ -294,6 +322,14 @@ public class AdminDeptUI {
 	    }
 	}
 
+	/**
+	 * 부서 삭제 기능 (DEPT_DEL_004)
+	 *
+	 * <p>입력한 부서 및 모든 하위 부서를 조회 후  
+	 * USE_YN = 'N' 으로 변경합니다.</p>
+	 *
+	 * <p>삭제 전 확인 메시지 출력 및 사용자 승인 절차 포함.</p>
+	 */
 	public void deleteDept() {
 	    System.out.println("\n부서 삭제 (사용여부 N 처리)...");
 
@@ -306,17 +342,14 @@ public class AdminDeptUI {
 	            return;
 	        }
 
-	        // 삭제할 부서 존재 여부 확인
 	        DeptDTO dto = deptDao.selectOneByDeptCd(deptCd);
 	        if (dto == null) {
 	            System.out.println("등록된 부서가 아닙니다.");
 	            return;
 	        }
 
-	        // 삭제 대상 부서 리스트 조회 (상위 + 모든 하위부서)
 	        List<DeptDTO> targetDepts = deptDao.selectDeptWithAllChildren(deptCd);
 
-	        // 삭제 대상 부서 목록 출력
 	        System.out.println("다음 부서들이 사용 안 함(N) 처리됩니다:");
 	        PrintUtil.printLine('=', 93);
 	        System.out.printf("%s | %s | %s\n",
@@ -333,7 +366,6 @@ public class AdminDeptUI {
 	        }
 	        PrintUtil.printLine('-', 93);	        
 	        
-	        // 삭제전 사용자 확인
 	        System.out.print("정말 삭제하시겠습니까? (Y/N): ");
 	        String confirm = br.readLine().trim();
 	        if (!confirm.equalsIgnoreCase("Y")) {
@@ -341,7 +373,6 @@ public class AdminDeptUI {
 	            return;
 	        }
 
-	        // 5️⃣ 하위 부서를 포함한 USE_YN = 'N' 처리
 	        int updatedCount = deptDao.deleteDept(deptCd);
 	        System.out.println(updatedCount + "개의 부서를 사용 처리했습니다.");
 
@@ -350,6 +381,9 @@ public class AdminDeptUI {
 	    }
 	}
 	
+	/**
+	 * 전사 인원 현황을 CSV 파일로 생성합니다. (DEPT_SEL_009)
+	 */
 	public void makeCSVFile() {
 	    System.out.println("\n전사인원현황 다운로드...");
 		try {
@@ -358,8 +392,24 @@ public class AdminDeptUI {
 		        e.printStackTrace();
 		    }
 	}
-	
+
+	/**
+	 * 본부부서 소속 인원 및 비율을 조회하여 그래프 형태로 출력합니다.
+	 *
+	 * <p>DEPT_SEL_010 쿼리 결과를 기반으로  
+	 * 부서별 인원수, 비율, 그래프(색상 막대)를 출력합니다.</p>
+	 */
     public void selectDeptMemberCountRatio() {
+    	
+    	String[] colors = {
+    		    "\033[31m", // red
+    		    "\033[32m", // green
+    		    "\033[33m", // yellow
+    		    "\033[34m", // blue
+    		    "\033[35m", // magenta
+    		    "\033[36m"  // cyan
+    		};
+    	
 	    System.out.println("\n본부부서소속인원...");
 	    
         List<DeptDTO> list = deptDao.selectDeptMemberCountRatio();
@@ -375,6 +425,7 @@ public class AdminDeptUI {
         		);
         PrintUtil.printLine('=', 80);
         
+        int idx = 0;
         for(DeptDTO dto : list) {            
             System.out.printf("%s|%s\t|%s|%s\t|",
             		PrintUtil.padCenter(dto.getDeptCd(), 9),
@@ -382,8 +433,16 @@ public class AdminDeptUI {
             		PrintUtil.padLeft(Integer.toString(dto.getDeptCount()), 8),
             		PrintUtil.padLeft(Integer.toString(dto.getDeptCountRatio())+"%", 8)
             		);
-    		System.out.println("█".repeat((int)Math.round(dto.getDeptCountRatio() / 2.0)));
-    		
+
+    	    int barLen = (int)Math.round(dto.getDeptCountRatio() / 2.0);
+
+    	    String color = colors[idx % colors.length];
+
+    	    System.out.print(color);
+    	    System.out.print("█".repeat(barLen));
+    	    System.out.println("\033[0m");
+
+    	    idx++;    		
         }
         PrintUtil.printLine('-', 80);
     }
