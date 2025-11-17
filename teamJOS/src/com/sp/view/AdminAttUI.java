@@ -397,6 +397,7 @@ public class AdminAttUI {
 		while (true) {
 			printLine(GREEN, "👉 사원번호(ex. 00001) : ");
 			empNo = br.readLine();
+			InputValidator.isUserExit(empNo);
 
 			// 형식검증
 			if (!empNo.matches("^\\d{5}$")) {

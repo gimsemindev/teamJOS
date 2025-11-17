@@ -7,6 +7,8 @@ import com.sp.dao.DeptDAO;
 import com.sp.util.LoginInfo;
 import com.sp.view.common.DeptCommonUI;
 
+import static com.sp.util.PrintUtil.*;
+
 public class EmployeeDeptUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private DeptDAO deptDao;
@@ -24,7 +26,7 @@ public class EmployeeDeptUI {
     public void menu() {
         int ch;
         String input;
-        System.out.println("\n[부서관리]");
+        printTitle("[🏢 부서관리]");
         
         while(true) {
         	

@@ -19,6 +19,7 @@ import com.sp.dao.impl.LoginDAOImpl;
 import com.sp.model.LoginDTO;
 import com.sp.util.DBConn;
 import com.sp.util.LoginInfo;
+import com.sp.util.PrintUtil;
 
 /**
  * <h2>MainUI (프로그램 메인 UI)</h2>
@@ -122,11 +123,11 @@ public class MainUI {
         do {
             try {
                 System.out.println();
-                System.out.println(CYAN + "╔════════════════════════════════════════╗" + RESET);
-                System.out.println(CYAN + "║                                        ║" + RESET);
-                System.out.println(CYAN + "║   🏢  " + YELLOW + " teamJOS 인사관리 시스템" + CYAN + "             ║" + RESET);
-                System.out.println(CYAN + "║                                        ║" + RESET);
-                System.out.println(CYAN + "╚════════════════════════════════════════╝" + RESET);
+                System.out.println(CYAN + "════════════════════════════════════════" + RESET);
+                System.out.println(CYAN + "                                        " + RESET);
+                System.out.println(CYAN + "   🏢  " + YELLOW + " teamJOS 인사관리 시스템" + CYAN + RESET);
+                System.out.println(CYAN + "                                        " + RESET);
+                System.out.println(CYAN + "════════════════════════════════════════" + RESET);
 
                 System.out.println(GRAY + "──────────────────────────────────────────" + RESET);
                 System.out.println(YELLOW + "   ① 로그인" + RESET);
@@ -168,9 +169,9 @@ public class MainUI {
      */
     private void loginProcess() {
     	try {
-			System.out.print("사번(아이디): ");
+			System.out.print(GREEN + "👉 사번(아이디) : ");
 			String empNo = br.readLine();
-			System.out.print("비밀번호: ");
+			System.out.print(GREEN + "👉 비밀번호: ");
 			String pw = br.readLine();
 
 			LoginDTO member = loginDao.login(empNo, pw);
@@ -214,7 +215,7 @@ public class MainUI {
                 System.out.println("\n[" + member.getMemberName() + " " + gradeDisplay + "] 님");
         		
         		do {
-        			System.out.print("1.사원관리 2.부서관리 3.근태관리 4.게시판 5.로그아웃 => ");
+        			PrintUtil.printMenu(YELLOW, "① 사원 관리", "② 부서 관리", "③ 근태 관리", "④ 게시판", "⑤ 로그아웃");
         			
         			input = br.readLine();
                     
@@ -242,7 +243,7 @@ public class MainUI {
         			break;
         		case 5:	
         			login.logout();
-        			System.out.println("로그아웃 되었습니다.\n");
+        			System.out.println(GREEN + "로그아웃 되었습니다.\n" + RESET);
         			return;
         		}
         	} catch (IOException e) {
@@ -272,10 +273,10 @@ public class MainUI {
         while(true) {
         	
         	try {
-        		System.out.println("\n[관리자 모드]");
+        		PrintUtil.printTitle("[관리자 모드]");
         		
         		do {
-        			System.out.print("1.사원관리 2.부서관리 3.근태관리 4.권한관리 5.게시판관리 6.로그아웃 => ");
+        			PrintUtil.printMenu(YELLOW, "① 사원 관리", "② 부서 관리", "③ 근태 관리","④ 권한 관리", "⑤ 게시판 관리", "⑥ 로그아웃");
 
         			input = br.readLine();
                     
@@ -305,7 +306,7 @@ public class MainUI {
         			break;
         		case 6:
         			login.logout();
-        			System.out.println("로그아웃 되었습니다.\n");
+        			System.out.println(GREEN + "로그아웃 되었습니다.\n" + RESET);
         			return;
         		}
         	} catch (IOException e) {

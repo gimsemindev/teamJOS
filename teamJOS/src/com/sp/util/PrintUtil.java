@@ -128,7 +128,7 @@ public class PrintUtil {
 	    // 하단 라인
 	    printLine('─', 65, GRAY);
 	    
-	    System.out.print(GREEN + "👉 메뉴 선택 : " + RESET);
+	    System.out.print(GREEN + "👉 메뉴 선택 [ q : 돌아가기 ] : " + RESET);
 	}
 	
 	public static void printLine(String color, String str) {
@@ -136,7 +136,7 @@ public class PrintUtil {
 	}
 	
 	public static void printLineln(String color, String str) {
-		System.out.println("\n" + color + str + RESET);
+		System.out.println("\n" + color + str + RESET + "\n");
 	}
 
 	
