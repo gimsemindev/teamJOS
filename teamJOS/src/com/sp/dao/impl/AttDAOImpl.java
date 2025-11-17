@@ -382,7 +382,7 @@ public class AttDAOImpl implements AttDAO{
 		
 		try {
 			// 원하는 날짜의 자신의 근태 정보를 조회하는 프로시저 호출
-			sql = "CALL /* ATT_SEL_014 */ SP_SELECT_ATD_BY_DATE_ALL(?, ?, ?) ";
+			sql = "CALL /* ATT_SEL_014 */ SP_SELECT_ATD_BY_DATE(?, ?, ?) ";
 			cstmt = conn.prepareCall(sql);
 			cstmt.setString(1, att.getEmpNo()); // 사원번호
 			cstmt.setString(2, att.getRegDt()); // 날짜
