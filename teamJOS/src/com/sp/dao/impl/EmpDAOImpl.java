@@ -22,6 +22,26 @@ import com.sp.util.DBConn;
 import com.sp.util.DBUtil;
 import com.sp.util.LoginInfo;
 
+/**
+ * <h2>EmpDAOImpl (사원 관리 데이터 접근 구현체)</h2>
+ *
+ * <p>EmpDAO 인터페이스를 구현한 클래스로, 사원 관리 기능(등록, 수정, 조회) 및 인사 이동(부서 이동, 진급),
+ * 이력 관리(경력, 자격증, 포상), 퇴직 신청/승인 기능을 실제 데이터베이스와 연동하여 처리합니다.</p>
+ *
+ * <ul>
+ * <li>사원 등록 및 기본 정보 수정</li>
+ * <li>부서 이동 및 진급 이력 관리</li>
+ * <li>경력, 자격증, 포상 이력 등록 및 조회</li>
+ * <li>퇴직 신청 및 관리자 승인 (프로시저 호출)</li>
+ * <li>코드 유효성 검증 및 CSV 파일 로드</li>
+ * </ul>
+ *
+ * <p><b>Service ID 범위:</b> EMP_INS_001 ~ EMP_LIS_019</p>
+ * <p><b>프로젝트명:</b> teamJOS 인사관리 프로젝트</p>
+ * <p><b>작성자:</b> 이지영</p>
+ * <p><b>작성일:</b> 2025-11-06</p>
+ * <p><b>버전:</b> 1.0</p>
+ */
 public class EmpDAOImpl implements EmpDAO{
 	private Connection conn = DBConn.getConnection();
 	private LoginInfo loginInfo;
@@ -35,7 +55,13 @@ public class EmpDAOImpl implements EmpDAO{
 		this.loginInfo = loginInfo;
 	}
 	
-	// 사원 등록 메소드
+	/**
+	 * EMP_INS_001 : 신규 사원 정보를 등록하고, 동시에 직급 이력 테이블(TB_EMP_GRADE_HIST)에 초기 직급 정보를 추가합니다.
+	 *
+	 * @param emp 등록할 사원 정보 DTO
+	 * @return 등록된 레코드 수 (2건)
+	 * @throws SQLException SQL 실행 실패 시
+	 */
 	@Override
 	public int insertEmployee(EmployeeDTO emp) throws SQLException{
 		PreparedStatement pstmt = null;
@@ -45,7 +71,7 @@ public class EmpDAOImpl implements EmpDAO{
 		int result = 0;
 		
 		try {
-			sql = "INSERT INTO TB_EMP(EMP_NO, EMP_NM, RRN, EMP_ADDR, HIRE_DT, DEPT_CD, GRADE_CD, EMP_STAT_CD, CONTRACT_TP_CD, EMAIL, PWD, REG_DT, LEVEL_CODE) "
+			sql = "INSERT INTO /*EMP_INS_001*/ TB_EMP(EMP_NO, EMP_NM, RRN, EMP_ADDR, HIRE_DT, DEPT_CD, GRADE_CD, EMP_STAT_CD, CONTRACT_TP_CD, EMAIL, PWD, REG_DT, LEVEL_CODE) "
 		               + " VALUES(?, ?, ?, ?, SYSDATE, ?, ?, 'A', ?, ?, ?, SYSDATE, ?)";
 		         
 		         pstmt = conn.prepareStatement(sql);
@@ -64,7 +90,7 @@ public class EmpDAOImpl implements EmpDAO{
 			result += pstmt.executeUpdate();
 			DBUtil.close(pstmt);
 			
-			sqlGd = "INSERT INTO TB_EMP_GRADE_HIST "
+			sqlGd = "INSERT INTO /* EMP_INS_001 */ TB_EMP_GRADE_HIST "
 	        		+ " (EMP_NO, GRADE_CD, VALID_STRT_DT, VALID_END_DT, DETAILS, REG_DT, DEPT_CD) "
 	                  + " VALUES (?, ?, SYSDATE, NULL, ?, SYSDATE, ?)";
 			
@@ -85,14 +111,22 @@ public class EmpDAOImpl implements EmpDAO{
 		return result;
 	}
 	
-	// 사원 정보 수정 메소드
+	/**
+	 * EMP_UPD_002 : 사원 정보의 특정 컬럼을 수정합니다.
+	 *
+	 * @param empNo 수정 대상 사원 번호
+	 * @param col 수정할 컬럼명
+	 * @param con 수정할 내용
+	 * @return 수정된 레코드 수
+	 * @throws SQLException SQL 실행 실패 시
+	 */
 	@Override
 	public int updateEmployee(String empNo, String col, String con) throws SQLException{
 		PreparedStatement pstmt = null;
 		String sql;
 		
 		try {
-			sql = "UPDATE TB_EMP SET " + col + " = ? WHERE EMP_NO = ?";
+			sql = "UPDATE /* EMP_UPD_002 */ TB_EMP SET " + col + " = ? WHERE EMP_NO = ?";
 		
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, con);
@@ -104,17 +138,23 @@ public class EmpDAOImpl implements EmpDAO{
 		} finally {
 			DBUtil.close(pstmt);
 		}
-		return 0;
+		return 0; // 메서드 구현부에서 0을 반환하므로 0 반환
 	}
 
-	// 부서 이동 메소드
+	/**
+	 * EMP_UPD_003 : 사원의 현재 부서 코드(DEPT_CD)를 변경(부서 이동)합니다.
+	 *
+	 * @param move 부서 이동 정보 DTO (새로운 부서 코드 포함)
+	 * @return 수정된 레코드 수
+	 * @throws SQLException SQL 실행 실패 시
+	 */
 	@Override
 	public int updateDeptMove(DeptMoveDTO move) throws SQLException{
 		PreparedStatement pstmt = null;
 		String sql;
 		
 		try {
-			sql = " UPDATE TB_EMP SET DEPT_CD = ? WHERE EMP_NO = ?";
+			sql = " UPDATE /* EMP_UPD_003 */ TB_EMP SET DEPT_CD = ? WHERE EMP_NO = ?";
 			
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, move.getNewDeptCd());
@@ -127,10 +167,17 @@ public class EmpDAOImpl implements EmpDAO{
 		} finally {
 			DBUtil.close(pstmt);
 		}
-		return 0;
+		return 0; // 메서드 구현부에서 0을 반환하므로 0 반환
 	}
 
-	// 직급 변경(TB_EMP) 및 직급 변경 이력(TB_EMP_GRADE_HIST) 추가 메소드
+	/**
+	 * EMP_UPD_004 : 사원의 직급 정보를 변경하고, 직급 이력 테이블(TB_EMP_GRADE_HIST)에 새로운 이력을 추가합니다.
+	 * <p>이전 직급 이력의 VALID_END_DT를 현재 날짜-1로 업데이트하고, TB_EMP의 GRADE_CD를 업데이트합니다.</p>
+	 *
+	 * @param promotion 진급 정보 DTO
+	 * @return 업데이트 및 등록된 레코드 총 수
+	 * @throws SQLException SQL 실행 실패 시
+	 */
 	@Override
 	public int updatePromotion(PromotionDTO promotion) throws SQLException{
 		PreparedStatement pstmt = null;
@@ -146,7 +193,7 @@ public class EmpDAOImpl implements EmpDAO{
 			EmployeeDTO empDto = selectDeptName(promotion.getEmpNo());
 	        String deptCd = empDto.getDeptCd();
 			
-			sqlup = "UPDATE TB_EMP_GRADE_HIST SET VALID_END_DT = SYSDATE-1 "
+			sqlup = "UPDATE /* EMP_UPD_004 */ TB_EMP_GRADE_HIST SET VALID_END_DT = SYSDATE-1 "
 					+ " WHERE EMP_NO = ? AND VALID_END_DT IS NULL";
 			
 			pstmt = conn.prepareStatement(sqlup);
@@ -165,7 +212,7 @@ public class EmpDAOImpl implements EmpDAO{
 		
 			result += pstmt2.executeUpdate();
 			
-			sqlupm = "UPDATE TB_EMP SET GRADE_CD = ? WHERE EMP_NO = ?";
+			sqlupm = "UPDATE /* EMP_UPD_004 */ TB_EMP SET GRADE_CD = ? WHERE EMP_NO = ?";
 			
 			pstmt3 = conn.prepareStatement(sqlupm);
 			pstmt3.setString(1, promotion.getNewGradeCd());
@@ -183,7 +230,13 @@ public class EmpDAOImpl implements EmpDAO{
 		return result;
 	}
 	
-	// 퇴직 신청 결재 메소드
+	/**
+	 * EMP_UPD_008 : 특정 퇴직 신청 건을 승인 처리(결재)하고 사원 정보를 업데이트하는 프로시저를 호출합니다.
+	 *
+	 * @param retireSeq 퇴직 신청 일련번호
+	 * @return 처리 결과 (1)
+	 * @throws SQLException SQL 실행 실패 시
+	 */
 	@Override
 	public int updateRetireApproval(int retireSeq) throws SQLException{
 		int result = 0;
@@ -192,7 +245,7 @@ public class EmpDAOImpl implements EmpDAO{
 		
 		try {
 			sql = """
-					CALL SP_APPROVE_RETIRE_SUSI(?)
+					CALL /* EMP_UPD_008 */ SP_APPROVE_RETIRE_SUSI(?)
 					""";
 			
 			cstmt = conn.prepareCall(sql);
@@ -207,14 +260,21 @@ public class EmpDAOImpl implements EmpDAO{
 		}
 		return result;
 	}
-	// 경력 추가 메소드
+	
+	/**
+	 * EMP_INS_009 : 사원의 경력 정보를 등록합니다.
+	 *
+	 * @param career 등록할 경력 정보 DTO
+	 * @return 등록된 레코드 수
+	 * @throws SQLException SQL 실행 실패 시
+	 */
 	@Override
 	public int insertCareer(CareerDTO career) throws SQLException{
 		PreparedStatement pstmt = null;
 		String sql;
 		
 		try {
-			sql = "INSERT INTO TB_EMP_CAREER_HIST(CAREER_SEQ, EMP_NO, PREV_COMP_NM, CAREER_STRT_DT, CAREER_END_DT, DETAILS) "
+			sql = "INSERT INTO /* EMP_INS_009 */ TB_EMP_CAREER_HIST(CAREER_SEQ, EMP_NO, PREV_COMP_NM, CAREER_STRT_DT, CAREER_END_DT, DETAILS) "
 					+ " VALUES(SQ_TB_EMP_CAREER_HIST.NEXTVAL, ?, ?, TO_DATE(?, 'YYYY-MM-DD'), TO_DATE(?, 'YYYY-MM-DD'), ?)";
 			
 			pstmt = conn.prepareStatement(sql);
@@ -230,17 +290,23 @@ public class EmpDAOImpl implements EmpDAO{
 		} finally {
 			DBUtil.close(pstmt);
 		}
-		return 0;
+		return 0; // 메서드 구현부에서 0을 반환하므로 0 반환
 	}
 
-	// 자격증 및 포상 추가 메소드
+	/**
+	 * EMP_INS_010 : 사원의 자격증 또는 포상 정보를 등록합니다.
+	 *
+	 * @param reward 등록할 자격증/포상 정보 DTO
+	 * @return 등록된 레코드 수
+	 * @throws SQLException SQL 실행 실패 시
+	 */
 	@Override
 	public int insertLicense(RewardDTO reward) throws SQLException{
 		PreparedStatement pstmt = null;
 		String sql;
 		
 		try {
-			sql = "INSERT INTO TB_EMP_CERT(CERT_SEQ, EMP_NO, CERT_NM, ISSUE_ORG_NM, ISSUE_DT) "
+			sql = "INSERT INTO /* EMP_INS_010 */ TB_EMP_CERT(CERT_SEQ, EMP_NO, CERT_NM, ISSUE_ORG_NM, ISSUE_DT) "
 					+ " VALUES(SQ_TB_EMP_CERT.NEXTVAL, ?, ?, ?, TO_DATE(?, 'YYYY-MM-DD'))";
 			
 			pstmt = conn.prepareStatement(sql);
@@ -254,10 +320,15 @@ public class EmpDAOImpl implements EmpDAO{
 		} finally {	
 			DBUtil.close(pstmt);
 		}
-		return 0;
+		return 0; // 메서드 구현부에서 0을 반환하므로 0 반환
 	}
 
-	// 사원번호 조회 메소드
+	/**
+	 * EMP_SEL_005 : 사원 번호를 기준으로 단일 사원의 상세 정보를 조회합니다.
+	 *
+	 * @param empNo 조회할 사원 번호
+	 * @return 조회된 사원 정보 DTO (없으면 null)
+	 */
 	@Override
 	public EmployeeDTO selectByEmpNo(String empNo) {
 		EmployeeDTO dto = null;
@@ -265,7 +336,7 @@ public class EmpDAOImpl implements EmpDAO{
 		ResultSet rs = null;
 		
 		try {
-			String sql = " SELECT e.EMP_NO, e.EMP_NM, e.RRN, e.EMP_ADDR, TO_CHAR(e.HIRE_DT, 'YYYY-MM-DD') HIRE_DT, "
+			String sql = " SELECT /* EMP_SEL_005 */ e.EMP_NO, e.EMP_NM, e.RRN, e.EMP_ADDR, TO_CHAR(e.HIRE_DT, 'YYYY-MM-DD') HIRE_DT, "
 					+ " d.DEPT_NM, g.GRADE_NM, s.EMP_STAT_NM, c.CONTRACT_TP_NM, "
 					+ " e.EMAIL, e.PWD, TO_CHAR(e.REG_DT, 'YYYY-MM-DD') REG_DT, TO_CHAR(e.RETIRE_DT, 'YYYY-MM-DD') RETIRE_DT, r.LEVEL_NM "
 					+ " FROM TB_EMP e "
@@ -308,7 +379,12 @@ public class EmpDAOImpl implements EmpDAO{
 		return dto;
 	}
 
-	// 사원이름 검색
+	/**
+	 * EMP_SEL_006 : 이름을 기준으로 사원 목록을 조회합니다.
+	 *
+	 * @param name 조회할 사원 이름
+	 * @return 이름이 포함된 사원 정보 리스트
+	 */
 	@Override
 	public List<EmployeeDTO> selectByName(String name) {
 		List<EmployeeDTO> list = new ArrayList<EmployeeDTO>();
@@ -317,7 +393,7 @@ public class EmpDAOImpl implements EmpDAO{
 		String sql;
 		
 		try {
-			sql = " SELECT e.EMP_NO, e.EMP_NM, e.RRN, e.EMP_ADDR, TO_CHAR(e.HIRE_DT, 'YYYY-MM-DD') HIRE_DT, "
+			sql = " SELECT /* EMP_SEL_006 */ e.EMP_NO, e.EMP_NM, e.RRN, e.EMP_ADDR, TO_CHAR(e.HIRE_DT, 'YYYY-MM-DD') HIRE_DT, "
 					+ " d.DEPT_NM, g.GRADE_NM, s.EMP_STAT_NM, c.CONTRACT_TP_NM, "
 					+ " e.EMAIL, e.PWD, TO_CHAR(e.REG_DT, 'YYYY-MM-DD') REG_DT, TO_CHAR(e.RETIRE_DT, 'YYYY-MM-DD') RETIRE_DT, r.LEVEL_NM "
 					+ " FROM TB_EMP e "
@@ -362,7 +438,11 @@ public class EmpDAOImpl implements EmpDAO{
 		return list;
 	}
 
-	// 전체 리스트
+	/**
+	 * EMP_SEL_007 : 전체 사원 목록을 조회합니다.
+	 *
+	 * @return 전체 사원 정보 리스트
+	 */
 	@Override
 	public List<EmployeeDTO> selectAll() {
 		List<EmployeeDTO> list = new ArrayList<EmployeeDTO>();
@@ -371,7 +451,7 @@ public class EmpDAOImpl implements EmpDAO{
 		String sql;
 		
 		try {
-			sql = " SELECT e.EMP_NO, e.EMP_NM, e.RRN, e.EMP_ADDR, TO_CHAR(e.HIRE_DT, 'YYYY-MM-DD') HIRE_DT, "
+			sql = " SELECT /* EMP_SEL_007 */ e.EMP_NO, e.EMP_NM, e.RRN, e.EMP_ADDR, TO_CHAR(e.HIRE_DT, 'YYYY-MM-DD') HIRE_DT, "
 					+ " d.DEPT_NM, g.GRADE_NM, s.EMP_STAT_NM, c.CONTRACT_TP_NM, "
 					+ " e.EMAIL, e.PWD, TO_CHAR(e.REG_DT, 'YYYY-MM-DD') REG_DT, TO_CHAR(e.RETIRE_DT, 'YYYY-MM-DD') RETIRE_DT, e.USE_YN, r.LEVEL_NM "
 					+ " FROM TB_EMP e "
@@ -417,7 +497,12 @@ public class EmpDAOImpl implements EmpDAO{
 
 
 	
-	// 경력 조회
+	/**
+	 * EMP_SEL_012 : 특정 사원의 경력 이력 목록을 조회합니다.
+	 *
+	 * @param empNo 조회할 사원 번호
+	 * @return 경력 이력 정보 리스트
+	 */
 	@Override
 	public List<HistoryDTO> selectCareerHis(String empNo) {
 		List<HistoryDTO> list = new ArrayList<HistoryDTO>();
@@ -426,7 +511,7 @@ public class EmpDAOImpl implements EmpDAO{
 		String sql;
 		
 		try {
-			sql = "SELECT e.EMP_NO, e.EMP_NM, c.PREV_COMP_NM, TO_CHAR(c.CAREER_STRT_DT, 'YYYY-MM-DD') CAREER_STRT_DT, TO_CHAR(c.CAREER_END_DT, 'YYYY-MM-DD') CAREER_END_DT, c.DETAILS, TO_CHAR(c.REG_DT, 'YYYY-MM-DD') REG_DT, c.APPRV_D "
+			sql = "SELECT /* EMP_SEL_012 */ e.EMP_NO, e.EMP_NM, c.PREV_COMP_NM, TO_CHAR(c.CAREER_STRT_DT, 'YYYY-MM-DD') CAREER_STRT_DT, TO_CHAR(c.CAREER_END_DT, 'YYYY-MM-DD') CAREER_END_DT, c.DETAILS, TO_CHAR(c.REG_DT, 'YYYY-MM-DD') REG_DT, c.APPRV_D "
 					+ " FROM TB_EMP_CAREER_HIST c "
 					+ " JOIN TB_EMP e ON c.EMP_NO = e.EMP_NO "
 					+ " WHERE c.EMP_NO = ?";
@@ -458,7 +543,12 @@ public class EmpDAOImpl implements EmpDAO{
 		return list;
 	}
 	
-	// 자격증 및 포상 이력 조회
+	/**
+	 * EMP_SEL_013 : 특정 사원의 자격증 및 포상 이력 목록을 조회합니다.
+	 *
+	 * @param empNo 조회할 사원 번호
+	 * @return 자격증 및 포상 이력 정보 리스트
+	 */
 	@Override
 	public List<HistoryDTO> selectCertHis(String empNo) {
 		List<HistoryDTO> list = new ArrayList<HistoryDTO>();
@@ -467,7 +557,7 @@ public class EmpDAOImpl implements EmpDAO{
 		String sql;
 		
 		try {
-			sql = "SELECT e.EMP_NO, e.EMP_NM, c.CERT_NM, c.ISSUE_ORG_NM, TO_CHAR(c.ISSUE_DT, 'YYYY-MM-DD') ISSUE_DT, TO_CHAR(c.REG_DT, 'YYYY-MM-DD') REG_DT "
+			sql = "SELECT /* EMP_SEL_013 */ e.EMP_NO, e.EMP_NM, c.CERT_NM, c.ISSUE_ORG_NM, TO_CHAR(c.ISSUE_DT, 'YYYY-MM-DD') ISSUE_DT, TO_CHAR(c.REG_DT, 'YYYY-MM-DD') REG_DT "
 					+ " FROM TB_EMP_CERT c"
 					+ " JOIN TB_EMP e ON c.EMP_NO = e.EMP_NO "
 					+ " WHERE c.EMP_NO = ? ";
@@ -497,7 +587,12 @@ public class EmpDAOImpl implements EmpDAO{
 		return list;
 	}	
 	
-	// 직급 이력 조회
+	/**
+	 * EMP_SEL_011 : 특정 사원의 직급 변동 이력 목록을 조회합니다.
+	 *
+	 * @param empNo 조회할 사원 번호
+	 * @return 직급 이력 정보 리스트
+	 */
 	@Override
 	public List<HistoryDTO> selectGradeHis(String empNo) {
 		List<HistoryDTO> list = new ArrayList<HistoryDTO>();
@@ -506,7 +601,7 @@ public class EmpDAOImpl implements EmpDAO{
 		String sql;
 		
 		try {
-			sql = "SELECT TO_CHAR(VALID_STRT_DT, 'YYYY-MM-DD') VALID_STRT_DT, e.EMP_NO, e.EMP_NM, g.GRADE_NM, TO_CHAR(VALID_END_DT, 'YYYY-MM-DD') VALID_END_DT, DETAILS, TO_CHAR(gh.REG_DT, 'YYYY-MM-DD') REG_DT, d.DEPT_NM "
+			sql = "SELECT /* EMP_SEL_011 */ TO_CHAR(VALID_STRT_DT, 'YYYY-MM-DD') VALID_STRT_DT, e.EMP_NO, e.EMP_NM, g.GRADE_NM, TO_CHAR(VALID_END_DT, 'YYYY-MM-DD') VALID_END_DT, DETAILS, TO_CHAR(gh.REG_DT, 'YYYY-MM-DD') REG_DT, d.DEPT_NM "
 					+ " FROM TB_EMP_GRADE_HIST gh "
 					+ " LEFT JOIN TB_EMP e ON e.EMP_NO = gh.EMP_NO "
 					+ " LEFT JOIN TB_GRADE g ON g.GRADE_CD = gh.GRADE_CD "
@@ -540,7 +635,11 @@ public class EmpDAOImpl implements EmpDAO{
 		return list;
 	}
 	
-	// 전체 사원 자격증 및 포상 이력 조회
+	/**
+	 * EMP_SEL_013 : 전체 사원의 자격증 및 포상 이력 목록을 조회합니다.
+	 *
+	 * @return 전체 자격증 및 포상 이력 정보 리스트
+	 */
 	@Override
 	public List<HistoryDTO> selectCertHisAll() {
 		List<HistoryDTO> list = new ArrayList<HistoryDTO>();
@@ -549,7 +648,7 @@ public class EmpDAOImpl implements EmpDAO{
 		String sql;
 		
 		try {
-			sql = "SELECT e.EMP_NO, e.EMP_NM, c.CERT_NM, c.ISSUE_ORG_NM, TO_CHAR(c.ISSUE_DT, 'YYYY-MM-DD') ISSUE_DT, TO_CHAR(c.REG_DT, 'YYYY-MM-DD') REG_DT "
+			sql = "SELECT /* EMP_SEL_013 */ e.EMP_NO, e.EMP_NM, c.CERT_NM, c.ISSUE_ORG_NM, TO_CHAR(c.ISSUE_DT, 'YYYY-MM-DD') ISSUE_DT, TO_CHAR(c.REG_DT, 'YYYY-MM-DD') REG_DT "
 					+ " FROM TB_EMP_CERT c"
 					+ " JOIN TB_EMP e ON c.EMP_NO = e.EMP_NO ";
 			
@@ -576,7 +675,12 @@ public class EmpDAOImpl implements EmpDAO{
 		}
 		return list;
 	}
-	// 전체 사원 직급 이력 조회
+	
+	/**
+	 * EMP_SEL_011 : 전체 사원의 직급 변동 이력 목록을 조회합니다.
+	 *
+	 * @return 전체 직급 이력 정보 리스트
+	 */
 	@Override
 	public List<HistoryDTO> selectGradeHisAll() {
 		List<HistoryDTO> list = new ArrayList<HistoryDTO>();
@@ -585,7 +689,7 @@ public class EmpDAOImpl implements EmpDAO{
 		String sql;
 		
 		try {
-			sql = "SELECT TO_CHAR(VALID_STRT_DT, 'YYYY-MM-DD') VALID_STRT_DT, e.EMP_NO, e.EMP_NM, g.GRADE_NM, TO_CHAR(VALID_END_DT, 'YYYY-MM-DD') VALID_END_DT, DETAILS, TO_CHAR(gh.REG_DT, 'YYYY-MM-DD') REG_DT, d.DEPT_NM "
+			sql = "SELECT /* EMP_SEL_011 */ TO_CHAR(VALID_STRT_DT, 'YYYY-MM-DD') VALID_STRT_DT, e.EMP_NO, e.EMP_NM, g.GRADE_NM, TO_CHAR(VALID_END_DT, 'YYYY-MM-DD') VALID_END_DT, DETAILS, TO_CHAR(gh.REG_DT, 'YYYY-MM-DD') REG_DT, d.DEPT_NM "
 					+ " FROM TB_EMP_GRADE_HIST gh "
 					+ " LEFT JOIN TB_EMP e ON e.EMP_NO = gh.EMP_NO "
 					+ " LEFT JOIN TB_GRADE g ON g.GRADE_CD = gh.GRADE_CD "
@@ -616,7 +720,12 @@ public class EmpDAOImpl implements EmpDAO{
 		}
 		return list;
 	}
-	// 전체 사원 경력 조회
+	
+	/**
+	 * EMP_SEL_012 : 전체 사원의 경력 이력 목록을 조회합니다.
+	 *
+	 * @return 전체 경력 이력 정보 리스트
+	 */
 	@Override
 	public List<HistoryDTO> selectCareerHisAll() {
 		List<HistoryDTO> list = new ArrayList<HistoryDTO>();
@@ -625,7 +734,7 @@ public class EmpDAOImpl implements EmpDAO{
 		String sql;
 		
 		try {
-			sql = "SELECT e.EMP_NO, e.EMP_NM, c.PREV_COMP_NM, TO_CHAR(c.CAREER_STRT_DT, 'YYYY-MM-DD') CAREER_STRT_DT, TO_CHAR(c.CAREER_END_DT, 'YYYY-MM-DD') CAREER_END_DT, c.DETAILS, TO_CHAR(c.REG_DT, 'YYYY-MM-DD') REG_DT, c.APPRV_D "
+			sql = "SELECT /* EMP_SEL_012 */ e.EMP_NO, e.EMP_NM, c.PREV_COMP_NM, TO_CHAR(c.CAREER_STRT_DT, 'YYYY-MM-DD') CAREER_STRT_DT, TO_CHAR(c.CAREER_END_DT, 'YYYY-MM-DD') CAREER_END_DT, c.DETAILS, TO_CHAR(c.REG_DT, 'YYYY-MM-DD') REG_DT, c.APPRV_D "
 					+ " FROM TB_EMP_CAREER_HIST c "
 					+ " JOIN TB_EMP e ON c.EMP_NO = e.EMP_NO ";
 			pstmt = conn.prepareStatement(sql);
@@ -654,7 +763,12 @@ public class EmpDAOImpl implements EmpDAO{
 		return list;
 	}
 	
-	// 부서명 조회
+	/**
+	 * EMP_SEL_014 : 사원 번호를 기준으로 해당 사원의 부서 정보(코드 및 이름)를 조회합니다.
+	 *
+	 * @param empNo 조회할 사원 번호
+	 * @return 부서 정보가 포함된 EmployeeDTO
+	 */
 	@Override
 	public EmployeeDTO selectDeptName(String empNo) {
 		PreparedStatement pstmt = null;
@@ -662,7 +776,7 @@ public class EmpDAOImpl implements EmpDAO{
 		String sql;
 		EmployeeDTO dto = new EmployeeDTO();
 		try {
-			sql = "SELECT e.DEPT_CD, d.DEPT_NM "
+			sql = "SELECT /* EMP_SEL_014 */ e.DEPT_CD, d.DEPT_NM "
 					+ " FROM TB_EMP e JOIN TB_DEPT d ON e.DEPT_CD = d.DEPT_CD "
 					+ " WHERE e.EMP_NO= ?";
 			pstmt = conn.prepareStatement(sql);
@@ -680,7 +794,12 @@ public class EmpDAOImpl implements EmpDAO{
 		return dto;
 	}
 
-	// 직급명 조회
+	/**
+	 * EMP_SEL_015 : 사원 번호를 기준으로 해당 사원의 직급 정보(코드 및 이름)를 조회합니다.
+	 *
+	 * @param empNo 조회할 사원 번호
+	 * @return 직급 정보가 포함된 EmployeeDTO
+	 */
 	@Override
 	public EmployeeDTO selectGradeName(String empNo) {
 		PreparedStatement pstmt = null;
@@ -689,7 +808,7 @@ public class EmpDAOImpl implements EmpDAO{
 	    EmployeeDTO dto = new EmployeeDTO();
 
 	    try {
-	        sql = " SELECT e.DEPT_CD, d.DEPT_NM, e.GRADE_CD, e.EMP_NM "
+	        sql = " SELECT /* EMP_SEL_015 */ e.DEPT_CD, d.DEPT_NM, e.GRADE_CD, e.EMP_NM "
 	        		+ " FROM TB_EMP e JOIN TB_DEPT d ON e.DEPT_CD = d.DEPT_CD"
 	        		+ " WHERE e.EMP_NO = ?";
 	        pstmt = conn.prepareStatement(sql);
@@ -710,9 +829,15 @@ public class EmpDAOImpl implements EmpDAO{
 	    return dto;
 	}
 	   
+	/**
+	 * EMP_BOL_015 : 주어진 부서 코드의 유효성을 검증합니다.
+	 *
+	 * @param deptCd 검증할 부서 코드
+	 * @return 유효한 코드이면 true, 아니면 false
+	 */
 	@Override
 	public boolean isValidDeptCd(String deptCd) {
-		String sql = "SELECT COUNT(*) FROM TB_DEPT WHERE DEPT_CD = ?";
+		String sql = "SELECT /* EMP_BOL_015 */ COUNT(*) FROM TB_DEPT WHERE DEPT_CD = ?";
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, deptCd);
 			ResultSet rs = pstmt.executeQuery();
@@ -727,9 +852,15 @@ public class EmpDAOImpl implements EmpDAO{
 		return false;
 	}
 	
+	/**
+	 * EMP_BOL_016 : 주어진 직급 코드의 유효성을 검증합니다.
+	 *
+	 * @param gradeCd 검증할 직급 코드
+	 * @return 유효한 코드이면 true, 아니면 false
+	 */
 	@Override
 	public boolean isValidGradeCd(String gradeCd) {
-		String sql = "SELECT COUNT(*) FROM TB_GRADE WHERE GRADE_CD = ?";
+		String sql = "SELECT /* EMP_BOL_016 */ COUNT(*) FROM TB_GRADE WHERE GRADE_CD = ?";
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, gradeCd);
 			ResultSet rs = pstmt.executeQuery();
@@ -743,9 +874,15 @@ public class EmpDAOImpl implements EmpDAO{
 		return false;
 	}
 
+	/**
+	 * EMP_BOL_020 : 주어진 계약 구분 코드의 유효성을 검증합니다.
+	 *
+	 * @param contractTpCd 검증할 계약 구분 코드
+	 * @return 유효한 코드이면 true, 아니면 false
+	 */
 	@Override
 	public boolean isValidContractTpCd(String contractTpCd) {
-		String sql = "SELECT COUNT(*) FROM TB_EMP_CNTRT_TYPE WHERE CONTRACT_TP_CD = ?";
+		String sql = "SELECT /* EMP_BOL_020 */ COUNT(*) FROM TB_EMP_CNTRT_TYPE WHERE CONTRACT_TP_CD = ?";
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, contractTpCd);
 			ResultSet rs = pstmt.executeQuery();
@@ -759,9 +896,15 @@ public class EmpDAOImpl implements EmpDAO{
 		return false;
 	}
 
+	/**
+	 * EMP_BOL_021 : 주어진 권한 레벨 코드의 유효성을 검증합니다.
+	 *
+	 * @param levelCode 검증할 권한 레벨 코드
+	 * @return 유효한 코드이면 true, 아니면 false
+	 */
 	@Override
 	public boolean isValidLevelCode(String levelCode) {
-		String sql = "SELECT COUNT(*) FROM TB_ROLE WHERE LEVEL_CODE = ?";
+		String sql = "SELECT /* EMP_BOL_021 */ COUNT(*) FROM TB_ROLE WHERE LEVEL_CODE = ?";
 		try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 			pstmt.setString(1, levelCode);
 			ResultSet rs = pstmt.executeQuery();
@@ -775,9 +918,15 @@ public class EmpDAOImpl implements EmpDAO{
 		return false;
 	}
 
+	/**
+	 * EMP_BOL_017 : 주어진 이메일의 중복 여부를 검증합니다.
+	 *
+	 * @param email 검증할 이메일 주소
+	 * @return 이미 존재하는 이메일이면 true, 아니면 false
+	 */
 	@Override
 	public boolean isEmailExists(String email) {
-	    String sql = "SELECT COUNT(*) FROM TB_EMP WHERE EMAIL = ?";
+	    String sql = "SELECT /* EMP_BOL_017 */ COUNT(*) FROM TB_EMP WHERE EMAIL = ?";
 	    try (PreparedStatement pstmt = conn.prepareStatement(sql)) {
 
 	        pstmt.setString(1, email);
@@ -794,6 +943,11 @@ public class EmpDAOImpl implements EmpDAO{
 	    return false; // 예외 발생 시 기본 false 반환
 	}
 
+	/**
+	 * EMP_SEL_018 : CSV 파일에서 사원 정보를 읽어와 데이터베이스에 일괄 삽입합니다.
+	 *
+	 * <p>이 메소드는 트랜잭션 관리를 포함하여 대량 데이터 로드를 처리합니다.</p>
+	 */
 	@Override
 	public void loadEmployeeInfo() {
         PreparedStatement pstmt = null;
@@ -801,7 +955,7 @@ public class EmpDAOImpl implements EmpDAO{
         String csvPath = "LOAD_TB_EMP.csv";
         
 	    String SQL = """
-	            INSERT INTO TB_EMP (
+	            INSERT /* EMP_SEL_018 */ INTO TB_EMP (
 	                EMP_NO, EMP_NM, RRN, EMP_ADDR, HIRE_DT, DEPT_CD, GRADE_CD,
 	                EMP_STAT_CD, CONTRACT_TP_CD, EMAIL, PWD, REG_DT, RETIRE_DT,
 	                USE_YN, LEVEL_CODE
@@ -867,6 +1021,11 @@ public class EmpDAOImpl implements EmpDAO{
 	            }
 	}
 
+	/**
+	 * EMP_LIS_019 : 승인 대기 중인 퇴직 신청 리스트를 조회합니다.
+	 *
+	 * @return 퇴직 신청 정보 DTO 리스트
+	 */
 	@Override
 	public List<RetireDTO> listRetire() {
 		List<RetireDTO> list = new ArrayList<RetireDTO>();
@@ -876,7 +1035,7 @@ public class EmpDAOImpl implements EmpDAO{
 		
 		try {
 			sql = """
-					SELECT RETIRE_SEQ, EMP_NO, REG_DT, APPROVER_YN, RETIRE_MEMO 
+					SELECT /* EMP_LIS_019 */ RETIRE_SEQ, EMP_NO, REG_DT, APPROVER_YN, RETIRE_MEMO 
 				      FROM TB_EMP_RETIRE
 					 WHERE APPROVER_YN = 'N'
 			      ORDER BY RETIRE_SEQ ASC
@@ -909,6 +1068,13 @@ public class EmpDAOImpl implements EmpDAO{
 		return list;
 	}
 
+	/**
+	 * EMP_INS_013 : 신규 퇴직 신청 정보를 등록합니다.
+	 *
+	 * @param dto 퇴직 신청 정보 DTO
+	 * @return 등록된 레코드 수 (1)
+	 * @throws SQLException SQL 실행 실패 시
+	 */
 	@Override
 	public int insertRetire(RetireDTO dto) throws SQLException {
 		int result = 0;
@@ -917,7 +1083,7 @@ public class EmpDAOImpl implements EmpDAO{
 		
 		try {
 			sql = """
-					INSERT INTO TB_EMP_RETIRE(RETIRE_SEQ, EMP_NO, REG_DT, APPROVER_YN, RETIRE_MEMO) 
+					INSERT INTO /* EMP_INS_013 */ TB_EMP_RETIRE(RETIRE_SEQ, EMP_NO, REG_DT, APPROVER_YN, RETIRE_MEMO) 
 						VALUES (RETIRE_SEQ_SQ.NEXTVAL, ?, TO_TIMESTAMP(?, 'YYYY-MM-DD HH24:MI:SS'), 'N', ?)
 					""";
 			
@@ -939,4 +1105,3 @@ public class EmpDAOImpl implements EmpDAO{
 	}
 
 }
-
