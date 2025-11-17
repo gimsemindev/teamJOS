@@ -94,6 +94,8 @@ public interface AttDAO {
      */
     List<VacationDTO> listVaction();
 
+    List<VacationDTO> listVaction(String empNo);
+    
     /** * ATT_SEL_006 : 전체 사원의 연차 정보를 페이징하여 조회합니다.
      * @param start 조회 시작 row 번호
      * @param end   조회 종료 row 번호
