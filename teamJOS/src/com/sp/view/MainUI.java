@@ -250,6 +250,8 @@ public class MainUI {
         		}
         	} catch (IOException e) {
         		System.err.println("입력 오류: " + e.getMessage());
+        	} catch (Exception e) {
+        		ch = 0;
         	}
         }
         
@@ -314,6 +316,8 @@ public class MainUI {
         		}
         	} catch (IOException e) {
         		System.err.println("입력 오류: " + e.getMessage());
+        	}  catch (Exception e) {
+        		ch = 0;
         	}
         }
     }
