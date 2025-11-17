@@ -222,7 +222,7 @@ public class AttDAOImpl implements AttDAO{
 					WHERE
 						VACATION_SEQ = ?      
 						AND EMP_NO = ?       
-						AND APPROVER_YN = 'N';
+						AND APPROVER_YN = 'N'
 					""";
 			pstmt = conn.prepareStatement(sql);
 			
@@ -586,7 +586,7 @@ public class AttDAOImpl implements AttDAO{
 				dto.setEmpNo(rs.getString("EMP_NO"));
 				dto.setStartDt(rs.getString("START_DT"));
 				dto.setEndDt(rs.getString("END_DT"));
-				dto.setVacationMemo(rs.getString("VACTION_MEMO"));
+				dto.setVacationMemo(rs.getString("VACATION_MEMO"));
 				dto.setApproverYn(rs.getString("APPROVER_YN"));
 				
 				list.add(dto);
@@ -603,7 +603,7 @@ public class AttDAOImpl implements AttDAO{
 	}
 	/** ATT_SEL_015 */
 	@Override
-	public List<VacationDTO> listVaction(String empNo) {
+	public List<VacationDTO> listVaction(VacationDTO vacation) {
 		List<VacationDTO> list = new ArrayList<VacationDTO>();
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -616,7 +616,6 @@ public class AttDAOImpl implements AttDAO{
 					LEFT JOIN TB_EMP E ON V.EMP_NO = E.EMP_NO 
 					WHERE APPROVER_YN = 'N' AND V.EMP_NO = ?
 					ORDER BY VACATION_SEQ ASC
-
 					""";
 			
 			pstmt = conn.prepareStatement(sql);
