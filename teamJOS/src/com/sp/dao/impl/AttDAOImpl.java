@@ -216,9 +216,8 @@ public class AttDAOImpl implements AttDAO{
 		try {
 			sql = """
 					UPDATE /* ATT_UPD_009 */ TB_VACATION
-					SET
-						START_DT = ?,         
-						END_DT = ?,           
+					SET START_DT = TO_DATE(?, 'YYYY-MM-DD'),
+                    END_DT = TO_DATE(?, 'YYYY-MM-DD'),         
 						VACATION_MEMO = ?    
 					WHERE
 						VACATION_SEQ = ?      
@@ -569,7 +568,7 @@ public class AttDAOImpl implements AttDAO{
 		
 		try {
 			sql = """
-					SELECT /* ATT_SEL_011 */ VACATION_SEQ, V.EMP_NO,TO_CHAR(START_DT, 'YYYY-MM-DD')AS START_DT,TO_CHAR(END_DT, 'YYYY-MM-DD') AS END_DT, VACTION_MEMO, APPROVER_YN
+					SELECT /* ATT_SEL_011 */ VACATION_SEQ, V.EMP_NO,TO_CHAR(START_DT, 'YYYY-MM-DD')AS START_DT,TO_CHAR(END_DT, 'YYYY-MM-DD') AS END_DT, VACATION_MEMO, APPROVER_YN
 					FROM TB_VACATION V
 					LEFT JOIN TB_EMP E ON V.EMP_NO = E.EMP_NO 
 					WHERE APPROVER_YN = 'N'
@@ -612,7 +611,7 @@ public class AttDAOImpl implements AttDAO{
 		
 		try {
 			sql = """
-					SELECT /* ATT_SEL_015 */ VACATION_SEQ, V.EMP_NO,TO_CHAR(START_DT, 'YYYY-MM-DD')AS START_DT,TO_CHAR(END_DT, 'YYYY-MM-DD') AS END_DT, VACTION_MEMO, APPROVER_YN
+					SELECT /* ATT_SEL_015 */ VACATION_SEQ, V.EMP_NO,TO_CHAR(START_DT, 'YYYY-MM-DD')AS START_DT,TO_CHAR(END_DT, 'YYYY-MM-DD') AS END_DT, VACATION_MEMO, APPROVER_YN
 					FROM TB_VACATION V
 					LEFT JOIN TB_EMP E ON V.EMP_NO = E.EMP_NO 
 					WHERE APPROVER_YN = 'N' AND V.EMP_NO = ?
@@ -632,7 +631,7 @@ public class AttDAOImpl implements AttDAO{
 				dto.setEmpNo(rs.getString("EMP_NO"));
 				dto.setStartDt(rs.getString("START_DT"));
 				dto.setEndDt(rs.getString("END_DT"));
-				dto.setVacationMemo(rs.getString("VACTION_MEMO"));
+				dto.setVacationMemo(rs.getString("VACATION_MEMO"));
 				dto.setApproverYn(rs.getString("APPROVER_YN"));
 				
 				list.add(dto);
