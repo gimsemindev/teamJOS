@@ -15,6 +15,8 @@ import com.sp.util.LoginInfo;
 import com.sp.util.PrintUtil;
 import com.sp.view.common.DeptCommonUI;
 
+import static com.sp.util.PrintUtil.*;
+
 /**
  * <h2>AdminDeptUI (관리자 부서 관리 UI)</h2>
  *
@@ -66,24 +68,22 @@ public class AdminDeptUI {
 	public void menu() {
 		int ch;
 		String input;
-		
-		System.out.println("\n[관리자 - 부서관리]");
 		while(true) {
-			
 			try {
-				
 				do {
-					System.out.print("1.부서등록 2.부서수정 3.부서조회 4.부서삭제 5.전사인원현황 6.전사인원현황 다운로드 7.본부부서소속인원 8.메뉴로돌아가기 => ");
+					printTitle("🏢 [관리자 - 부서관리]");
+					printMenu(YELLOW, "① 부서 등록", "② 부서 수정", "③ 부서 조회", "④ 부서 삭제", "⑤ 전사 인원 현황", "⑥ 전사 인원 현황 다운로드", "⑦ 본부 부서 소속 인원");
 					
 					input = br.readLine();
-	                
+					InputValidator.isUserExit(input);
+					
 	                if(input == null || input.trim().isEmpty()) {
 	                	ch = 0;
 	                	continue;
 	                }
 	                ch = Integer.parseInt(input);
 					
-				} while (ch < 1 || ch > 8);
+				} while (ch < 1 || ch > 7);
 				
 				switch (ch) {
 				case 1:
@@ -107,11 +107,13 @@ public class AdminDeptUI {
 				case 7:
 					selectDeptMemberCountRatio();
 					break; // DEPT_SEL_010
-				case 8:
-					return; 
+				default : printLineln(MAGENTA, "📢 잘못된 입력입니다");
 				}
 				
-			} catch (Exception e) {
+			} catch (UserQuitException e) {
+				printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
+				return;
+		    } catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -126,18 +128,18 @@ public class AdminDeptUI {
 	 * <p>입력 검증 및 q 입력 시 중단 기능을 포함합니다.</p>
 	 */
 	public void insertDept() {
-		System.out.println("\n[부서 등록]");
+		printTitle("📌 [부서 등록]");
 
 		DeptDTO dto = new DeptDTO();
 
 		try {
 			while (true) {
-				System.out.print("부서코드를 입력 [예: D10000, 입력중단:q]: ");
+				printLine(GREEN, "👉 부서코드를 입력 [예: D10000, 입력중단:q]: ");
 
 				String deptCd = br.readLine().trim();
 
 				if (deptCd.isEmpty()) {
-					System.out.println("부서코드는 필수 입력사항입니다. 다시 입력하세요.\n");
+					printLineln(MAGENTA, "📢 부서코드는 필수 입력사항입니다. 다시 입력하세요.");
 					continue;
 				}
 
@@ -147,25 +149,25 @@ public class AdminDeptUI {
 					continue;
 				}
 
-				System.out.print("부서명을 입력 [예: 마케팅부, 입력중단:q]: ");
+				printLine(GREEN, "👉 부서명을 입력 [예: 마케팅부, 입력중단:q]: ");
 				String deptNm = br.readLine().trim();
 
 				if (deptNm.isEmpty()) {
-					System.out.println("부서명은 필수 입력사항입니다. 다시 입력하세요.\n");
+					printLineln(MAGENTA, "📢 부서명은 필수 입력사항입니다. 다시 입력하세요.");
 					continue;
 				}
 
 				InputValidator.isUserExit(deptNm);
 
-				System.out.print("내선번호를 입력(미배정시 엔터) [예: 1111, 입력중단: q]: ");
+				printLine(GREEN, "👉 내선번호를 입력(미배정시 엔터) [예: 1111, 입력중단: q]: ");
 				String extNo = br.readLine().trim();
 				InputValidator.isUserExit(extNo);
 
-				System.out.print("상위부서코드 입력(미배정시 엔터) [예: D10000, 입력중단:q]: ");
+				printLine(GREEN, "👉 상위부서코드 입력(미배정시 엔터) [예: D10000, 입력중단:q]: ");
 				String superDeptCd = br.readLine().trim();
 				InputValidator.isUserExit(superDeptCd);
 
-				System.out.print("사용여부 입력 [예: Y 또는 N, 입력중단:q] : ");
+				printLine(GREEN, "👉 사용여부 입력 [예: Y 또는 N, 입력중단:q] : ");
 				String useYn = br.readLine().trim();
 				if (useYn.isEmpty())
 					useYn = "Y";
@@ -182,17 +184,17 @@ public class AdminDeptUI {
 
 			deptDao.insertDept(dto);
 
-			System.out.println("데이터 등록이 완료 되었습니다.");
+			printLineln(MAGENTA, "📢 데이터 등록이 완료 되었습니다.");
 
 		} catch (UserQuitException e) {
 			System.out.println(e.getMessage());
 		} catch (SQLIntegrityConstraintViolationException e) {
 			if (e.getErrorCode() == 1) {
-				System.out.println("에러-부서코드 중복으로 추가가 불가능합니다.");
+				printLineln(MAGENTA, "📢 에러-부서코드 중복으로 추가가 불가능합니다.");
 			} else if (e.getErrorCode() == 1400) {
-				System.out.println("에러-필수 입력사항을 입력하지 않았습니다.");
+				printLineln(MAGENTA, "📢 에러-필수 입력사항을 입력하지 않았습니다.");
 			} else {
-				System.out.println(e.toString());
+				printLineln(MAGENTA, e.toString());
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -208,28 +210,28 @@ public class AdminDeptUI {
 	 * <p>입력 중단(q), 기존 값 유지(p) 기능을 포함합니다.</p>
 	 */
 	public void updateDept() {
-	    System.out.println("\n부서 정보 수정...");
+		printTitle("📌 [부서 정보 수정]");
 	    String deptCd;
 
 	    try {
-	        System.out.print("수정할 부서코드 ? ");
+	    	printLine(GREEN, "👉 수정할 부서코드를 입력하세요. : ");
 	        deptCd = br.readLine();
 
 	        if (deptCd == null || deptCd.trim().isEmpty()) {
-	            System.out.println("부서코드는 필수 입력사항입니다.");
+	        	printLineln(MAGENTA, "📢 부서코드는 필수 입력사항입니다.");
 	            return;
 	        }
 
 	        DeptDTO dto = deptDao.selectOneByDeptCd(deptCd.trim());
 	        if (dto == null) {
-	            System.out.println("등록된 부서가 아닙니다.");
+	        	printLineln(MAGENTA, "📢 등록된 부서가 아닙니다.");
 	            return;
 	        }
 
 	        DeptDTO updDTO = new DeptDTO();
 	        updDTO.setDeptCd(dto.getDeptCd());
 
-	        PrintUtil.printLine('=', 131);
+	        PrintUtil.printLine('═', 131);
 	        System.out.printf("%s | %s \t| %s | %s | %s | %s \n",
 	                PrintUtil.padCenter("부서코드", 14),
 	                PrintUtil.padCenter("부서명", 24),
@@ -238,7 +240,7 @@ public class AdminDeptUI {
 	                PrintUtil.padCenter("사용여부", 10),
 	                PrintUtil.padCenter("등록일시", 30)
 	        );
-	        PrintUtil.printLine('=', 131);
+	        PrintUtil.printLine('═', 131);
 
 	        System.out.printf("%s | %s \t | %s | %s | %s | %s  \n",
 	                PrintUtil.padCenter(dto.getDeptCd(), 12),
@@ -248,11 +250,11 @@ public class AdminDeptUI {
 	                PrintUtil.padCenter(dto.getUseYn(), 10),
 	                PrintUtil.padCenter(dto.getRegDt(), 10)
 	        );
-	        PrintUtil.printLine('-', 131);
+	        PrintUtil.printLine('─', 131);
 
 	        while (true) {
 
-	            System.out.print("수정 부서명을 입력 [예: 마케팅부, 현재유지:p, 입력중단:q]: ");
+	        	printLine(GREEN, "👉 수정 부서명을 입력 [예: 마케팅부, 현재유지:p, 입력중단:q]: ");
 	            String deptNm = br.readLine();
 	            if (deptNm == null) deptNm = "";
 	            deptNm = deptNm.trim();
@@ -261,13 +263,13 @@ public class AdminDeptUI {
 	            if (deptNm.equalsIgnoreCase("p")) {
 	                updDTO.setDeptNm(dto.getDeptNm());
 	            } else if (deptNm.isEmpty()) {
-	                System.out.println("부서명은 필수 입력사항입니다. 다시 입력하세요.\n");
+	            	printLineln(MAGENTA, "📢 부서명은 필수 입력사항입니다. 다시 입력하세요.");
 	                continue;
 	            } else {
 	                updDTO.setDeptNm(deptNm);
 	            }
 
-	            System.out.print("수정 내선번호를 입력 [예: 1111, 현재유지:p, 입력중단:q]: ");
+	            printLine(GREEN, "👉 수정 내선번호를 입력 [예: 1111, 현재유지:p, 입력중단:q]: ");
 	            String extNo = br.readLine();
 	            if (extNo == null) extNo = "";
 	            extNo = extNo.trim();
@@ -279,7 +281,7 @@ public class AdminDeptUI {
 	                updDTO.setExtNo(extNo);
 	            }
 
-	            System.out.print("수정 상위부서코드 입력 [예: D10000, 현재유지:p, 입력중단:q]: ");
+	            printLine(GREEN, "👉 수정 상위부서코드 입력 [예: D10000, 현재유지:p, 입력중단:q]: ");
 	            String superDeptCd = br.readLine();
 	            if (superDeptCd == null) superDeptCd = "";
 	            superDeptCd = superDeptCd.trim();
@@ -289,13 +291,13 @@ public class AdminDeptUI {
 	                updDTO.setSuperDeptCd(dto.getSuperDeptCd());
 	            } else {
 	                if (!InputValidator.isValidDeptCode(superDeptCd)) {
-	                    System.out.println("상위부서코드는 D로 시작하는 5자리여야 합니다. 다시 입력하세요.\n");
+	                	printLineln(MAGENTA, "📢 상위부서코드는 D로 시작하는 5자리여야 합니다. 다시 입력하세요.");
 	                    continue;
 	                }
 	                updDTO.setSuperDeptCd(superDeptCd);
 	            }
 
-	            System.out.print("수정 사용여부 입력 [예: Y 또는 N, 현재유지:p, 입력중단:q] : ");
+	            printLine(GREEN, "👉 수정 사용여부 입력 [예: Y 또는 N, 현재유지:p, 입력중단:q] : ");
 	            String useYn = br.readLine();
 	            if (useYn == null) useYn = "";
 	            useYn = useYn.trim();
@@ -313,7 +315,7 @@ public class AdminDeptUI {
 	        }
 
 	        deptDao.updateDept(updDTO);
-	        System.out.println("수정이 완료되었습니다.");
+	        printLineln(MAGENTA, "📢 수정이 완료되었습니다.");
 
 	    } catch (UserQuitException e) {
 	        System.out.println(e.getMessage());
@@ -331,32 +333,32 @@ public class AdminDeptUI {
 	 * <p>삭제 전 확인 메시지 출력 및 사용자 승인 절차 포함.</p>
 	 */
 	public void deleteDept() {
-	    System.out.println("\n부서 삭제 (사용여부 N 처리)...");
+		printTitle("📌 [부서 삭제 (사용여부 N 처리)]");
 
 	    try {
-	        System.out.print("삭제할 부서코드 입력: ");
+	    	printLine(GREEN, "👉 삭제할 부서코드 : ");
 	        String deptCd = br.readLine().trim();
 
 	        if (deptCd.isEmpty()) {
-	            System.out.println("부서코드를 입력해야 합니다.");
+	        	printLineln(MAGENTA, "📢 부서코드를 입력해야 합니다.");
 	            return;
 	        }
 
 	        DeptDTO dto = deptDao.selectOneByDeptCd(deptCd);
 	        if (dto == null) {
-	            System.out.println("등록된 부서가 아닙니다.");
+	        	printLineln(MAGENTA, "📢 등록된 부서가 아닙니다.");
 	            return;
 	        }
 
 	        List<DeptDTO> targetDepts = deptDao.selectDeptWithAllChildren(deptCd);
 
-	        System.out.println("다음 부서들이 사용 안 함(N) 처리됩니다:");
-	        PrintUtil.printLine('=', 93);
+	        printLineln(MAGENTA, "📢 다음 부서들이 사용 안 함(N) 처리됩니다:");
+	        PrintUtil.printLine('═', 93);
 	        System.out.printf("%s | %s | %s\n",
 	        		PrintUtil.padCenter("부서코드", 14),
 	        		PrintUtil.padCenter("부서명", 34),
 	        		PrintUtil.padCenter("사용여부",10));
-	        PrintUtil.printLine('=', 93);
+	        PrintUtil.printLine('═', 93);
 	        
 	        for (DeptDTO d : targetDepts) {           
 	            System.out.printf("%s | %s \t | %s\n",
@@ -364,17 +366,17 @@ public class AdminDeptUI {
 	            		PrintUtil.padRight(d.getDeptNm(), 32),
 	            		PrintUtil.padCenter(d.getUseYn(), 8));
 	        }
-	        PrintUtil.printLine('-', 93);	        
+	        PrintUtil.printLine('─', 93);	        
 	        
-	        System.out.print("정말 삭제하시겠습니까? (Y/N): ");
+	        printLineln(MAGENTA, "📢 정말 삭제하시겠습니까? (Y/N): ");
 	        String confirm = br.readLine().trim();
 	        if (!confirm.equalsIgnoreCase("Y")) {
-	            System.out.println("삭제가 취소되었습니다.");
+	        	printLineln(MAGENTA, "📢 삭제가 취소되었습니다.");
 	            return;
 	        }
 
 	        int updatedCount = deptDao.deleteDept(deptCd);
-	        System.out.println(updatedCount + "개의 부서를 사용 처리했습니다.");
+	        printLineln(MAGENTA, updatedCount + "개의 부서를 사용 처리했습니다.");
 
 	    } catch (Exception e) {
 	        e.printStackTrace();
@@ -385,7 +387,7 @@ public class AdminDeptUI {
 	 * 전사 인원 현황을 CSV 파일로 생성합니다. (DEPT_SEL_009)
 	 */
 	public void makeCSVFile() {
-	    System.out.println("\n전사인원현황 다운로드...");
+		printLineln(MAGENTA, "📁 전사인원현황 다운로드...");
 		try {
 			 deptDao.makeCSVFile();
 		 } catch (Exception e) {
@@ -410,12 +412,13 @@ public class AdminDeptUI {
     		    "\033[36m"  // cyan
     		};
     	
+    	printTitle("📌 [본부 부서 소속 인원]");
 	    System.out.println("\n본부부서소속인원...");
 	    
         List<DeptDTO> list = deptDao.selectDeptMemberCountRatio();
 
         System.out.println("전체 부서수 : " + list.size());    
-        PrintUtil.printLine('=', 80);
+        PrintUtil.printLine('═', 80);
         System.out.printf("%s|%s\t|%s|%s\t|%s\n",
         		PrintUtil.padCenter("본부부서코드", 12),
         		PrintUtil.padCenter("본부부서명", 24),
@@ -423,7 +426,7 @@ public class AdminDeptUI {
                 PrintUtil.padCenter("비율",8),
                 PrintUtil.padCenter("그래프",10)
         		);
-        PrintUtil.printLine('=', 80);
+        PrintUtil.printLine('═', 80);
         
         int idx = 0;
         for(DeptDTO dto : list) {            
@@ -444,6 +447,6 @@ public class AdminDeptUI {
 
     	    idx++;    		
         }
-        PrintUtil.printLine('-', 80);
+        PrintUtil.printLine('─', 80);
     }
 }

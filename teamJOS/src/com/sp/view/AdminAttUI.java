@@ -79,7 +79,10 @@ public class AdminAttUI {
 					break; // 6.연차조회 (전체조회) // ATT_SEL_006
 				}
 
-			} catch (Exception e) {
+			} catch (UserQuitException e) {
+				printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
+				return;
+		    } catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -241,7 +244,7 @@ public class AdminAttUI {
 		                int endIndex = Math.min(startIndex + pageSize, total);
 
 		                System.out.println();
-		                System.out.printf("▶ 근태 조회 결과 | 페이지 %d / %d | 총 %d건 | 조회범위: %d~%d%n",
+		                System.out.printf("👉 근태 조회 결과 | 페이지 %d / %d | 총 %d건 | 조회범위: %d~%d%n",
 		                        page, totalPage, total, startIndex + 1, endIndex);
 		                PrintUtil.printLine('═', 120);
 

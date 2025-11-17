@@ -234,8 +234,8 @@ public class AdminEmpUI {
 				levelCode = br.readLine();
 				InputValidator.isUserExit(levelCode);
 
-				if (!levelCode.matches("0[1-3]")) {
-					printLineln(MAGENTA, "📢 입력 오류 : 01~03 사이의 값을 입력해주세요.\n");
+				if (!levelCode.matches("0(1|3)")) {
+					printLineln(MAGENTA, "📢 입력 오류 : 01, 03 중 입력해주세요.\n");
 					continue;
 				}
 				dto.setLevelCode(levelCode);

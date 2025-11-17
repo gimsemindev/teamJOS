@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.sql.SQLException;
 
 import com.sp.dao.AuthDAO;
+import com.sp.exception.UserQuitException;
 import com.sp.model.LoginDTO;
 import com.sp.util.InputValidator;
 import com.sp.util.LoginInfo;
@@ -34,12 +35,11 @@ public class AdminAuthUI {
         int ch;
         String input;
         
-        printTitle("🏢 [관리자 - 권한관리] ");
         while(true) {
-        	
         	try {
         		do {
-        			printMenu(YELLOW, "① 관리자 정보 수정", "② 관리자 계정 등록", "③ 메뉴로 돌아가기");
+        			printTitle("🏢 [관리자 - 권한관리] ");
+        			printMenu(YELLOW, "① 관리자 정보 수정", "② 관리자 계정 등록");
         			
         			input = br.readLine();
         			InputValidator.isUserExit(input);
@@ -59,7 +59,10 @@ public class AdminAuthUI {
         		case 3: return; // 4.메뉴화면으로
         		}
         		
-        	} catch (Exception e) {
+        	} catch (UserQuitException e) {
+				printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
+				return;
+		    } catch (Exception e) {
         		e.printStackTrace();
         	}
         }
