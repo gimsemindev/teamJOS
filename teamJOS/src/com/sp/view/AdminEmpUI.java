@@ -78,22 +78,22 @@ public class AdminEmpUI {
 
 	/** 1. 사원관리 - 사원 정보 등록 */
 	protected void insertEmployeeInfo() {
-		printTitle("🏢 [관리자  -  사원관리  -  정보등록]");
 		EmployeeDTO dto = new EmployeeDTO();
 
 		try {
 			// ==================== 사원번호 ====================
 			while (true) {
+				printTitle("📌 [관리자 - 사원관리 - 정보등록]");
 				printLine(GREEN, "👉 사원번호 (ex.00001) [q:돌아가기] : ");
 				String empNo = br.readLine();
 				InputValidator.isUserExit(empNo);
 
 				if (!InputValidator.isValidEmpNo(empNo)) {
-					printLineln(MAGENTA, "📢 형식 오류 : 영문 / 숫자 조합 5자리로 입력해주세요.\n");
+					printLineln(MAGENTA, "📢 형식 오류 : 영문 / 숫자 조합 5자리로 입력해주세요.");
 					continue;
 				}
 				if (empDao.selectByEmpNo(empNo) != null) {
-					printLineln(MAGENTA, "📢 이미 존재하는 사원번호입니다.\n");
+					printLineln(MAGENTA, "📢 이미 존재하는 사원번호입니다.");
 					continue;
 				}
 				dto.setEmpNo(empNo);
@@ -110,12 +110,12 @@ public class AdminEmpUI {
 
 			// ==================== 주민등록번호 ====================
 			while (true) {
-				printLine(GREEN, "👉 주민번호('-' 제외 13자리, ex.0101013456789) [ q : 돌아가기 ] : ");
+				printLine(GREEN, "👉 주민번호('-' 제외 13자리, ex.0101013456789) [q:돌아가기] : ");
 				String rrn = br.readLine();
 				InputValidator.isUserExit(rrn);
 
 				if (!InputValidator.isValidRRN(rrn)) {
-					printLineln(MAGENTA, "📢 형식 오류 : 숫자 13자리로 입력해주세요.\n");
+					printLineln(MAGENTA, "📢 형식 오류 : 숫자 13자리로 입력해주세요.");
 					continue;
 				}
 				dto.setRrn(rrn);
@@ -139,7 +139,7 @@ public class AdminEmpUI {
 				InputValidator.isUserExit(deptCd);
 
 				if (!empDao.isValidDeptCd(deptCd)) {
-					printLineln(MAGENTA, "📢 존재하지 않는 부서 코드입니다.\n");
+					printLineln(MAGENTA, "📢 존재하지 않는 부서 코드입니다.");
 					continue;
 				}
 				dto.setDeptCd(deptCd);
@@ -150,14 +150,14 @@ public class AdminEmpUI {
 			// ==================== 직급 코드 ====================
 			String gradeCd;
 			while (true) {
-				printTitle("직급 코드");
+				printTitle("📌 직급 코드");
 				printLineln(YELLOW, "📑 01.사원  02.대리  03.과장  04.차장  05.부장  06.이사  07.대표이사");
 				printLine(GREEN, "👉 직급코드 입력 [q:돌아가기] : ");
 				gradeCd = br.readLine();
 				InputValidator.isUserExit(gradeCd);
 
 				if (!empDao.isValidGradeCd(gradeCd)) {
-					printLineln(MAGENTA, "📢 존재하지 않는 직급 코드입니다.\n");
+					printLineln(MAGENTA, "📢 존재하지 않는 직급 코드입니다.");
 					continue;
 				}
 				dto.setGradeCd(gradeCd);
@@ -167,8 +167,8 @@ public class AdminEmpUI {
 
 			// ==================== 사원 상태 기본값 ====================
 			dto.setEmpStatCd("A");
-			printTitle("사원 상태");
-			printLine(MAGENTA, "신규 등록 사원은 기본적으로 재직 상태(A)로 설정됩니다.\n");
+			printTitle("📌 사원 상태");
+			printLine(MAGENTA, "신규 등록 사원은 기본적으로 재직 상태(A)로 설정됩니다.");
 			printLine(MAGENTA, "계속 진행하려면 엔터를 눌러주세요. [Enter] ");
 			br.readLine();
 			System.out.println();
@@ -176,14 +176,14 @@ public class AdminEmpUI {
 			// ==================== 계약구분 코드 ====================
 			String contractCd;
 			while (true) {
-				printTitle("계약구분 코드");
+				printTitle("📌 계약구분 코드");
 				printLineln(YELLOW, "📑 1. 정규직   2. 계약직   3. 인턴");
 				printLine(GREEN, "👉 계약구분코드 입력 [q:돌아가기] : ");
 				contractCd = br.readLine();
 				InputValidator.isUserExit(contractCd);
 
 				if (!contractCd.matches("[123]")) {
-					printLineln(MAGENTA, "📢 입력 오류 : 1~3 중 하나를 선택해주세요.\n");
+					printLineln(MAGENTA, "📢 입력 오류 : 1~3 중 하나를 선택해주세요.");
 					continue;
 				}
 				dto.setContractTpCd(contractCd);
@@ -198,11 +198,11 @@ public class AdminEmpUI {
 				InputValidator.isUserExit(email);
 
 				if (!InputValidator.isValidEmail(email)) {
-					printLineln(MAGENTA, "📢 형식 오류: example@jos.com 형태로 입력해주세요.\n");
+					printLineln(MAGENTA, "📢 형식 오류: example@jos.com 형태로 입력해주세요.");
 					continue;
 				}
 				if (empDao.isEmailExists(email)) {
-					printLineln(MAGENTA, "📢 이미 등록된 이메일입니다. 다른 이메일을 입력해주세요.\n");
+					printLineln(MAGENTA, "📢 이미 등록된 이메일입니다. 다른 이메일을 입력해주세요.");
 					continue;
 				}
 				dto.setEmail(email);
@@ -217,7 +217,7 @@ public class AdminEmpUI {
 				InputValidator.isUserExit(pwd);
 
 				if (!InputValidator.isNotEmpty(pwd)) {
-					printLineln(MAGENTA, "📢 비밀번호는 필수 입력값입니다.\n");
+					printLineln(MAGENTA, "📢 비밀번호는 필수 입력값입니다.");
 					continue;
 				}
 				dto.setPwd(pwd);
@@ -235,7 +235,7 @@ public class AdminEmpUI {
 				InputValidator.isUserExit(levelCode);
 
 				if (!levelCode.matches("0(1|3)")) {
-					printLineln(MAGENTA, "📢 입력 오류 : 01, 03 중 입력해주세요.\n");
+					printLineln(MAGENTA, "📢 입력 오류 : 01, 03 중 입력해주세요.");
 					continue;
 				}
 				dto.setLevelCode(levelCode);
@@ -263,7 +263,7 @@ public class AdminEmpUI {
 
 	/** 2. 사원관리 - 정보 수정 */
 	protected void updateEmployeeInfo() {
-		printTitle("🏢 [관리자  -  사원관리  -  정보수정]");
+		printTitle("✏️ [관리자 - 사원관리 - 정보수정]");
 		try {
 			String empNo = checkEmpNo(true);
 
@@ -310,7 +310,7 @@ public class AdminEmpUI {
 
 	/** 3. 사원관리 - 부서이동 */
 	private void updateDeptMoveInfo() {
-		PrintUtil.printTitle("관리자  -  사원관리  -  부서이동");
+		PrintUtil.printTitle("✏️ [관리자 - 사원관리 - 부서이동]");
 		try {
 			String empNo = checkEmpNo(true);
 
@@ -318,14 +318,14 @@ public class AdminEmpUI {
 			EmployeeDTO emp = empDao.selectByEmpNo(empNo);
 			EmployeeDTO deptInfo = empDao.selectDeptName(empNo);
 
-			PrintUtil.printSection("현재 부서 정보");
-			System.out.printf("사원명 : %s%n", emp != null ? emp.getEmpNm() : "");
-			System.out.printf("현재 부서코드 : %s%n", deptInfo != null ? deptInfo.getDeptCd() : "");
-			System.out.printf("현재 부서명 : %s%n", deptInfo != null ? deptInfo.getDeptNm() : "");
-			PrintUtil.printLine('-', 70);
+			PrintUtil.printSection(GRAY + "📌 현재 부서 정보" + RESET);
+			System.out.printf(GRAY + "사원명 : %s%n", emp != null ? emp.getEmpNm() : "" + RESET);
+			System.out.printf(GRAY + "현재 부서코드 : %s%n", deptInfo != null ? deptInfo.getDeptCd() : "" + RESET);
+			System.out.printf(GRAY + "현재 부서명 : %s%n", deptInfo != null ? deptInfo.getDeptNm() : "" + RESET);
+			PrintUtil.printLine('─', 70);
 
 			// 이동할 부서 선택
-			PrintUtil.printSection("이동할 부서 선택");
+			PrintUtil.printSection(GREEN + "📌 이동할 부서 선택" + RESET);
 			deptCommonUI.selectAllDept();
 
 			String newDeptCd;
@@ -350,30 +350,30 @@ public class AdminEmpUI {
 			dto.setNewDeptCd(newDeptCd);
 			empDao.updateDeptMove(dto);
 
-			PrintUtil.printSection("이동 완료");
-			printLineln(MAGENTA, "📢 부서 이동이 성공적으로 처리되었습니다.\n");
+			PrintUtil.printSection(GRAY + "❗ 이동 완료" + RESET);
+			printLineln(MAGENTA, "📢 부서 이동이 성공적으로 처리되었습니다.");
 
 		} catch (UserQuitException e) {
-			printLineln(MAGENTA, "📢 부서 이동을 취소하고 상위 메뉴로 돌아갑니다.\n");
+			printLineln(MAGENTA, "📢 부서 이동을 취소하고 상위 메뉴로 돌아갑니다.");
 		} catch (Exception e) {
 			e.printStackTrace();
-			printLineln(MAGENTA, "📢 처리 중 오류가 발생했습니다.\n");
+			printLineln(MAGENTA, "📢 처리 중 오류가 발생했습니다.");
 		}
 	}
 
 	/** 4. 사원관리 - 진급관리 */
 	private void updatePromotionInfo() {
-		PrintUtil.printTitle("관리자  -  사원관리  -  진급관리");
+		PrintUtil.printTitle("✏️ [관리자 - 사원관리 - 진급관리]");
 		try {
 			String empNo = checkEmpNo(true);
 
 			EmployeeDTO emp = empDao.selectByEmpNo(empNo);
 
-			PrintUtil.printSection("현재 정보");
-			System.out.printf("사원명 : %s%n", emp != null ? emp.getEmpNm() : "");
-			System.out.printf("현재 직급 : %s%n", emp != null ? emp.getGradeNm() : "");
-			System.out.printf("현재 부서명 : %s%n", emp != null ? emp.getDeptNm() : "");
-			PrintUtil.printLine('-', 70);
+			PrintUtil.printSection(GRAY + "📌 현재 정보" + RESET);
+			System.out.printf(GRAY + "사원명 : %s%n", emp != null ? emp.getEmpNm() : "" + RESET);
+			System.out.printf(GRAY + "현재 직급 : %s%n", emp != null ? emp.getGradeNm() : "" + RESET);
+			System.out.printf(GRAY + "현재 부서명 : %s%n", emp != null ? emp.getDeptNm() : "" + RESET);
+			PrintUtil.printLine('─', 70);
 
 			// 직급 목록 출력
 			printTitle(" 📑 직급 코드 목록 ");
@@ -387,11 +387,11 @@ public class AdminEmpUI {
 				InputValidator.isUserExit(newGrade);
 
 				if (!empDao.isValidGradeCd(newGrade)) {
-					printLineln(MAGENTA, "📢 존재하지 않는 직급 코드입니다.\n");
+					printLineln(MAGENTA, "📢 존재하지 않는 직급 코드입니다.");
 					continue;
 				}
 				if (emp != null && newGrade.equals(emp.getGradeCd())) {
-					printLineln(MAGENTA, "📢 현재 직급과 동일합니다. 다른 직급을 선택해주세요.\n");
+					printLineln(MAGENTA, "📢 현재 직급과 동일합니다. 다른 직급을 선택해주세요.");
 					continue;
 				}
 				break;
@@ -405,7 +405,7 @@ public class AdminEmpUI {
 				InputValidator.isUserExit(reason);
 
 				if (!InputValidator.isNotEmpty(reason)) {
-					printLineln(MAGENTA, "📢 진급 사유는 반드시 입력해야 합니다.\n");
+					printLineln(MAGENTA, "📢 진급 사유는 반드시 입력해야 합니다.");
 					continue;
 				}
 				break;
@@ -420,13 +420,13 @@ public class AdminEmpUI {
 			int result = empDao.updatePromotion(dto);
 
 			if (result > 0) {
-				printLineln(MAGENTA, "📢 진급 처리가 완료되었습니다.\n");
+				printLineln(MAGENTA, "📢 진급 처리가 완료되었습니다.");
 			} else {
-				printLineln(MAGENTA, "📢 진급 처리에 실패하였습니다.\n");
+				printLineln(MAGENTA, "📢 진급 처리에 실패하였습니다.");
 			}
 
 		} catch (UserQuitException e) {
-			printLineln(MAGENTA, "📢 진급관리를 취소하고 상위 메뉴로 돌아갑니다.\n");
+			printLineln(MAGENTA, "📢 진급관리를 취소하고 상위 메뉴로 돌아갑니다.");
 		} catch (SQLException e) {
 			printLineln(MAGENTA, "📢 데이터베이스 처리 중 오류가 발생했습니다.");
 			e.printStackTrace();
@@ -438,9 +438,9 @@ public class AdminEmpUI {
 
 	/** 5. 사원관리 - 정보조회 */
 	private void manageEmployeeSearch() {
-		printTitle("🏢 [관리자 - 사원관리 - 정보조회]");
 	    try {
 	        while (true) {
+	        	printTitle("🔍 [관리자 - 사원관리 - 정보조회]");
 	        	printMenu(YELLOW, "① 사번 조회", "② 이름 조회", "③ 전체 조회");
 	            String sel = br.readLine();
 	            if (sel == null) sel = "";
@@ -448,22 +448,20 @@ public class AdminEmpUI {
 	            if ("q".equalsIgnoreCase(sel)) {
 	                return;
 	            }
-
 	            int ch;
 	            try {
 	                ch = Integer.parseInt(sel);
 	            } catch (NumberFormatException e) {
-	            	printLineln(MAGENTA, "📢 잘못된 번호입니다. 1~3 사이의 값을 입력해주세요.\n");
+	            	printLineln(MAGENTA, "📢 잘못된 번호입니다. 1~3 사이의 값을 입력해주세요.");
 	                continue;
 	            }
-
 	            switch (ch) {
 	            // 1. 사번 조회 - 단건도 목록이랑 같은 형식 사용
 	            case 1 -> {
 	                String empNo = checkEmpNo(true);
 	                EmployeeDTO dto = empDao.selectByEmpNo(empNo);
 	                if (dto == null) {
-	                	printLineln(MAGENTA, "📢 해당 사원번호의 정보가 존재하지 않습니다.\n");
+	                	printLineln(MAGENTA, "📢 해당 사원번호의 정보가 존재하지 않습니다.");
 	                    break;
 	                }
 
@@ -471,9 +469,9 @@ public class AdminEmpUI {
 	                String level = dto.getLevelCode() == null ? "-" : dto.getLevelCode();
 	                String addr  = getFirstTwoWords(dto.getEmpAddr()); // 주소는 앞 두 단어만
 
-	                PrintUtil.printLine('=', 150);
+	                PrintUtil.printLine('═', 150);
 	                System.out.println(PrintUtil.padCenter("관리자 - 사원관리 - 사원 정보 조회", 150));
-	                PrintUtil.printLine('=', 150);
+	                PrintUtil.printLine('═', 150);
 
 	                // ───── 헤더 (한글 폭 기준 정렬) ─────
 	                System.out.printf(
@@ -512,7 +510,7 @@ public class AdminEmpUI {
 	                        PrintUtil.padRightDisplay(level, 8)
 	                );
 
-	                PrintUtil.printLine('=', 150);
+	                PrintUtil.printLine('═', 150);
 	                System.out.println();
 	            }
 
@@ -530,11 +528,11 @@ public class AdminEmpUI {
 	                printEmployeeListPaged(list);
 	            }
 
-	            default -> printLineln(MAGENTA, "📢 잘못된 번호입니다. 1~3 사이의 값을 입력해주세요.\n");
+	            default -> printLineln(MAGENTA, "📢 잘못된 번호입니다. 1~3 사이의 값을 입력해주세요.");
 	            }
 	        }
 	    } catch (UserQuitException e) {
-	    	printLineln(MAGENTA, "📢 정보 조회를 취소했습니다.\n");
+	    	printLineln(MAGENTA, "📢 정보 조회를 취소했습니다.");
 	    } catch (IOException e) {
 	        e.printStackTrace();
 	    } catch (Exception e) {
@@ -544,17 +542,7 @@ public class AdminEmpUI {
 
 	/** 6. 사원관리 - 재직결재 */
 	protected void updateRetireApprovalInfo() {
-		printTitle("🏢 [관리자 - 사원관리 - 퇴직결재]");
-
-		final String RESET = "\u001B[0m";
-		final String GREEN = "\u001B[32m";
-		final String YELLOW = "\u001B[33m";
-		final String CYAN = "\u001B[36m";
-		final String GRAY = "\u001B[90m";
-
-		System.out.println(CYAN + "\n╔════════════════════════════════════════╗" + RESET);
-		System.out.println(CYAN + "║       🗓️  관리자 - 퇴직 승인 관리            ║" + RESET);
-		System.out.println(CYAN + "╚════════════════════════════════════════╝" + RESET);
+		printTitle("🗓️ [관리자 - 사원관리 - 퇴직 승인 관리]");
 
 		String input;
 		int retireSeq;
@@ -563,7 +551,7 @@ public class AdminEmpUI {
 			List<RetireDTO> list = empDao.listRetire();
 
 			PrintUtil.printLine('─', 64);
-			System.out.println(YELLOW + " 미승인 퇴직 신청 (총 " + list.size() + "건)" + RESET);
+			printLineln(YELLOW, " 미승인 퇴직 신청 (총 " + list.size() + "건)");
 			PrintUtil.printLine('─', 64);
 			// 헤더 출력
 			System.out.printf("%s\t | %s\t | %s\t | %s\t | %s\t\n", 
@@ -572,11 +560,11 @@ public class AdminEmpUI {
 					PrintUtil.padCenter("퇴직일", 12), PrintUtil.padCenter("신청사유", 8),
 					PrintUtil.padCenter("승인상태", 8));
 
-			PrintUtil.printLine('-', 64);
+			PrintUtil.printLine('─', 64);
 
 			if (list.isEmpty()) {
 				printLineln(MAGENTA, "📢 현재 미승인된 퇴직 신청이 없습니다.");
-				PrintUtil.printLine('-', 64);
+				PrintUtil.printLine('─', 64);
 				return;
 			}
 
@@ -589,7 +577,7 @@ public class AdminEmpUI {
 								: dto.getRetireMemo(), 8),
 						PrintUtil.padCenter(dto.getApproverYn(), 8));
 			}
-			PrintUtil.printLine('-', 64);
+			PrintUtil.printLine('─', 64);
 
 			printLine(GREEN, "👉  승인하실 퇴직 신청 번호를 입력하세요 (취소: Enter) : ");
 			input = br.readLine();
@@ -602,8 +590,7 @@ public class AdminEmpUI {
 			retireSeq = Integer.parseInt(input.trim());
 
 			empDao.updateRetireApproval(retireSeq);
-
-			System.out.println(GREEN + "\n✅ 퇴직 신청 번호 " + retireSeq + " 승인 완료." + RESET);
+			printLineln(GREEN, "\n✅ 퇴직 신청 번호 " + retireSeq + " 승인 완료.");
 
 		} catch (Exception e) {
 		}
@@ -611,7 +598,7 @@ public class AdminEmpUI {
 
 	/** 7. 사원관리 - 경력등록 */
 	protected void insertCareerInfo() {
-		printTitle("🏢 [관리자 - 사원관리 - 경력등록]");
+		printTitle("✏️ [관리자 - 사원관리 - 경력등록]");
 		try {
 			String empNo = checkEmpNo(true);
 			CareerDTO dto = new CareerDTO();
@@ -650,7 +637,7 @@ public class AdminEmpUI {
 
 	/** 8. 사원관리 - 자격증등록 */
 	protected void insertLicenseInfo() {
-		printTitle("🏢 [관리자  -  사원관리  -  자격증등록]");
+		printTitle("✏️ [관리자 - 사원관리 - 자격증등록]");
 		try {
 			String empNo = checkEmpNo(true);
 			RewardDTO dto = new RewardDTO();
@@ -673,10 +660,10 @@ public class AdminEmpUI {
 
 			empDao.insertLicense(dto);
 			PrintUtil.printSection("등록 완료");
-			printLineln(MAGENTA, "📢 자격증 등록이 완료되었습니다.\n");
+			printLineln(MAGENTA, "📢 자격증 등록이 완료되었습니다.");
 
 		} catch (UserQuitException e) {
-			printLineln(MAGENTA, "📢 등록이 취소되었습니다.\n");
+			printLineln(MAGENTA, "📢 등록이 취소되었습니다.");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -684,23 +671,27 @@ public class AdminEmpUI {
 
 	/** 9. 사원관리 - 이력조회 */
 	protected void selectHistoryInfo() {
-		printTitle("🏢 [관리자 - 사원관리 - 이력조회]");
 		try {
 			while (true) {
-				System.out.print("1. 경력 | 2. 자격증 | 3. 직급이력 | [q: 돌아가기] ➤ ");
+				printTitle("🔍 [관리자 - 사원관리 - 이력조회]");
+				printMenu(YELLOW, "① 경력 조회 ", "② 자격증 조회", "③ 직급 이력 조회");
 				String sel = br.readLine();
+				InputValidator.isUserExit(sel);
+				
 				if (sel == null)
 					sel = "";
 				sel = sel.trim();
-				if ("q".equalsIgnoreCase(sel)) {
-					return;
-				}
 
+				if (sel == null || sel.trim().isEmpty()) {
+					sel = "";
+                	continue;
+                }
+				
 				int ch;
 				try {
 					ch = Integer.parseInt(sel);
 				} catch (NumberFormatException e) {
-					printLineln(MAGENTA, "📢 잘못된 번호입니다.\n");
+					printLineln(MAGENTA, "📢 잘못된 번호입니다. 1~3 사이의 숫자를 입력하세요.");
 					continue;
 				}
 
@@ -722,10 +713,13 @@ public class AdminEmpUI {
 				case 4 -> {
 					return;
 				}
-				default -> printLineln(MAGENTA, "📢 잘못된 번호입니다.\n");
+				default -> printLineln(MAGENTA, "📢 잘못된 번호입니다. 1~3 사이의 숫자를 입력하세요.");
 				}
 			}
-		} catch (IOException e) {
+		} catch (UserQuitException e) {
+			printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
+			return;
+	    } catch (IOException e) {
 			e.printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -768,7 +762,7 @@ public class AdminEmpUI {
 	// ==================== 공통 : 사원 목록 페이징 ====================
 	private void printEmployeeListPaged(List<EmployeeDTO> list) throws IOException {
 		if (list == null || list.isEmpty()) {
-			printLineln(MAGENTA, "📢 조회 결과가 없습니다.\n");
+			printLineln(MAGENTA, "📢 조회 결과가 없습니다.");
 			return;
 		}
 
@@ -784,7 +778,7 @@ public class AdminEmpUI {
 			System.out.println();
 			System.out.printf("▶ 사원 정보 목록 | 페이지 %d / %d | 총 %d건 | 조회범위: %d~%d%n", page, totalPage, total,
 					startIndex + 1, endIndex);
-			PrintUtil.printLine('=', 150);
+			PrintUtil.printLine('═', 150);
 
 			// ───── 헤더 (한글 폭 기준 정렬) ─────
 			System.out.printf("%s\t| %s\t| %s\t | %s\t | %s\t | %s\t | %s\t | %s\t | %s\t | %s%n",
@@ -798,7 +792,7 @@ public class AdminEmpUI {
 					PrintUtil.padCenterDisplay("재직", 4),
 					PrintUtil.padCenterDisplay("계약", 4),
 					PrintUtil.padCenterDisplay("이메일", 16));
-			PrintUtil.printLine('-', 150);
+			PrintUtil.printLine('─', 150);
 
 			// ───── 데이터 행 ─────
 			for (int i = startIndex; i < endIndex; i++) {
@@ -829,7 +823,7 @@ public class AdminEmpUI {
 						PrintUtil.padRightDisplay(email, 16));
 			}
 
-			PrintUtil.printLine('=', 150);
+			PrintUtil.printLine('═', 150);
 			printLine(GREEN, "[n: 다음, p: 이전, q: 종료] 👉 ");
 			String cmd = br.readLine();
 			if (cmd == null)
@@ -840,12 +834,12 @@ public class AdminEmpUI {
 				if (page < totalPage)
 					page++;
 				else
-					printLineln(MAGENTA, "📢 마지막 페이지입니다.\n");
+					printLineln(MAGENTA, "📢 마지막 페이지입니다.");
 			} else if ("p".equals(cmd)) {
 				if (page > 1)
 					page--;
 				else
-					printLineln(MAGENTA, "📢 첫 페이지입니다.\n");
+					printLineln(MAGENTA, "📢 첫 페이지입니다.");
 			} else if ("q".equals(cmd)) {
 				break;
 			}
@@ -869,7 +863,7 @@ public class AdminEmpUI {
 	// ==================== 공통 : 경력 이력 페이징 ====================
 	private void printCareerHistoryPaged(List<HistoryDTO> list) throws IOException {
 		if (list == null || list.isEmpty()) {
-			printLineln(MAGENTA, "📢 등록된 경력 이력이 없습니다.\n");
+			printLineln(MAGENTA, "📢 등록된 경력 이력이 없습니다.");
 			return;
 		}
 
@@ -885,7 +879,7 @@ public class AdminEmpUI {
 			System.out.println();
 			System.out.printf("▶ 경력 이력 목록 | 페이지 %d / %d | 총 %d건 | 조회범위: %d~%d%n", page, totalPage, total,
 					startIndex + 1, endIndex);
-			PrintUtil.printLine('=', 120);
+			PrintUtil.printLine('═', 120);
 
 			System.out.printf("%s\t | %s\t | %s\t | %s\t | %s\t | %s%n", 
 					PrintUtil.padCenter("사번", 6),
@@ -894,7 +888,7 @@ public class AdminEmpUI {
 					PrintUtil.padCenter("시작일", 10),
 					PrintUtil.padCenter("종료일", 10), 
 					PrintUtil.padCenter("상세", 30));
-			PrintUtil.printLine('-', 120);
+			PrintUtil.printLine('─', 120);
 
 			for (int i = startIndex; i < endIndex; i++) {
 				HistoryDTO d = list.get(i);
@@ -907,7 +901,7 @@ public class AdminEmpUI {
 						PrintUtil.padRight(d.getEndDt(), 10),
 						PrintUtil.padRight(d.getDetails(), 30));
 			}
-			PrintUtil.printLine('=', 120);
+			PrintUtil.printLine('═', 120);
 			printLine(GREEN, "[n: 다음, p: 이전, q: 종료] 👉 ");
 			String cmd = br.readLine();
 			if (cmd == null)
@@ -918,12 +912,12 @@ public class AdminEmpUI {
 				if (page < totalPage)
 					page++;
 				else
-					printLineln(MAGENTA, "📢 마지막 페이지입니다.\n");
+					printLineln(MAGENTA, "📢 마지막 페이지입니다.");
 			} else if ("p".equals(cmd)) {
 				if (page > 1)
 					page--;
 				else
-					printLineln(MAGENTA, "📢 첫 페이지입니다.\n");
+					printLineln(MAGENTA, "📢 첫 페이지입니다.");
 			} else if ("q".equals(cmd)) {
 				break;
 			}
@@ -933,7 +927,7 @@ public class AdminEmpUI {
 	// ==================== 공통 : 자격증 이력 페이징 ====================
 	private void printCertHistoryPaged(List<HistoryDTO> list) throws IOException {
 		if (list == null || list.isEmpty()) {
-			printLineln(MAGENTA, "📢 등록된 자격증 이력이 없습니다.\n");
+			printLineln(MAGENTA, "📢 등록된 자격증 이력이 없습니다.");
 			return;
 		}
 
@@ -949,7 +943,7 @@ public class AdminEmpUI {
 			System.out.println();
 			System.out.printf("▶ 자격증 이력 목록 | 페이지 %d / %d | 총 %d건 | 조회범위: %d~%d%n", page, totalPage, total,
 					startIndex + 1, endIndex);
-			PrintUtil.printLine('=', 120);
+			PrintUtil.printLine('═', 120);
 
 			System.out.printf("%s\t | %s\t | %s\t | %s\t | %s%n", 
 					PrintUtil.padCenter("사번", 6), 
@@ -957,7 +951,7 @@ public class AdminEmpUI {
 					PrintUtil.padCenter("자격증명", 20),
 					PrintUtil.padCenter("발급기관", 20), 
 					PrintUtil.padCenter("발급일", 10));
-			PrintUtil.printLine('-', 120);
+			PrintUtil.printLine('─', 120);
 
 			for (int i = startIndex; i < endIndex; i++) {
 				HistoryDTO d = list.get(i);
@@ -969,7 +963,7 @@ public class AdminEmpUI {
 						PrintUtil.padRight(d.getIssueOrgNm(), 20), 
 						PrintUtil.padRight(d.getIssueDt(), 10));
 			}
-			PrintUtil.printLine('=', 120);
+			PrintUtil.printLine('═', 120);
 			printLine(GREEN, "[n: 다음, p: 이전, q: 종료] 👉 ");
 			String cmd = br.readLine();
 			if (cmd == null)
@@ -980,7 +974,7 @@ public class AdminEmpUI {
 				if (page < totalPage)
 					page++;
 				else
-					printLineln(MAGENTA, "📢 마지막 페이지입니다.\n");
+					printLineln(MAGENTA, "📢 마지막 페이지입니다.");
 			} else if ("p".equals(cmd)) {
 				if (page > 1)
 					page--;
@@ -1011,7 +1005,7 @@ public class AdminEmpUI {
 			System.out.println();
 			System.out.printf("▶ 직급 이력 목록 | 페이지 %d / %d | 총 %d건 | 조회범위: %d~%d%n", page, totalPage, total,
 					startIndex + 1, endIndex);
-			PrintUtil.printLine('=', 120);
+			PrintUtil.printLine('═', 120);
 
 			System.out.printf("%s\t | %s\t | %s\t | %s\t | %s\t | %s%n", 
 					PrintUtil.padCenter("시작일", 10),
@@ -1020,7 +1014,7 @@ public class AdminEmpUI {
 					PrintUtil.padCenter("직급", 6),
 					PrintUtil.padCenter("종료일", 10), 
 					PrintUtil.padCenter("부서", 12));
-			PrintUtil.printLine('-', 120);
+			PrintUtil.printLine('─', 120);
 
 			for (int i = startIndex; i < endIndex; i++) {
 				HistoryDTO d = list.get(i);
@@ -1033,7 +1027,7 @@ public class AdminEmpUI {
 						PrintUtil.padRight(d.getEndDt(), 10),
 						PrintUtil.padRight(d.getDeptNm(), 12));
 			}
-			PrintUtil.printLine('=', 120);
+			PrintUtil.printLine('═', 120);
 			printLine(GREEN, "[n: 다음, p: 이전, q: 종료] 👉 ");
 			String cmd = br.readLine();
 			if (cmd == null)
@@ -1044,12 +1038,12 @@ public class AdminEmpUI {
 				if (page < totalPage)
 					page++;
 				else
-					printLineln(MAGENTA, "📢 마지막 페이지입니다.\n");
+					printLineln(MAGENTA, "📢 마지막 페이지입니다.");
 			} else if ("p".equals(cmd)) {
 				if (page > 1)
 					page--;
 				else
-					printLineln(MAGENTA, "📢 첫 페이지입니다.\n");
+					printLineln(MAGENTA, "📢 첫 페이지입니다.");
 			} else if ("q".equals(cmd)) {
 				break;
 			}
