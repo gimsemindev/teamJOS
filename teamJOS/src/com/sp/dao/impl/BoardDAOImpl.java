@@ -88,7 +88,7 @@ public class BoardDAOImpl implements BoardDAO{
 
             // 2. SQL 쿼리 준비
 			sql ="INSERT INTO /* BOARD_INS_001 */ tb_board(BOARD_SEQ, EMP_NO, TITLE, CONTENT, REG_DTM) "
-               + " VALUES(SQ_TB_BOARD_SEQ.NEXTVAL, ?, ?, ?, SYSTIMESTAMP)";
+               + " VALUES(SQ_TB_BOARD.NEXTVAL, ?, ?, ?, SYSTIMESTAMP)";
             
 			pstmt = conn.prepareStatement(sql);
             

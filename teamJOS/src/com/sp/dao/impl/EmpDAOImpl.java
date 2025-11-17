@@ -1096,7 +1096,7 @@ public class EmpDAOImpl implements EmpDAO{
 		try {
 			sql = """
 					INSERT INTO /* EMP_INS_013 */ TB_EMP_RETIRE(RETIRE_SEQ, EMP_NO, REG_DT, APPROVER_YN, RETIRE_MEMO) 
-						VALUES (RETIRE_SEQ_SQ.NEXTVAL, ?, TO_TIMESTAMP(?, 'YYYY-MM-DD HH24:MI:SS'), 'N', ?)
+						VALUES (SQ_TB_RETIRE.NEXTVAL, ?, TO_TIMESTAMP(?, 'YYYY-MM-DD HH24:MI:SS'), 'N', ?)
 					""";
 			
 			pstmt = conn.prepareStatement(sql);
