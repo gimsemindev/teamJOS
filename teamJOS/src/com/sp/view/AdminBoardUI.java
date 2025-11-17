@@ -42,17 +42,18 @@ public class AdminBoardUI {
                     }
                     ch = Integer.parseInt(input);
         			
-        		} while(ch < 1 || ch > 5);
+        		} while(ch < 1 || ch > 4);
         		
         		switch(ch) {
         		case 1: insert(); break; // BOARD_INS_001 
         		case 2: update(); break; // BOARD_UPD_002 
         		case 3: delete(); break; // BOARD_DEL_003 어드민 전용 삭제 추가
         		case 4: viewPostsList(); break;
-        		case 5: return; // 4. 메뉴화면으로 
         		}
         		
-        	} catch (UserQuitException e) {
+        	} catch (NumberFormatException e) {
+        		printLineln(MAGENTA, "📢 1 ~ 4 사이의 숫자만 입력 가능합니다.");
+			} catch (UserQuitException e) {
 				printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
 				return;
 		    } catch (Exception e) {

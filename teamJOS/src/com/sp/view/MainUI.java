@@ -18,7 +18,6 @@ import com.sp.dao.impl.EmpDAOImpl;
 import com.sp.dao.impl.LoginDAOImpl;
 import com.sp.model.LoginDTO;
 import com.sp.util.DBConn;
-import com.sp.util.InputValidator;
 import com.sp.util.LoginInfo;
 import com.sp.util.PrintUtil;
 
@@ -180,7 +179,7 @@ public class MainUI {
 
 			if (member != null) {
 				login.login(member);
-				System.out.println(GREEN + "✅ 로그인 성공! (" + member.getMemberName() + " " + member.getGradeNm() + ")" + RESET + "\n");
+				System.out.println(GREEN + "\n✅ 로그인 성공! (" + member.getMemberName() + " " + member.getGradeNm() + ")" + RESET + "\n");
 			} else {
 				System.out.println(YELLOW + "❌ 로그인 실패: 사번 또는 비밀번호를 확인하세요." + RESET + "\n");
 			}
@@ -214,15 +213,15 @@ public class MainUI {
         		LoginDTO member = login.loginMember();
 
         		String gradeDisplay = member.getGradeNm() != null ? member.getGradeNm() : "직급미정";
-                System.out.println("\n[" + member.getMemberName() + " " + gradeDisplay + "] 님");
+                System.out.println("[" + member.getMemberName() + " " + gradeDisplay + "] 님");
         		
         		do {
         			PrintUtil.printLine('─', 65);
-        			PrintUtil.printLineln(YELLOW, "① 사원 관리\n");
-        			PrintUtil.printLineln(YELLOW, "② 부서 관리\n");
-        			PrintUtil.printLineln(YELLOW, "③ 근태 관리\n");
-        			PrintUtil.printLineln(YELLOW, "④ 게시판\n");
-        			PrintUtil.printLineln(YELLOW, "⑤ 로그아웃\n");
+        			PrintUtil.printLine(YELLOW, "① 사원 관리\n");
+        			PrintUtil.printLine(YELLOW, "② 부서 관리\n");
+        			PrintUtil.printLine(YELLOW, "③ 근태 관리\n");
+        			PrintUtil.printLine(YELLOW, "④ 게시판\n");
+        			PrintUtil.printLine(YELLOW, "⑤ 로그아웃\n");
         			PrintUtil.printLine('─', 65);
         			PrintUtil.printLine(GREEN, "👉 메뉴 선택 : ");
         			input = br.readLine();

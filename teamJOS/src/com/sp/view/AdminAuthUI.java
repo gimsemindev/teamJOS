@@ -50,16 +50,17 @@ public class AdminAuthUI {
                     }
                     ch = Integer.parseInt(input);
         			
-        		} while(ch < 1 || ch > 3);
+        		} while(ch < 1 || ch > 2);
         		
         		switch(ch) {
         		case 1: updateAdmin(); break; // AUTH_UPD_002
         		case 2: insertAdmin(); break; // AUTH_INS_001
         		//case 3: deleteAdmin(); break; // AUTH_DEL_003
-        		case 3: return; // 4.메뉴화면으로
         		}
         		
-        	} catch (UserQuitException e) {
+        	} catch (NumberFormatException e) {
+				printLineln(MAGENTA, "📢 1 ~ 2 사이의 숫자만 입력 가능합니다.");
+			} catch (UserQuitException e) {
 				printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
 				return;
 		    } catch (Exception e) {
@@ -78,16 +79,16 @@ public class AdminAuthUI {
             LoginDTO currentUser = loginInfo.loginMember();
             
             if (currentUser != null && currentUser.getMemberId().equals(empNo)) {
-                System.out.println(YELLOW + "❌ 권한 강등 실패: 현재 로그인한 관리자 본인의 권한은 강등할 수 없습니다." + RESET);
+            	printLineln(MAGENTA, "❌ 권한 강등 실패: 현재 로그인한 관리자 본인의 권한은 강등할 수 없습니다.");
                 return; 
             }
             
             int result = authDao.insertAdmin(empNo, EMPLOYEE_LEVEL_CODE);
             
             if (result > 0) {
-                System.out.println(GREEN + "✅ 권한 수정 완료! 사번 " + empNo + "이(가) 일반사원으로 변경되었습니다." + RESET);
+            	printLineln(MAGENTA, "✅ 권한 수정 완료! 사번 " + empNo + "이(가) 일반사원으로 변경되었습니다.");
             } else {
-                System.out.println(YELLOW + "❌ 권한 수정 실패: 해당 사번이 존재하지 않거나, 이미 일반사원입니다." + RESET);
+            	printLineln(MAGENTA, "❌ 권한 수정 실패: 해당 사번이 존재하지 않거나, 이미 일반사원입니다.");
             }
             
         } catch (IOException e) {
@@ -109,9 +110,9 @@ public class AdminAuthUI {
             int result = authDao.insertAdmin(empNo, ADMIN_LEVEL_CODE);
             
             if (result > 0) {
-                System.out.println(GREEN + "✅ 권한 등록 완료! 사번 " + empNo + "이(가) 관리자로 승급되었습니다." + RESET);
+            	printLineln(MAGENTA, "✅ 권한 등록 완료! 사번 " + empNo + "이(가) 관리자로 승급되었습니다.");
             } else {
-                System.out.println(YELLOW + "❌ 권한 등록 실패: 해당 사번이 존재하지 않거나, 이미 관리자입니다." + RESET);
+            	printLineln(MAGENTA, "❌ 권한 등록 실패: 해당 사번이 존재하지 않거나, 이미 관리자입니다.");
             }
             
         } catch (IOException e) {
