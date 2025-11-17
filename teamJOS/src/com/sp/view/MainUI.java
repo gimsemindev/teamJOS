@@ -18,6 +18,7 @@ import com.sp.dao.impl.EmpDAOImpl;
 import com.sp.dao.impl.LoginDAOImpl;
 import com.sp.model.LoginDTO;
 import com.sp.util.DBConn;
+import com.sp.util.InputValidator;
 import com.sp.util.LoginInfo;
 import com.sp.util.PrintUtil;
 
@@ -218,7 +219,8 @@ public class MainUI {
         			PrintUtil.printMenu(YELLOW, "① 사원 관리", "② 부서 관리", "③ 근태 관리", "④ 게시판", "⑤ 로그아웃");
         			
         			input = br.readLine();
-                    
+        			InputValidator.isUserExit(input);
+        			
                     if (input == null || input.trim().isEmpty()) {
                     	ch = 0;
                     	continue;
@@ -279,6 +281,7 @@ public class MainUI {
         			PrintUtil.printMenu(YELLOW, "① 사원 관리", "② 부서 관리", "③ 근태 관리","④ 권한 관리", "⑤ 게시판 관리", "⑥ 로그아웃");
 
         			input = br.readLine();
+        			InputValidator.isUserExit(input);
                     
                     if (input == null || input.trim().isEmpty()) {
                     	ch = 0;

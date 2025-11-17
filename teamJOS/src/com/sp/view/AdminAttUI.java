@@ -42,10 +42,10 @@ public class AdminAttUI {
 			try {
 				do {
 					printTitle("🏢 [관리자 - 근태관리]");
-					printMenu(YELLOW, "① 출근 시간 입력", "② 퇴근 시간 입력", "③ 근태 정보 수정", "④ 근태 조회", "⑤ 휴가 승인", "⑥ 연차 조회",
-							"⑦ 상위 메뉴로 돌아가기" + PrintUtil.RESET);
+					printMenu(YELLOW, "① 출근 시간 입력", "② 퇴근 시간 입력", "③ 근태 정보 수정", "④ 근태 조회", "⑤ 휴가 승인", "⑥ 연차 조회");
 
 					input = br.readLine();
+					InputValidator.isUserExit(input);
 
 					if (input == null || input.trim().isEmpty()) {
 						ch = 0;
@@ -87,7 +87,7 @@ public class AdminAttUI {
 
 	// 출근 시간 입력
 	protected void insertCheckInInfo() {
-		PrintUtil.printTitle("[관리자 - 근태관리 - 출근시간입력]");
+		PrintUtil.printTitle("🏢 [관리자 - 근태관리 - 출근시간입력]");
 		AttendanceDTO att = new AttendanceDTO();
 		String empNo = loginInfo.loginMember().getMemberId();
 		att.setEmpNo(empNo);
@@ -117,7 +117,7 @@ public class AdminAttUI {
 
 	// 퇴근 시간 입력
 	protected void insertCheckOutInfo() {
-		printTitle("[관리자 - 근태관리 - 퇴근 시간 입력]");
+		printTitle("🏢 [관리자 - 근태관리 - 퇴근 시간 입력]");
 		AttendanceDTO att = new AttendanceDTO();
 		String empNo = loginInfo.loginMember().getMemberId();
 		att.setEmpNo(empNo);
@@ -147,7 +147,7 @@ public class AdminAttUI {
 	// 근태 정보 수정
 	protected void updateAttendanceInfo() {
 		AttendanceDTO att = new AttendanceDTO();
-		printTitle("[관리자 - 근태관리 - 근태정보수정]");
+		printTitle("🏢 [관리자 - 근태관리 - 근태정보수정]");
 		
 		try {
 			while(true) {
@@ -162,15 +162,14 @@ public class AdminAttUI {
 				att.setRegDt(date);
 
 				printLine(CYAN, "❓ 수정할 항목 ? ");
-				printMenu(YELLOW, " ① 출근일시", " ② 출근일시", " ③ 상위 메뉴로 돌아가기");
+				printMenu(YELLOW, " ① 출근일시", " ② 출근일시");
 
-				int ch = Integer.parseInt(br.readLine());
-				if (ch == 3)
-					return;
+				String ch = br.readLine();
+				InputValidator.isUserExit(ch);
 
 				String col = switch (ch) {
-					case 1 -> "CHECK_IN";
-					case 2 -> "CHECK_OUT";
+					case "1" -> "CHECK_IN";
+					case "2" -> "CHECK_OUT";
 					default -> null;
 				};
 
@@ -205,7 +204,7 @@ public class AdminAttUI {
 
 	// 근태 정보 조회
 	protected void selectAttendanceInfo() {
-		printTitle("[관리자 - 근태관리 - 근태정보조회]");
+		printTitle("🏢 [관리자 - 근태관리 - 근태정보조회]");
 		try {
 			while(true) {
 				printLine(GREEN, " ❓ 조회할 날짜 (ex.2025-10-10) [q:돌아가기] : ");

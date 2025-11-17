@@ -26,14 +26,14 @@ public class EmployeeDeptUI {
     public void menu() {
         int ch;
         String input;
-        printTitle("[🏢 부서관리]");
+        printTitle("🏢 [부서 관리]");
         
         while(true) {
         	
         	try {
         		
         		do {
-        			System.out.print("1.부서조회 2.부서인원현황 3.메뉴로돌아가기 => ");
+        			printMenu(YELLOW, "① 부서 조회", "② 부서 인원 현황", "③ 메뉴로 돌아가기");
 
         			input = br.readLine();
                     

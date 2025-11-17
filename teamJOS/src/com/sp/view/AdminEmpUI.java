@@ -229,7 +229,7 @@ public class AdminEmpUI {
 			String levelCode;
 			while (true) {
 				printTitle("권한 레벨 코드");
-				printLineln(YELLOW, "📑 01.일반사원  02.관리자  03.인사담당자");
+				printLineln(YELLOW, "📑 01.일반사원 03.인사담당자");
 				printLine(GREEN, "👉 레벨코드 입력 [q:돌아가기] : ");
 				levelCode = br.readLine();
 				InputValidator.isUserExit(levelCode);

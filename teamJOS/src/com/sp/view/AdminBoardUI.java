@@ -7,6 +7,8 @@ import com.sp.model.BoardDTO;
 import com.sp.util.LoginInfo;
 import com.sp.view.common.BoardCommonUI;
 
+import static com.sp.util.PrintUtil.*;
+
 public class AdminBoardUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private BoardDAO boardDao;
@@ -24,11 +26,11 @@ public class AdminBoardUI {
         int ch;
         String input;
         
-        System.out.println("\n[관리자 - 게시판관리]");
+        printTitle("🏢 [관리자 - 게시판관리]");
         while(true) {
         	try {
         		do {
-        			System.out.print("1.게시글등록 2.게시글수정 3.게시글삭제 4.게시글 보기 5.메뉴로돌아가기 => ");
+        			printMenu(YELLOW, "① 게시글 등록", "② 게시글 수정", "③ 게시글 삭제", "④ 게시글 보기", "⑤ 메뉴로 돌아가기");
 
         			input = br.readLine();
                     

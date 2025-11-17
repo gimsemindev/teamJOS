@@ -7,9 +7,10 @@ import java.sql.SQLException;
 
 import com.sp.dao.AuthDAO;
 import com.sp.model.LoginDTO;
+import com.sp.util.InputValidator;
 import com.sp.util.LoginInfo;
 
-
+import static com.sp.util.PrintUtil.*;
 
 
 public class AdminAuthUI {
@@ -33,14 +34,15 @@ public class AdminAuthUI {
         int ch;
         String input;
         
-        System.out.println("\n[관리자 - 권한관리]");
+        printTitle("🏢 [관리자 - 권한관리] ");
         while(true) {
         	
         	try {
         		do {
-        			System.out.print("1.관리자정보수정 2.관리자계정등록 3.메뉴로돌아가기 => ");
+        			printMenu(YELLOW, "① 관리자 정보 수정", "② 관리자 계정 등록", "③ 메뉴로 돌아가기");
         			
         			input = br.readLine();
+        			InputValidator.isUserExit(input);
                     
                     if(input == null || input.trim().isEmpty()) {
                     	ch = 0;
@@ -64,10 +66,10 @@ public class AdminAuthUI {
     }
     
     public void updateAdmin() {
-    	System.out.println("\n[관리자 계정 수정]");
+    	printTitle("🏢 [관리자 계정 수정]");
     	String empNo = null;
     	try {
-            System.out.print("수정할 사번 (관리자 ID): ");
+    		printLine(GREEN, "👉 수정할 사번 (관리자 ID): ");
             empNo = br.readLine();
             
             LoginDTO currentUser = loginInfo.loginMember();
@@ -94,11 +96,11 @@ public class AdminAuthUI {
     }
     
     public void insertAdmin() {
-    	System.out.println("\n[관리자 계정 등록]");
+    	printTitle("🏢 [관리자 계정 등록]");
     	String empNo = null;
     	
     	try {
-            System.out.print("등록할 사번 (관리자 ID): ");
+    		printLine(GREEN, "👉 등록할 사번 (관리자 ID): ");
             empNo = br.readLine();
             
             int result = authDao.insertAdmin(empNo, ADMIN_LEVEL_CODE);
