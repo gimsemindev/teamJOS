@@ -3,7 +3,9 @@ package com.sp.view;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import com.sp.dao.BoardDAO;
+import com.sp.exception.UserQuitException;
 import com.sp.model.BoardDTO;
+import com.sp.util.InputValidator;
 import com.sp.util.LoginInfo;
 import com.sp.view.common.BoardCommonUI;
 
@@ -30,10 +32,10 @@ public class AdminBoardUI {
         while(true) {
         	try {
         		do {
-        			printMenu(YELLOW, "① 게시글 등록", "② 게시글 수정", "③ 게시글 삭제", "④ 게시글 보기", "⑤ 메뉴로 돌아가기");
+        			printMenu(YELLOW, "① 게시글 등록", "② 게시글 수정", "③ 게시글 삭제", "④ 게시글 보기");
 
         			input = br.readLine();
-                    
+        			InputValidator.isUserExit(input);
                     if(input == null || input.trim().isEmpty()) {
                     	ch = 0;
                     	continue;
@@ -50,14 +52,17 @@ public class AdminBoardUI {
         		case 5: return; // 4. 메뉴화면으로 
         		}
         		
-        	} catch (Exception e) {
+        	} catch (UserQuitException e) {
+				printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
+				return;
+		    } catch (Exception e) {
         		e.printStackTrace();
         	}
         	
         }
     }
     private void insert() {
-        System.out.println("--- [ 1. 게시글 등록 ] ---");
+    	printTitle("📝 [게시글 등록]");
         
     	try {
     		boardCommonUI.insert();
@@ -68,7 +73,7 @@ public class AdminBoardUI {
     
     
     private void update() {
-        System.out.println("--- [ 2. 게시글 수정 ] ---");
+    	printTitle("✏️ [게시글 수정]");
     	try {
     		boardCommonUI.update();
     		} catch (Exception e) {
@@ -77,7 +82,7 @@ public class AdminBoardUI {
     }
     
     private void viewPostsList() {
-        System.out.println("--- [ 4. 게시글 전체 보기 ] ---");
+    	printTitle("🗂️ [게시글 전체 보기]");
     	try {
     	     boardCommonUI.viewPostsList();
     	} catch (Exception e) {
@@ -87,26 +92,22 @@ public class AdminBoardUI {
     }
     
     private void delete() {
-        System.out.println("\n--- [ 3. 게시글 삭제 ] ---");
+    	printTitle("🗑️ [게시글 삭제]");
         BoardDTO dto= new BoardDTO();
         int boardNo;
         try {
             // 1. 사용자로부터 삭제할 글번호 입력
-        	System.out.print("삭제할 글번호 ? ");
+        	printLine(GREEN, "👉 삭제할 글 번호를 입력하세요. : ");
         	boardNo = Integer.parseInt(br.readLine());
         	 // TODO: 나중에 loginInfo.loginMember().getEmpNo()로 변경
             
-            
             dto.setBoardNo(boardNo);
             
-            
-
-            
-            System.out.print("! 정말 " + boardNo + "번 글을 삭제하시겠습니까? (Y/N) ");
+            printLine(MAGENTA, "❓ 정말 " + boardNo + "번 글을 삭제하시겠습니까? (Y/N) : ");
             String confirm = br.readLine();
 
             if (!confirm.equalsIgnoreCase("Y")) {
-                System.out.println("! 삭제를 취소했습니다.");
+            	printLineln(MAGENTA, "📢 삭제를 취소했습니다.");
                 return;
             }
 
@@ -115,15 +116,15 @@ public class AdminBoardUI {
 
             // 5. 결과 피드백
             if (result > 0) {
-                System.out.println("✓ " + boardNo + "번 글이 성공적으로 삭제되었습니다.");
+            	printLine(MAGENTA, "✓ " + boardNo + "번 글이 성공적으로 삭제되었습니다.");
             } else {
-                System.out.println("! 글 삭제에 실패했습니다. ");
+            	printLineln(MAGENTA, "📢 글 삭제에 실패했습니다. ");
             }
 
         } catch (NumberFormatException e) {
-            System.out.println("! 글번호는 숫자로 입력해야 합니다.");
+        	printLineln(MAGENTA, "📢 글번호는 숫자로 입력해야 합니다.");
         } catch (Exception e) {
-            System.out.println("! 게시글 삭제 중 오류 발생: " + e.getMessage());
+        	printLineln(MAGENTA, "📢 게시글 삭제 중 오류 발생: " + e.getMessage());
         }
     }
     

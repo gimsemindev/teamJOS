@@ -49,6 +49,7 @@ public class MainUI {
 	final String GREEN  = "\u001B[32m";
 	final String YELLOW = "\u001B[33m";
 	final String GRAY   = "\u001B[90m";
+	final String MAGENTA = "\u001B[35m";
 	
 	private BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	private LoginInfo login = new LoginInfo();
@@ -216,10 +217,15 @@ public class MainUI {
                 System.out.println("\n[" + member.getMemberName() + " " + gradeDisplay + "] 님");
         		
         		do {
-        			PrintUtil.printMenu(YELLOW, "① 사원 관리", "② 부서 관리", "③ 근태 관리", "④ 게시판", "⑤ 로그아웃");
-        			
+        			PrintUtil.printLine('─', 65);
+        			PrintUtil.printLineln(YELLOW, "① 사원 관리\n");
+        			PrintUtil.printLineln(YELLOW, "② 부서 관리\n");
+        			PrintUtil.printLineln(YELLOW, "③ 근태 관리\n");
+        			PrintUtil.printLineln(YELLOW, "④ 게시판\n");
+        			PrintUtil.printLineln(YELLOW, "⑤ 로그아웃\n");
+        			PrintUtil.printLine('─', 65);
+        			PrintUtil.printLine(GREEN, "👉 메뉴 선택 : ");
         			input = br.readLine();
-        			InputValidator.isUserExit(input);
         			
                     if (input == null || input.trim().isEmpty()) {
                     	ch = 0;
@@ -248,7 +254,9 @@ public class MainUI {
         			System.out.println(GREEN + "로그아웃 되었습니다.\n" + RESET);
         			return;
         		}
-        	} catch (IOException e) {
+        	}catch (NumberFormatException e) {
+        		System.out.println(MAGENTA + "1 ~ 5 사이의 숫자만 입력 가능합니다." + RESET);
+			} catch (IOException e) {
         		System.err.println("입력 오류: " + e.getMessage());
         	} catch (Exception e) {
         		ch = 0;
@@ -280,10 +288,17 @@ public class MainUI {
         		PrintUtil.printTitle("[관리자 모드]");
         		
         		do {
-        			PrintUtil.printMenu(YELLOW, "① 사원 관리", "② 부서 관리", "③ 근태 관리","④ 권한 관리", "⑤ 게시판 관리", "⑥ 로그아웃");
+        			PrintUtil.printLine('─', 65);
+        			PrintUtil.printLine(YELLOW, "① 사원 관리\n");
+        			PrintUtil.printLine(YELLOW, "② 부서 관리\n");
+        			PrintUtil.printLine(YELLOW, "③ 근태 관리\n");
+        			PrintUtil.printLine(YELLOW, "④ 권한 관리\n");
+        			PrintUtil.printLine(YELLOW, "⑤ 게시판\n");
+        			PrintUtil.printLine(YELLOW, "⑥ 로그아웃\n");
+        			PrintUtil.printLine('─', 65);
+        			PrintUtil.printLine(GREEN, "👉 메뉴 선택 : ");
 
         			input = br.readLine();
-        			InputValidator.isUserExit(input);
                     
                     if (input == null || input.trim().isEmpty()) {
                     	ch = 0;
@@ -314,7 +329,9 @@ public class MainUI {
         			System.out.println(GREEN + "로그아웃 되었습니다.\n" + RESET);
         			return;
         		}
-        	} catch (IOException e) {
+        	} catch (NumberFormatException e) {
+        		System.out.println(MAGENTA + "📢 1 ~ 6사이의 숫자만 입력 가능합니다." + RESET);
+			} catch (IOException e) {
         		System.err.println("입력 오류: " + e.getMessage());
         	}  catch (Exception e) {
         		ch = 0;
