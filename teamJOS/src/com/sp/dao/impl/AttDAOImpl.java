@@ -147,7 +147,7 @@ public class AttDAOImpl implements AttDAO{
 		try {
 			
 			sql = """
-					INSERT INTO /* ATT_INS_008 */ TB_VACATION(VACATION_SEQ, EMP_NO, START_DT, END_DT, VACATION_MEMO, APPROVER_YN) VALUES(RETIRE_SEQ.NEXTVAL, ?, TO_TIMESTAMP(?, 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP(?, 'YYYY-MM-DD HH24:MI:SS'), ?, 'N')
+					INSERT INTO /* ATT_INS_008 */ TB_VACATION(SQ_TB_VACATION, EMP_NO, START_DT, END_DT, VACATION_MEMO, APPROVER_YN) VALUES(RETIRE_SEQ.NEXTVAL, ?, TO_TIMESTAMP(?, 'YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP(?, 'YYYY-MM-DD HH24:MI:SS'), ?, 'N')
 					""";
 			pstmt = conn.prepareStatement(sql);
 			
@@ -209,8 +209,39 @@ public class AttDAOImpl implements AttDAO{
 	 */
 	@Override
 	public int updateVacation(VacationDTO vacation) throws SQLException{
-		// TODO Auto-generated method stub
-		return 0;
+		int result = 0;
+		PreparedStatement pstmt = null;
+		String sql;
+		
+		try {
+			sql = """
+					UPDATE /* ATT_UPD_009 */ TB_VACATION
+					SET
+						START_DT = ?,         
+						END_DT = ?,           
+						VACATION_MEMO = ?    
+					WHERE
+						VACATION_SEQ = ?      
+						AND EMP_NO = ?       
+						AND APPROVER_YN = 'N';
+					""";
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, vacation.getStartDt());
+			pstmt.setString(2, vacation.getEndDt());
+			pstmt.setString(3, vacation.getVacationMemo());
+			pstmt.setInt(4, vacation.getVacationSeq());			
+			pstmt.setString(5, loginInfo.loginMember().getMemberId());
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			throw e;
+		} finally {
+			DBUtil.close(pstmt);
+		}
+		
+		return result;
 	}
 
 	/**
@@ -547,6 +578,51 @@ public class AttDAOImpl implements AttDAO{
 					""";
 			
 			pstmt = conn.prepareStatement(sql);
+			
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				VacationDTO dto = new VacationDTO();
+				dto.setVacationSeq(rs.getInt("VACATION_SEQ"));
+				dto.setEmpNo(rs.getString("EMP_NO"));
+				dto.setStartDt(rs.getString("START_DT"));
+				dto.setEndDt(rs.getString("END_DT"));
+				dto.setVacationMemo(rs.getString("VACTION_MEMO"));
+				dto.setApproverYn(rs.getString("APPROVER_YN"));
+				
+				list.add(dto);
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			DBUtil.close(rs);
+			DBUtil.close(pstmt);
+		}
+		
+		return list;
+	}
+	/** ATT_SEL_015 */
+	@Override
+	public List<VacationDTO> listVaction(String empNo) {
+		List<VacationDTO> list = new ArrayList<VacationDTO>();
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+		String sql;
+		
+		try {
+			sql = """
+					SELECT /* ATT_SEL_015 */ VACATION_SEQ, V.EMP_NO,TO_CHAR(START_DT, 'YYYY-MM-DD')AS START_DT,TO_CHAR(END_DT, 'YYYY-MM-DD') AS END_DT, VACTION_MEMO, APPROVER_YN
+					FROM TB_VACATION V
+					LEFT JOIN TB_EMP E ON V.EMP_NO = E.EMP_NO 
+					WHERE APPROVER_YN = 'N' AND V.EMP_NO = ?
+					ORDER BY VACATION_SEQ ASC
+
+					""";
+			
+			pstmt = conn.prepareStatement(sql);
+			
+			pstmt.setString(1, loginInfo.loginMember().getMemberId());
 			
 			rs = pstmt.executeQuery();
 			

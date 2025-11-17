@@ -53,10 +53,7 @@ public class AdminAttUI {
 					}
 					ch = Integer.parseInt(input);
 
-				} while (ch < 1 || ch > 7);
-
-				if (ch == 7)
-					return; // 5.메뉴화면으로
+				} while (ch < 1 || ch > 6);
 
 				switch (ch) {
 				case 1:
@@ -79,6 +76,8 @@ public class AdminAttUI {
 					break; // 6.연차조회 (전체조회) // ATT_SEL_006
 				}
 
+			} catch (NumberFormatException e) {
+				printLineln(MAGENTA, "📢 1 ~ 6 사이의 숫자만 입력 가능합니다.");
 			} catch (UserQuitException e) {
 				printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
 				return;
@@ -186,7 +185,7 @@ public class AdminAttUI {
 				boolean canUpdate = attDao.checkAtdColumnIsNull(att);
 
 				if (!canUpdate) {
-					printLineln(MAGENTA, "❌ 해당 근태는 수정할 수 없습니다.\\n");
+					printLineln(MAGENTA, "❌ 해당 근태는 수정할 수 없습니다.");
 					return; // 상위 메뉴로
 				}
 				

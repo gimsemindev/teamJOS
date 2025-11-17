@@ -110,6 +110,8 @@ public class AdminDeptUI {
 				default : printLineln(MAGENTA, "📢 잘못된 입력입니다");
 				}
 				
+			} catch (NumberFormatException e) {
+				printLineln(MAGENTA, "📢 1 ~ 7 사이의 숫자만 입력 가능합니다.");
 			} catch (UserQuitException e) {
 				printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
 				return;

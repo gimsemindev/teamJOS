@@ -68,7 +68,7 @@ public class AdminEmpUI {
 				printLineln(MAGENTA, "📢 사원관리 메뉴를 종료합니다.");
 				return;
 			} catch (NumberFormatException e) {
-				printLineln(MAGENTA, "📢 숫자만 입력해주세요.");
+				printLineln(MAGENTA, "📢 1 ~ 10 사이의 값을 입력해주세요.");
 			} catch (Exception e) {
 				e.printStackTrace();
 				printLineln(MAGENTA, "📢 처리 중 오류가 발생했습니다.");

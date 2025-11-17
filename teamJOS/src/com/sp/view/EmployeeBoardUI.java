@@ -32,8 +32,7 @@ public class EmployeeBoardUI {
         String input;
         
         while(true) {
-        	try {
-        		        		
+        	try {		
         		do {
         			printTitle("📌 [게시판] 📌");
         			printMenu(YELLOW, "① 게시글 등록", "② 게시글 수정", "③ 게시글 삭제", "④ 게시글 보기");
@@ -60,7 +59,9 @@ public class EmployeeBoardUI {
         		
                 System.out.println(); // 각 작업 후 한 줄 띄우기
 
-        	} catch (UserQuitException e) {
+        	} catch (NumberFormatException e) {
+				printLineln(MAGENTA, "📢 1 ~ 4 사이의 숫자만 입력 가능합니다.");
+			} catch (UserQuitException e) {
 				printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
 		    } catch (Exception e) {
 		    	printLineln(MAGENTA, "📢 [오류] 알 수 없는 예외가 발생했습니다.");
