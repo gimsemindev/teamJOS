@@ -51,7 +51,6 @@ public class AttDAOImpl implements AttDAO{
 				
 				// 프로시저 실행 후 리턴메시지 받아옴
 				msg = cstmt.getString(2);
-				System.out.println(msg);
 				
 			} catch (Exception e) {
 				throw e;

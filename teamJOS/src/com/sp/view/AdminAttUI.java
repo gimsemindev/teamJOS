@@ -9,8 +9,10 @@ import java.util.List;
 import com.sp.dao.AttDAO;
 import com.sp.dao.EmpDAO;
 import com.sp.dao.impl.EmpDAOImpl;
+import com.sp.exception.UserQuitException;
 import com.sp.model.AttendanceDTO;
 import com.sp.model.VacationDTO;
+import com.sp.util.InputValidator;
 import com.sp.util.LoginInfo;
 import com.sp.util.PrintUtil;
 import com.sp.view.common.DeptCommonUI;
@@ -37,9 +39,7 @@ public class AdminAttUI {
 		System.out.println();
 
 		while (true) {
-
 			try {
-
 				do {
 					printTitle("🏢 [관리자 - 근태관리]");
 					printMenu(YELLOW, "① 출근 시간 입력", "② 퇴근 시간 입력", "③ 근태 정보 수정", "④ 근태 조회", "⑤ 휴가 승인", "⑥ 연차 조회",
@@ -146,84 +146,154 @@ public class AdminAttUI {
 
 	// 근태 정보 수정
 	protected void updateAttendanceInfo() {
-
 		AttendanceDTO att = new AttendanceDTO();
-
+		printTitle("[관리자 - 근태관리 - 근태정보수정]");
+		
 		try {
-			att.setEmpNo(checkEmpNo(true));
-			printTitle("[관리자 - 근태관리 - 근태정보수정]");
-			printLine(PrintUtil.GREEN, null);
-			printLine(GREEN, "❓ 조회할 날짜 (ex.2025-10-10) : ");
-			att.setRegDt(br.readLine());
+			while(true) {
+				att.setEmpNo(checkEmpNo(true));
+				
+				printLine(PrintUtil.GREEN, null);
+				printLine(GREEN, "❓ 조회할 날짜 (ex.2025-10-10) : ");
+				String date = (br.readLine());
+				InputValidator.isUserExit(date);
+				InputValidator.isValidDate(date);
+				
+				att.setRegDt(date);
 
-			printLine(CYAN, "❓ 수정할 항목 ? ");
-			printMenu(YELLOW, " ① 출근일시", " ② 출근일시", " ③ 상위 메뉴로 돌아가기");
+				printLine(CYAN, "❓ 수정할 항목 ? ");
+				printMenu(YELLOW, " ① 출근일시", " ② 출근일시", " ③ 상위 메뉴로 돌아가기");
 
-			int ch = Integer.parseInt(br.readLine());
-			if (ch == 3)
-				return;
+				int ch = Integer.parseInt(br.readLine());
+				if (ch == 3)
+					return;
 
-			String col = switch (ch) {
-				case 1 -> "CHECK_IN";
-				case 2 -> "CHECK_OUT";
-				default -> null;
-			};
+				String col = switch (ch) {
+					case 1 -> "CHECK_IN";
+					case 2 -> "CHECK_OUT";
+					default -> null;
+				};
 
-			if (col == null) {
-				printLineln(MAGENTA, "📢 잘못된 입력입니다\n");
-				return;
+				if (col == null) {
+					printLineln(MAGENTA, "📢 잘못된 입력입니다\n");
+					return;
+				}
+
+				att.setAtdNo(col);
+
+				boolean canUpdate = attDao.checkAtdColumnIsNull(att);
+
+				if (!canUpdate) {
+					printLineln(MAGENTA, "❌ 해당 근태는 수정할 수 없습니다.\\n");
+					return; // 상위 메뉴로
+				}
+				
+				printLine(GREEN, "❓ 변경할 값 입력(ex.2025-11-11 09:00:00) : ");
+				att.setAtdStatusCd(br.readLine());
+
+				String msg = attDao.updateAttendance(att);
+				msg = "📢 " + msg; 
+				printLineln(MAGENTA, msg);
+				System.out.println();
 			}
-
-			att.setAtdNo(col);
-
-			boolean canUpdate = attDao.checkAtdColumnIsNull(att);
-
-			if (!canUpdate) {
-				printLineln(MAGENTA, "❌ 해당 근태는 수정할 수 없습니다.\\n");
-				return; // 상위 메뉴로
-			}
-			
-			printLine(GREEN, "❓ 변경할 값 입력(ex.2025-11-11 09:00:00) : ");
-			att.setAtdStatusCd(br.readLine());
-
-			String msg = attDao.updateAttendance(att);
-			msg = "📢 " + msg; 
-			printLineln(MAGENTA, msg);
-			System.out.println();
-
-		} catch (Exception e) {
+		} catch (UserQuitException e) {
+			printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
+	    } catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	// 근태 정보 조회
 	protected void selectAttendanceInfo() {
+		printTitle("[관리자 - 근태관리 - 근태정보조회]");
 		try {
-			printTitle("[관리자 - 근태관리 - 근태정보조회]");
-			printLine(GREEN, " ❓ 조회할 날짜 (ex.2025-10-10) : ");
-			String date = (br.readLine());
+			while(true) {
+				printLine(GREEN, " ❓ 조회할 날짜 (ex.2025-10-10) [q:돌아가기] : ");
+				String date = (br.readLine());
+				InputValidator.isUserExit(date);
+				InputValidator.isValidDate(date);
 
-			List<AttendanceDTO> list = attDao.selectAttendanceAll(date);
+				List<AttendanceDTO> list = attDao.selectAttendanceAll(date);
+				
+				 if (list == null || list.isEmpty()) {
+		                printLineln(MAGENTA, "📢 조회된 근태 정보가 없습니다.");
+		                continue;
+		            }
+				 /*
+				for (AttendanceDTO att : list) {
+					System.out.print(att.getEmpNo() + "\t");
+					System.out.print(att.getAtdNo() + "\t");
+					System.out.print(att.getCheckIn() + "\t");
+					System.out.print(att.getCheckOut() + "\t");
+					System.out.print(att.getWorkHours() + "\t");
+					System.out.print(att.getAtdStatusCd() + "\t");
+					System.out.println(att.getRegDt());
+				}
+				printLineln(MAGENTA, "📢 조회 완료되었습니다.");
+				*/
+				 
+				 final int pageSize = 10;
+		            int total = list.size();
+		            int totalPage = (total + pageSize - 1) / pageSize;
+		            int page = 1;
 
-			/*
-			 * for(AttendanceDTO dto : list) { System.out.printf("%s %s %s %s %.1f %s %s\n",
-			 * dto.getEmpNo(), dto.getAtdNo(), dto.getCheckIn(), dto.getCheckOut(),
-			 * dto.getWorkHours(), dto.getAtdStatusCd(), dto.getRegDt()); }
-			 */
+		            while (true) {
+		                int startIndex = (page - 1) * pageSize;
+		                int endIndex = Math.min(startIndex + pageSize, total);
 
-			for (AttendanceDTO att : list) {
-				System.out.print(att.getEmpNo() + "\t");
-				System.out.print(att.getAtdNo() + "\t");
-				System.out.print(att.getCheckIn() + "\t");
-				System.out.print(att.getCheckOut() + "\t");
-				System.out.print(att.getWorkHours() + "\t");
-				System.out.print(att.getAtdStatusCd() + "\t");
-				System.out.println(att.getRegDt());
+		                System.out.println();
+		                System.out.printf("▶ 근태 조회 결과 | 페이지 %d / %d | 총 %d건 | 조회범위: %d~%d%n",
+		                        page, totalPage, total, startIndex + 1, endIndex);
+		                PrintUtil.printLine('═', 120);
+
+		                // 컬럼 헤더
+		                System.out.printf("%s | %s | %s | %s | %s | %s\t | %s%n",
+		                        PrintUtil.padCenter("사번", 7),
+		                        PrintUtil.padCenter("근태번호", 9),
+		                        PrintUtil.padCenter("출근시간", 21),
+		                        PrintUtil.padCenter("퇴근시간", 22),
+		                        PrintUtil.padCenter("근무시간", 10),
+		                        PrintUtil.padCenter("상태", 6),
+		                        PrintUtil.padCenter("등록일", 12)
+		                );
+		                PrintUtil.printLine('─', 120);
+
+		                // 데이터 출력
+		                for (int i = startIndex; i < endIndex; i++) {
+		                    AttendanceDTO d = list.get(i);
+
+		                    System.out.printf("%s | %s | %s | %s | %s | %s\t | %s%n",
+		                            PrintUtil.padRight(d.getEmpNo(), 6),
+		                            PrintUtil.padRight(d.getAtdNo(), 8),
+		                            PrintUtil.padRight(d.getCheckIn(), 20),
+		                            PrintUtil.padRight(d.getCheckOut(), 20),
+		                            PrintUtil.padRight(String.valueOf(d.getWorkHours()), 8),
+		                            PrintUtil.padRight(d.getAtdStatusCd(), 6),
+		                            PrintUtil.padRight(d.getRegDt(), 12)
+		                    );
+		                }
+
+		                PrintUtil.printLine('═', 120);
+		                printLine(GREEN, "[n: 다음, p: 이전, q: 종료] 👉 ");
+		                String cmd = br.readLine();
+		                if (cmd == null) cmd = "";
+		                cmd = cmd.trim().toLowerCase();
+
+		                if ("n".equals(cmd)) {
+		                    if (page < totalPage) page++;
+		                    else System.out.println("마지막 페이지입니다.\n");
+		                } else if ("p".equals(cmd)) {
+		                    if (page > 1) page--;
+		                    else System.out.println("첫 페이지입니다.\n");
+		                } else if ("q".equals(cmd)) {
+		                    break; // 페이징 종료 → 날짜 입력 메뉴로 돌아감
+		                }
+		            }
+		            printLineln(MAGENTA, "📢 조회 완료되었습니다.");
 			}
-			
-			printLineln(MAGENTA, "📢 조회 완료되었습니다.");
-		} catch (Exception e) {
+		} catch (UserQuitException e) {
+			printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
+	    } catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
