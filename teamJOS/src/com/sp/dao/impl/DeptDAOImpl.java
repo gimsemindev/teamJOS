@@ -404,12 +404,12 @@ public class DeptDAOImpl implements DeptDAO{
 		
 		try {
 			sql = """
-				  UPDATE /* DEPT_DEL_004 */ TB_DEPT " 
-                     SET USE_YN = 'N' " 
-                   WHERE DEPT_CD IN ( " 
-                                     SELECT DEPT_CD " 
-                                       FROM TB_DEPT " 
-                                      START WITH DEPT_CD = ? " 
+				  UPDATE /* DEPT_DEL_004 */ TB_DEPT 
+                     SET USE_YN = 'N' 
+                   WHERE DEPT_CD IN ( 
+                                     SELECT DEPT_CD 
+                                       FROM TB_DEPT 
+                                      START WITH DEPT_CD = ? 
                                     CONNECT BY PRIOR DEPT_CD = SUPER_DEPT_CD) """;
 			
 			pstmt = conn.prepareStatement(sql);
@@ -495,7 +495,8 @@ public class DeptDAOImpl implements DeptDAO{
 		
 	    try {
 	    	sql = """
-                  SELECT ROOT_DEPT_CD      AS DEPT_CD
+                  SELECT /* DEPT_SEL_010 */
+                         ROOT_DEPT_CD      AS DEPT_CD
                        , MAX(ROOT_DEPT_NM) AS DEPT_NM
                        , COUNT(DISTINCT EMP_NO) AS TOTAL_EMP_COUNT
                        , ROUND(RATIO_TO_REPORT(COUNT(DISTINCT EMP_NO)) OVER(), 2) * 100 AS RATIO_PERCENT
