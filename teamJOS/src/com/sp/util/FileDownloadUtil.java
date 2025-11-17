@@ -52,10 +52,12 @@ public class FileDownloadUtil {
 
                 Field[] fields = dtoClass.getDeclaredFields();
 
-                // 헤더 자동 생성
+                // 헤더 자동 생성 : 마지막 컬럼에는 , 붙으면 안됨
                 for (int i = 0; i < fields.length; i++) {
                     bw.write(fields[i].getName());
-                    if (i < fields.length - 1) bw.write(",");
+                    if (i < fields.length - 1) {
+                    	bw.write(",");
+                    }
                 }
                 bw.newLine();
 
@@ -63,7 +65,8 @@ public class FileDownloadUtil {
                 while (rs.next()) {
                     for (int i = 0; i < fields.length; i++) {
                         String fieldName = fields[i].getName();
-                        String columnName = columnMapping.getOrDefault(fieldName, fieldName);
+                        // 매핑이 안된 컬럼은 DTO명을 사용
+                        String columnName = columnMapping.containsKey(fieldName)? columnMapping.get(fieldName) : fieldName;
                         Object value = null;
                         try {
                             value = rs.getObject(columnName);
@@ -72,7 +75,11 @@ public class FileDownloadUtil {
                         }
 
                         bw.write(escapeCsv(value == null ? "" : value.toString()));
-                        if (i < fields.length - 1) bw.write(",");
+                        
+                        // 각 열마다 ,을 넣어줘야함
+                        if (i < fields.length - 1) {
+                        	bw.write(",");
+                        }
                     }
                     bw.newLine();
                 }

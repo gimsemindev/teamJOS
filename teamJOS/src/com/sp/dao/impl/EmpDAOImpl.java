@@ -975,7 +975,7 @@ public class EmpDAOImpl implements EmpDAO{
 	                conn.setAutoCommit(false);
 	                pstmt = conn.prepareStatement(SQL);
 
-	                // 첫줄 헤더임으로 스킵
+	                // 첫줄은 컬럼명으로 스킵
 	                String header = br.readLine();
 	                String line;
 	                int count = 0;
@@ -1000,7 +1000,8 @@ public class EmpDAOImpl implements EmpDAO{
 
 	                    pstmt.addBatch();
 	                    count++;
-
+   
+	                    // 500건마다 커밋
 	                    if (count % 500 == 0) {
 	                        pstmt.executeBatch();
 	                        conn.commit();
@@ -1010,14 +1011,25 @@ public class EmpDAOImpl implements EmpDAO{
 
 	                pstmt.executeBatch();
 	                conn.commit();
-	                System.out.println("✅ 총 " + count + "건 INSERT 완료!");
+	                System.out.println(" 총 " + count + "건 INSERT 완료!");
 
 	            } catch (Exception e) {
 	                e.printStackTrace();
-	                try { if (conn != null) conn.rollback(); } catch (Exception ex) {}
+	                try { 
+	                	if (conn != null) conn.rollback(); 
+	                } catch (Exception ex) {}
 	            } finally {
-	                try { if (pstmt != null) pstmt.close(); } catch (Exception e) {}
-	                try { if (conn != null) ; } catch (Exception e) {}
+	            	try {
+	            	    conn.setAutoCommit(true);
+	            	    } catch(Exception e) {  	
+	            	    }
+	                try { if (pstmt != null) 
+	                	  pstmt.close(); 
+	                    } catch (Exception e) {	
+	                    }
+	                try { if (conn != null) ; 
+	                    } catch (Exception e) {    	
+	                    }
 	            }
 	}
 
