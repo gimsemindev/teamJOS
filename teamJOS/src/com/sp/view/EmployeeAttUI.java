@@ -65,6 +65,7 @@ public class EmployeeAttUI {
         		printLineln(MAGENTA, "📢 1 ~ 6 사이의 숫자만 입력 가능합니다.");
 			} catch (UserQuitException e) {
     			printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
+    			return;
     	    } catch (Exception e) {
         		e.printStackTrace();
         	}
@@ -85,7 +86,7 @@ public class EmployeeAttUI {
 			switch (ch) {
 			case "Y": {
 				String msg = attDao.insertAttendanceIn(att); 
-				System.out.println(msg);
+				printLineln(MAGENTA, "📢 " + msg);
 				break;
 			}
 			case "N": printLineln(GREEN, "👉 출근 입력을 취소했습니다."); return;
@@ -108,7 +109,7 @@ public class EmployeeAttUI {
             switch (ch) {
                 case "Y": {
                     String msg = attDao.insertAttendanceOut(att);
-                    System.out.println(msg);
+                    printLineln(MAGENTA, "📢 " + msg);
                     break;
                 }
                 case "N":

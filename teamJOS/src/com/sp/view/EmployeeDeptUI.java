@@ -27,11 +27,11 @@ public class EmployeeDeptUI {
     public void menu() {
         int ch;
         String input;
-        printTitle("🏢 [부서 관리]");
-        
+
         while(true) {
         	try {
         		do {
+        			printTitle("🏢 [부서 관리]");
         			printMenu(YELLOW, "① 부서 조회", "② 부서 인원 현황");
 
         			input = br.readLine();
@@ -54,6 +54,7 @@ public class EmployeeDeptUI {
 				printLineln(MAGENTA, "📢 1 ~ 2 사이의 숫자만 입력 가능합니다.");
 			} catch (UserQuitException e) {
 				printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
+				return;
 		    } catch (Exception e) {
         		e.printStackTrace();
         	}
