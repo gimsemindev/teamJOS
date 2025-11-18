@@ -294,7 +294,7 @@ public class EmployeeAttUI {
 		VacationDTO dto = new VacationDTO();
 		String empNo = loginInfo.loginMember().getMemberId();
     	dto.setEmpNo(empNo);
-		
+    	String inputDt;
     	try {
     		List<VacationDTO> list = attDao.listVaction(dto);
 			
@@ -347,15 +347,37 @@ public class EmployeeAttUI {
 	            }
 	        }
 	        dto.setVacationSeq(vacationSeq); 
-
-	        printLine(GREEN, "새 휴가 시작일자 (YYYY-MM-DD) ? ");
-	        dto.setStartDt(br.readLine()); 
 	        
-	        printLine(GREEN, "새 휴가 종료일자 (YYYY-MM-DD) ? ");
-	        dto.setEndDt(br.readLine());
+	        while (true) {
+	            printLine(GREEN, "👉 새 휴가 시작일자 (YYYY-MM-DD, 취소:'q') ? ");
+	            inputDt = br.readLine();
+	            
+	            InputValidator.isUserExit(inputDt); 
+	            
+	            if (InputValidator.isValidDate(inputDt)) {
+	                dto.setStartDt(inputDt);
+	                break;
+	            }
+	            printLineln(MAGENTA, "❌ 날짜 형식이 올바르지 않습니다. (YYYY-MM-DD 형식으로 입력하세요)");
+	        }
 	        
-	        printLine(GREEN, "새 휴가 사유 ? ");
-	        dto.setVacationMemo(br.readLine());
+	        while (true) {
+	            printLine(GREEN, "👉 새 휴가 종료일자 (YYYY-MM-DD, 취소:'q') ? ");
+	            inputDt = br.readLine();
+	            
+	            InputValidator.isUserExit(inputDt); 
+	            
+	            if (InputValidator.isValidDate(inputDt)) {
+	                dto.setEndDt(inputDt);
+	                break;
+	            }
+	            printLineln(MAGENTA, "❌ 날짜 형식이 올바르지 않습니다. (YYYY-MM-DD 형식으로 입력하세요)");
+	        }
+	        
+	        printLine(GREEN, "새 휴가 사유 (취소:'q') ? ");
+	        String memo = br.readLine();
+	        InputValidator.isUserExit(memo);
+	        dto.setVacationMemo(memo);
 
 	        int result = attDao.updateVacation(dto); 
 	        
@@ -364,7 +386,9 @@ public class EmployeeAttUI {
 	        } else {
 	            printLineln(MAGENTA, "❌ 휴가 수정에 실패했습니다. (이미 승인되었거나 존재하지 않는 번호)");
 	        }
-    		
+	        
+	    } catch (UserQuitException e) {
+	        printLineln(MAGENTA, "📢 휴가 수정을 취소하고 메뉴로 돌아갑니다.");	
     	} catch (SQLException e) {
     		System.out.println(e.getMessage());
     	} catch (IOException e) {
