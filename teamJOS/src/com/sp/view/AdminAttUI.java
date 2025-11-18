@@ -19,6 +19,27 @@ import com.sp.view.common.DeptCommonUI;
 
 import static com.sp.util.PrintUtil.*;
 
+/**
+ * <h2>AdminAttUI (관리자 근태 관리 UI)</h2>
+ *
+ * <p>관리자 메뉴에서 전체 사원의 근태 기록을 관리하고, 휴가 신청을 승인하며,
+ * 전체 연차 현황을 조회하는 콘솔 기반 UI 클래스입니다.</p>
+ *
+ * <h3>주요 기능 (유스케이스 ID)</h3>
+ * <ul>
+ * <li>출근 시간 입력 (ATT_INS_001) - 관리자 자신의 출근 시간 등록</li>
+ * <li>퇴근 시간 입력 (ATT_INS_002) - 관리자 자신의 퇴근 시간 등록</li>
+ * <li>근태 정보 수정 (ATT_UPD_010) - 특정 사원의 특정 날짜 출퇴근 시각 수정</li>
+ * <li>근태 조회 (ATT_SEL_004) - 특정 날짜의 전체 사원 근태 기록 조회 (페이징)</li>
+ * <li>휴가 승인 (ATT_UPD_003) - 미승인된 휴가 신청을 승인하고 연차 차감 처리</li>
+ * <li>연차 조회 (ATT_SEL_006) - 전체 사원의 연차 발생/사용/잔여 현황 조회 (DeptCommonUI 위임)</li>
+ * </ul>
+ *
+ * <p><b>프로젝트명:</b> teamJOS 인사관리 프로젝트</p>
+ * <p><b>작성자:</b> 이지영, 오다은, 황선호</p>
+ * <p><b>작성일:</b> 2025-11-17</p>
+ * <p><b>버전:</b> 1.0</p>
+ */
 public class AdminAttUI {
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	private EmpDAO empDao = new EmpDAOImpl();
@@ -26,12 +47,24 @@ public class AdminAttUI {
 	private LoginInfo loginInfo;
 	private DeptCommonUI deptCommonUI;
 
+	/**
+	 * AdminAttUI 생성자
+	 *
+	 * @param attDao 근태 DAO (데이터 접근 객체)
+	 * @param loginInfo 로그인 사용자 정보 객체
+	 */
 	public AdminAttUI(AttDAO attDao, LoginInfo loginInfo) {
 		this.attDao = attDao;
 		this.loginInfo = loginInfo;
 		this.deptCommonUI = new DeptCommonUI(this.loginInfo);
 	}
 
+	/**
+	 * 관리자 근태 관리 메인 메뉴 화면을 출력하고 사용자 입력을 처리합니다.
+	 *
+	 * <p>1~6번까지의 기능을 선택하여 근태 관리 및 휴가 승인 기능을 실행합니다.</p>
+	 * <p>사용자 입력 'q' 또는 'Q' 입력 시 상위 메뉴로 돌아갑니다.</p>
+	 */
 	public void menu() {
 		int ch;
 		String input;
@@ -58,16 +91,16 @@ public class AdminAttUI {
 				switch (ch) {
 				case 1:
 					insertCheckInInfo();
-					break; // 1. 출근시간 입력
+					break; // 1. 출근시간 입력 // ATT_INS_001
 				case 2:
 					insertCheckOutInfo();
-					break; // 2. 퇴근시간 입력
+					break; // 2. 퇴근시간 입력 // ATT_INS_002
 				case 3:
 					updateAttendanceInfo();
 					break; // 3.근태정보수정 // ATT_UPD_010
 				case 4:
 					selectAttendanceInfo();
-					break; // 4. 근태정보조회
+					break; // 4. 근태정보조회 // ATT_SEL_004
 				case 5:
 					updateVacationApproveInfo();
 					break; // 5.휴가승인 // ATT_UPD_003
@@ -87,7 +120,11 @@ public class AdminAttUI {
 		}
 	}
 
-	// 출근 시간 입력
+	/**
+	 * 관리자 본인의 출근 시간 등록 기능 (ATT_INS_001)
+	 *
+	 * <p>현재 로그인된 관리자 사원의 사번으로 현재 시각을 출근 시간으로 기록합니다.</p>
+	 */
 	protected void insertCheckInInfo() {
 		PrintUtil.printTitle("🏢 [관리자 - 근태관리 - 출근시간입력]");
 		AttendanceDTO att = new AttendanceDTO();
@@ -117,7 +154,11 @@ public class AdminAttUI {
 		}
 	}
 
-	// 퇴근 시간 입력
+	/**
+	 * 관리자 본인의 퇴근 시간 등록 기능 (ATT_INS_002)
+	 *
+	 * <p>현재 로그인된 관리자 사원의 사번으로 현재 시각을 퇴근 시간으로 기록합니다.</p>
+	 */
 	protected void insertCheckOutInfo() {
 		printTitle("🏢 [관리자 - 근태관리 - 퇴근 시간 입력]");
 		AttendanceDTO att = new AttendanceDTO();
@@ -146,7 +187,12 @@ public class AdminAttUI {
 		}
 	}
 
-	// 근태 정보 수정
+	/**
+	 * 특정 사원의 근태 정보 수정 기능 (ATT_UPD_010)
+	 *
+	 * <p>사원 번호와 날짜를 입력받아 해당 근태 기록의 출근 시각 또는 퇴근 시각을 수정합니다.</p>
+	 * <p>수정하려는 근태 기록이 존재하는지 사전에 확인합니다.</p>
+	 */
 	protected void updateAttendanceInfo() {
 		AttendanceDTO att = new AttendanceDTO();
 		printTitle("🏢 [관리자 - 근태관리 - 근태정보수정]");
@@ -206,7 +252,12 @@ public class AdminAttUI {
 		}
 	}
 
-	// 근태 정보 조회
+	/**
+	 * 특정 날짜 전체 사원 근태 정보 조회 기능 (ATT_SEL_004)
+	 *
+	 * <p>관리자로부터 날짜를 입력받아 해당 날짜의 전체 사원 근태 기록을 조회하고,
+	 * 결과를 페이지당 10건씩 페이징 처리하여 출력합니다.</p>
+	 */
 	protected void selectAttendanceInfo() {
 		printTitle("🏢 [관리자 - 근태관리 - 근태정보조회]");
 		try {
@@ -222,18 +273,6 @@ public class AdminAttUI {
 		                printLineln(MAGENTA, "📢 조회된 근태 정보가 없습니다.");
 		                continue;
 		            }
-				 /*
-				for (AttendanceDTO att : list) {
-					System.out.print(att.getEmpNo() + "\t");
-					System.out.print(att.getAtdNo() + "\t");
-					System.out.print(att.getCheckIn() + "\t");
-					System.out.print(att.getCheckOut() + "\t");
-					System.out.print(att.getWorkHours() + "\t");
-					System.out.print(att.getAtdStatusCd() + "\t");
-					System.out.println(att.getRegDt());
-				}
-				printLineln(MAGENTA, "📢 조회 완료되었습니다.");
-				*/
 				 
 				 final int pageSize = 10;
 		            int total = list.size();
@@ -302,6 +341,13 @@ public class AdminAttUI {
 		}
 	}
 
+	/**
+	 * 휴가 신청 승인 기능 (ATT_UPD_003)
+	 *
+	 * <p>미승인 상태의 휴가 신청 목록을 조회하고, 관리자로부터 휴가 번호를 입력받아 해당 휴가를 승인 처리합니다.</p>
+	 * <p>승인 시 해당 사원의 연차를 차감하는 로직을 포함합니다 (DB 프로시저 호출).</p>
+	 * <p>잔여 연차 부족 등 DB 프로시저에서 발생하는 오류 코드를 상세하게 처리합니다.</p>
+	 */
 	protected void updateVacationApproveInfo() {
 		printTitle("🗓️  관리자 - 휴가 승인 관리 ");
 
@@ -384,19 +430,16 @@ public class AdminAttUI {
 			printLineln(RED, msg);
 		}
 	}
-	/*
-	 * // WBS의 4레벨 메뉴(3.근무시간조회) 처리를 위한 별도 메서드 private void manageWorkTimeSearch() {
-	 * int ch; System.out.println("\n[관리자 - 근태관리 - 근무시간조회]"); try { do {
-	 * System.out.print("1.전체조회 2.사번조회 3.상위메뉴로돌아가기 => "); ch =
-	 * Integer.parseInt(br.readLine()); } while(ch < 1 || ch > 3);
-	 * 
-	 * switch (ch) { case 1: attDao.selectAllWorkTime(); break; // ATT_SEL_004 case
-	 * 2: attDao.selectWorkTimeByEmp(0); break; // ATT_SEL_005 case 3: return; } }
-	 * catch (Exception e) { e.printStackTrace(); } }
+	
+	/**
+	 * 사원 번호 유효성 검사 및 입력 기능.
+	 * * @param mustExist 사원 번호가 반드시 DB에 존재해야 하는지 여부 (true: 존재해야 함, false: 존재하지 않아야 함)
+	 * @return 유효성이 검증된 사원 번호 (String, 5자리 숫자)
+	 * @throws IOException 입출력 오류 발생 시
+	 * @throws SQLException DB 오류 발생 시
+	 * @throws UserQuitException 사용자가 'q' 또는 'Q'를 입력하여 작업을 취소했을 경우
 	 */
-
-	// 사원 번호 입력받는 메소드(통합)
-	protected String checkEmpNo(boolean mustExist) throws IOException, SQLException {
+	protected String checkEmpNo(boolean mustExist) throws IOException, SQLException, UserQuitException {
 		String empNo;
 		while (true) {
 			printLine(GREEN, "👉 사원번호(ex. 00001) [q:돌아가기] : ");

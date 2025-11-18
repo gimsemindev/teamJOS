@@ -25,25 +25,53 @@ import com.sp.util.LoginInfo;
 import com.sp.util.PrintUtil;
 import com.sp.view.common.DeptCommonUI;
 
-import static com.sp.util.PrintUtil.*;
-
+/**
+ * <h2>EmployeeAttUI (일반 사원 근태 관리 UI)</h2>
+ *
+ * <p>일반 사원 메뉴에서 자신의 근태(출퇴근 기록) 등록 및 조회, 휴가 신청 및 수정, 연차 현황 조회 기능을
+ * 제어하는 콘솔 기반 UI 클래스입니다.</p>
+ *
+ * <h3>주요 기능 (유스케이스 ID)</h3>
+ * <ul>
+ * <li>출근 등록 (ATT_INS_001) - 현재 시각을 기준으로 출근 기록 등록</li>
+ * <li>퇴근 등록 (ATT_INS_002) - 현재 시각을 기준으로 퇴근 기록 등록</li>
+ * <li>휴가 신청 (ATT_INS_008) - 휴가 시작일, 종료일, 사유를 입력받아 휴가 신청</li>
+ * <li>휴가 수정 (ATT_UPD_009) - 미승인 상태의 휴가 신청을 조회하고 수정</li>
+ * <li>연차 조회 (ATT_SEL_007) - 전체 사원의 연차 잔여 현황 조회 (DeptCommonUI 위임)</li>
+ * <li>근태 조회 (ATT_SEL_001, ATT_SEL_002) - 특정 날짜의 출퇴근 기록 및 근무 시간 조회</li>
+ * </ul>
+ *
+ * <p><b>프로젝트명:</b> teamJOS 인사관리 프로젝트</p>
+ * <p><b>작성자:</b> 이지영, 오다은, 황선호</p>
+ * <p><b>작성일:</b> 2025-11-17</p>
+ * <p><b>버전:</b> 1.0</p>
+ */
 public class EmployeeAttUI {
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
     private AttDAO attDao;
     private LoginInfo loginInfo;
     private DeptCommonUI deptCommonUI;
     
+    /**
+     * EmployeeAttUI 생성자
+     *
+     * @param attDao 근태 DAO (데이터 접근 객체)
+     * @param loginInfo 로그인 사용자 정보 객체
+     */
     public EmployeeAttUI(AttDAO attDao, LoginInfo loginInfo) {
     	this.loginInfo = loginInfo;
         this.attDao = new AttDAOImpl(this.loginInfo);
         this.deptCommonUI = new DeptCommonUI(loginInfo);
     }
     
-    // EmployeeUI의 manageAttendance() 기능을 menu()로 변경
+    /**
+     * 일반 사원 근태 관리 메인 메뉴 화면을 출력하고 사용자 입력을 처리합니다.
+     *
+     * <p>1~6번까지의 기능을 선택하여 근태 등록/조회 및 휴가 신청 기능을 실행합니다.</p>
+     * <p>사용자 입력 'q' 또는 'Q' 입력 시 상위 메뉴로 돌아갑니다.</p>
+     */
     public void menu() {
         int ch;
-        String role = loginInfo.loginMember().getRole();
-        String deptCd = loginInfo.loginMember().getDeptCd();
         String input;
 
         while(true) {
@@ -66,10 +94,9 @@ public class EmployeeAttUI {
         		switch(ch) {
         		case 1: insertAttendanceInInfo(); break; // ATT_INS_001 
         		case 2: insertAttendanceOutInfo(); break; // ATT_INS_002 
-        		case 3: insertVacation(); break; // ATT_INS_008 (기존 코드의 insertVacation을 requestVacation으로 수정) 
+        		case 3: insertVacation(); break; // ATT_INS_008
         		case 4: updateVacation(); break; // ATT_UPD_009 
         		case 5: deptCommonUI.selectAllAnnualLeave(); break; // ATT_SEL_007 
-//        		case 6: attDao.selectWorkTimeByEmp(0); break; // ATT_SEL_005 
         		case 6: selectAttendaceInfo(); break;
         		}
         	} catch (NumberFormatException e) {
@@ -83,6 +110,12 @@ public class EmployeeAttUI {
         }
     }
     
+	/**
+	 * 출근 시간 등록 기능 (ATT_INS_001)
+	 *
+	 * <p>현재 로그인된 사원의 사번으로 현재 시각을 출근 시간으로 기록합니다.
+	 * 당일 이미 출근 기록이 있으면 등록 실패 메시지를 출력합니다.</p>
+	 */
 	protected void insertAttendanceInInfo() {
 		printTitle("⏰ [출근 시간 입력]");
     	AttendanceDTO att = new AttendanceDTO();
@@ -90,7 +123,7 @@ public class EmployeeAttUI {
     	att.setEmpNo(empNo);
     	
     	try {
-    		printLine(GREEN, "❓ 출근 시간을 입력하시겠습니까? [ Y | N ] ");
+    		printLine(GREEN, "👉 출근 시간을 입력하시겠습니까? [ Y | N ] ");
 			String ch = br.readLine();
 			ch = ch.toUpperCase();
 			
@@ -100,14 +133,19 @@ public class EmployeeAttUI {
 				printLineln(MAGENTA, "📢 " + msg);
 				break;
 			}
-			case "N": printLineln(GREEN, "📢 출근 입력을 취소했습니다."); return;
+			case "N": printLineln(GREEN, "👉 출근 입력을 취소했습니다."); return;
 			default: printLineln(MAGENTA, "📢 Y | N 만 입력 가능합니다."); break;
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
+	/**
+	 * 퇴근 시간 등록 기능 (ATT_INS_002)
+	 *
+	 * <p>현재 로그인된 사원의 사번으로 현재 시각을 퇴근 시간으로 기록합니다.
+	 * 출근 기록이 없거나 이미 퇴근 기록이 있으면 처리 실패 메시지를 출력합니다.</p>
+	 */
 	protected void insertAttendanceOutInfo() {
 		printTitle("⏰ [퇴근 시간 입력]");
     	AttendanceDTO att = new AttendanceDTO();
@@ -115,7 +153,7 @@ public class EmployeeAttUI {
     	att.setEmpNo(empNo);
     	
     	try {
-    		printLine(GREEN, "❓ 퇴근 시간을 입력하시겠습니까? [ Y | N ] ");
+    		printLine(GREEN, "👉 퇴근 시간을 입력하시겠습니까? [ Y | N ] ");
             String ch = br.readLine().toUpperCase();
 
             switch (ch) {
@@ -135,22 +173,27 @@ public class EmployeeAttUI {
 		}
 	}
 	
+	/**
+	 * 근태 정보 조회 기능 (ATT_SEL_001, ATT_SEL_002)
+	 *
+	 * <p>사용자로부터 특정 날짜를 입력받아 해당 날짜의 자신의 출퇴근 기록 및 근무 시간 정보를 조회합니다.</p>
+	 */
     protected void selectAttendaceInfo() {
     	printTitle("⏰ [근태 정보 조회]");
     	AttendanceDTO att = new AttendanceDTO();
     	String empNo = loginInfo.loginMember().getMemberId();
     	att.setEmpNo(empNo);
     	try {
-    		printLine(GREEN, "❓ 조회할 날짜 (ex.2025-10-10) [q:돌아가기] : ");
+    		printLine(GREEN, "👉 조회할 날짜 ? ex.2025-10-10 ");
 			att.setRegDt(br.readLine());
 			
 			att = attDao.selectAttendance(att);
 			
 			if(att == null) {
-				printLineln(MAGENTA, "📢 조회된 근태 정보가 없습니다.");
+				printLineln(MAGENTA, "📢 등록된 날짜가 아닙니다.\n");
 				return;
 			}
-			/*
+			
 			System.out.print(att.getEmpNo() + "\t");
 			System.out.print(att.getAtdNo() + "\t");
 			System.out.print(att.getCheckIn() + "\t");
@@ -158,59 +201,33 @@ public class EmployeeAttUI {
 			System.out.print(att.getWorkHours() + "\t");
 			System.out.print(att.getAtdStatusCd() + "\t");
 			System.out.println(att.getRegDt());
-			*/
-			printLine('═', 120);
-	        System.out.printf("%s | %s | %s | %s | %s | %s | %s%n",
-	                padCenter("사번", 7),
-	                padCenter("근태번호", 9),
-	                padCenter("출근시간", 21),
-	                padCenter("퇴근시간", 22),
-	                padCenter("근무시간", 10),
-	                padCenter("상태", 6),
-	                padCenter("등록일", 12)
-	        );
-	        printLine('─', 120);
-
-	        System.out.printf("%s | %s | %s | %s | %s | %s | %s%n",
-	                padRight(att.getEmpNo(), 6),
-	                padRight(att.getAtdNo(), 8),
-	                padRight(att.getCheckIn(), 20),
-	                padRight(att.getCheckOut(), 20),
-	                padRight(String.valueOf(att.getWorkHours()), 8),
-	                padRight(att.getAtdStatusCd(), 6),
-	                padRight(att.getRegDt(), 12)
-	        );
-
-	        printLine('═', 120);
 			
 			printLineln(MAGENTA, "📢 조회 완료되었습니다.");
-		} catch (UserQuitException e) {
-			printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
-			return;
-	    } catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			
 		}
+		
 	}
 
+	/**
+	 * 휴가 신청 기능 (ATT_INS_008)
+	 *
+	 * <p>휴가 시작일, 종료일, 사유를 입력받아 휴가를 신청합니다.
+	 * 신청된 휴가는 미승인 상태로 저장되며, 관리자의 승인을 기다립니다.</p>
+	 */
 	public void insertVacation() {
 		printTitle("🧳 [휴가 신청]");
     	VacationDTO dto = new VacationDTO();
     	
     	try {
-    		printLine(GREEN, "👉 휴가 시작일자 [q:돌아가기] :");
-    		String input = br.readLine();
-    		InputValidator.isUserExit(input);
-			dto.setStartDt(input);  
+    		printLine(GREEN, "👉 휴가 시작일자 ? ");
+			dto.setStartDt(br.readLine()); 
 			
-			printLine(GREEN, "👉 휴가 종료일자 [q:돌아가기] : ");
-			input = br.readLine();
-    		InputValidator.isUserExit(input);
-			dto.setEndDt(input);
+			printLine(GREEN, "👉 휴가 종료일자 ? ");
+			dto.setEndDt(br.readLine());
 			
-			printLine(GREEN, "👉 휴가 사유 [q:돌아가기] : ");
-			input = br.readLine();
-    		InputValidator.isUserExit(input);
-			dto.setVacationMemo(input);
+			printLine(GREEN, "👉 휴가 사유 ? ");
+			dto.setVacationMemo(br.readLine());
     		
 			attDao.insertVacation(dto);
 			
@@ -224,6 +241,12 @@ public class EmployeeAttUI {
    		}
     }
 	
+	/**
+	 * 휴가 수정 기능 (ATT_UPD_009)
+	 *
+	 * <p>현재 자신의 미승인된 휴가 신청 목록을 조회하고, 수정할 휴가 번호를 입력받아
+	 * 휴가 기간 및 사유를 변경하여 다시 신청합니다.</p>
+	 */
 	public void updateVacation() {
 		printTitle("🧳 [휴가 수정]");
 		VacationDTO dto = new VacationDTO();
@@ -284,19 +307,13 @@ public class EmployeeAttUI {
 	        dto.setVacationSeq(vacationSeq); 
 
 	        printLine(GREEN, "새 휴가 시작일자 (YYYY-MM-DD) ? ");
-	        String input = br.readLine();
-    		InputValidator.isUserExit(input);
-			dto.setStartDt(input);
+	        dto.setStartDt(br.readLine()); 
 	        
 	        printLine(GREEN, "새 휴가 종료일자 (YYYY-MM-DD) ? ");
-	        input = br.readLine();
-    		InputValidator.isUserExit(input);
-			dto.setEndDt(input);
+	        dto.setEndDt(br.readLine());
 	        
 	        printLine(GREEN, "새 휴가 사유 ? ");
-	        input = br.readLine();
-    		InputValidator.isUserExit(input);
-			dto.setVacationMemo(input);
+	        dto.setVacationMemo(br.readLine());
 
 	        int result = attDao.updateVacation(dto); 
 	        
@@ -306,10 +323,7 @@ public class EmployeeAttUI {
 	            printLineln(MAGENTA, "❌ 휴가 수정에 실패했습니다. (이미 승인되었거나 존재하지 않는 번호)");
 	        }
     		
-    	} catch (UserQuitException e) {
-			printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
-			return;
-	    } catch (SQLException e) {
+    	} catch (SQLException e) {
     		System.out.println(e.getMessage());
     	} catch (IOException e) {
     		e.printStackTrace();
