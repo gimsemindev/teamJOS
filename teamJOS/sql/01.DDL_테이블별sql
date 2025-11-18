@@ -1,0 +1,645 @@
+/********************************************************************
+ 프로젝트 : teamJOS 인사관리 프로젝트
+ 파일명   : teamJOS_schema_full.sql
+ 내용     : 테이블 단위로 CREATE → COMMENT → SEQUENCE → FK 순서 정리본
+********************************************************************/
+
+--------------------------------------------------------------------
+-- 1. TB_DEPT (부서)
+--------------------------------------------------------------------
+/********************************************************************
+ 프로젝트 : teamJOS 인사관리 프로젝트
+ 테이블ID : TB_DEPT
+ 테이블명 : 부서
+*********************************************************************/
+-- 테이블 정의
+CREATE TABLE TB_DEPT (
+    DEPT_CD         CHAR(6)           NOT NULL,
+    DEPT_NM         VARCHAR2(50)     ,
+    EXT_NO          VARCHAR2(20)     ,
+    SUPER_DEPT_CD   CHAR(6)           NOT NULL,
+    USE_YN          CHAR(1)           DEFAULT 'Y',
+    REG_DT          DATE              DEFAULT SYSDATE
+);
+
+ALTER TABLE TB_DEPT 
+    ADD CONSTRAINT PK_TB_DEPT PRIMARY KEY (DEPT_CD);
+
+-- COMMENT
+COMMENT ON TABLE  JOS.TB_DEPT               IS '부서';
+COMMENT ON COLUMN JOS.TB_DEPT.DEPT_CD       IS '부서코드';
+COMMENT ON COLUMN JOS.TB_DEPT.DEPT_NM       IS '부서명';
+COMMENT ON COLUMN JOS.TB_DEPT.EXT_NO        IS '내선번호';
+COMMENT ON COLUMN JOS.TB_DEPT.SUPER_DEPT_CD IS '상위부서코드';
+COMMENT ON COLUMN JOS.TB_DEPT.USE_YN        IS '사용여부';
+COMMENT ON COLUMN JOS.TB_DEPT.REG_DT        IS '등록일자';
+
+-- SEQUENCE : 없음
+
+-- FK : 없음
+
+
+--------------------------------------------------------------------
+-- 2. TB_GRADE (직급)
+--------------------------------------------------------------------
+/********************************************************************
+ 프로젝트 : teamJOS 인사관리 프로젝트
+ 테이블ID : TB_GRADE
+ 테이블명 : 직급
+*********************************************************************/
+-- 테이블 정의
+CREATE TABLE TB_GRADE (
+    GRADE_CD        CHAR(2)           NOT NULL,
+    GRADE_NM        VARCHAR2(50)     ,
+    USE_YN          CHAR(1)           DEFAULT 'Y' NOT NULL,
+    REG_DT          DATE              DEFAULT SYSDATE
+);
+
+ALTER TABLE TB_GRADE 
+    ADD CONSTRAINT PK_TB_GRADE PRIMARY KEY (GRADE_CD);
+
+-- COMMENT
+COMMENT ON TABLE  JOS.TB_GRADE          IS '직급';
+COMMENT ON COLUMN JOS.TB_GRADE.GRADE_CD IS '직급코드';
+COMMENT ON COLUMN JOS.TB_GRADE.GRADE_NM IS '직급명';
+COMMENT ON COLUMN JOS.TB_GRADE.USE_YN   IS '사용여부';
+COMMENT ON COLUMN JOS.TB_GRADE.REG_DT   IS '등록일자';
+
+-- SEQUENCE : 없음
+
+-- FK : 없음
+
+
+--------------------------------------------------------------------
+-- 3. TB_EMP_STATUS (재직 상태)
+--------------------------------------------------------------------
+/********************************************************************
+ 프로젝트 : teamJOS 인사관리 프로젝트
+ 테이블ID : TB_EMP_STATUS
+ 테이블명 : 재직 상태
+*********************************************************************/
+-- 테이블 정의
+CREATE TABLE TB_EMP_STATUS (
+    EMP_STAT_CD     CHAR(1)           NOT NULL,
+    EMP_STAT_NM     VARCHAR2(50)      NOT NULL,
+    USE_YN          CHAR(1)           DEFAULT 'Y' NOT NULL,
+    REG_DT          DATE              DEFAULT SYSDATE
+);
+
+ALTER TABLE TB_EMP_STATUS 
+    ADD CONSTRAINT PK_TB_EMP_STATUS PRIMARY KEY (EMP_STAT_CD);
+
+-- COMMENT
+COMMENT ON TABLE  JOS.TB_EMP_STATUS             IS '재직 상태';
+COMMENT ON COLUMN JOS.TB_EMP_STATUS.EMP_STAT_CD IS '재직상태코드';
+COMMENT ON COLUMN JOS.TB_EMP_STATUS.EMP_STAT_NM IS '재직상태명';
+COMMENT ON COLUMN JOS.TB_EMP_STATUS.USE_YN      IS '사용여부';
+COMMENT ON COLUMN JOS.TB_EMP_STATUS.REG_DT      IS '등록일자';
+
+-- SEQUENCE : 없음
+
+-- FK : 없음
+
+
+--------------------------------------------------------------------
+-- 4. TB_EMP_CNTRT_TYPE (계약 유형)
+--------------------------------------------------------------------
+/********************************************************************
+ 프로젝트 : teamJOS 인사관리 프로젝트
+ 테이블ID : TB_EMP_CNTRT_TYPE
+ 테이블명 : 계약 유형
+*********************************************************************/
+-- 테이블 정의
+CREATE TABLE TB_EMP_CNTRT_TYPE (
+    CONTRACT_TP_CD  CHAR(1)           NOT NULL,
+    CONTRACT_TP_NM  VARCHAR2(50)     ,
+    USE_YN          CHAR(1)           DEFAULT 'Y',
+    REG_DT          DATE              DEFAULT SYSDATE
+);
+
+ALTER TABLE TB_EMP_CNTRT_TYPE 
+    ADD CONSTRAINT PK_TB_EMP_CNTRT_TYPE PRIMARY KEY (CONTRACT_TP_CD);
+
+-- COMMENT
+COMMENT ON TABLE  JOS.TB_EMP_CNTRT_TYPE                IS '계약 유형';
+COMMENT ON COLUMN JOS.TB_EMP_CNTRT_TYPE.CONTRACT_TP_CD IS '계약유형코드';
+COMMENT ON COLUMN JOS.TB_EMP_CNTRT_TYPE.CONTRACT_TP_NM IS '계약유형';
+COMMENT ON COLUMN JOS.TB_EMP_CNTRT_TYPE.USE_YN         IS '사용여부';
+COMMENT ON COLUMN JOS.TB_EMP_CNTRT_TYPE.REG_DT         IS '등록일자';
+
+-- SEQUENCE : 없음
+
+-- FK : 없음
+
+
+--------------------------------------------------------------------
+-- 5. TB_CNTCT_TYPE (연락처 유형)
+--------------------------------------------------------------------
+/********************************************************************
+ 프로젝트 : teamJOS 인사관리 프로젝트
+ 테이블ID : TB_CNTCT_TYPE
+ 테이블명 : 연락처 유형
+*********************************************************************/
+-- 테이블 정의
+CREATE TABLE TB_CNTCT_TYPE (
+    CONTACT_TP_CD   CHAR(1)           NOT NULL,
+    CONTACT_TP_NM   VARCHAR2(50)     ,
+    USE_YN          CHAR(1)           DEFAULT 'Y',
+    REG_DT          DATE              DEFAULT SYSDATE
+);
+
+ALTER TABLE TB_CNTCT_TYPE 
+    ADD CONSTRAINT PK_TB_CNTCT_TYPE PRIMARY KEY (CONTACT_TP_CD);
+
+-- COMMENT
+COMMENT ON TABLE  JOS.TB_CNTCT_TYPE               IS '연락처 유형';
+COMMENT ON COLUMN JOS.TB_CNTCT_TYPE.CONTACT_TP_CD IS '연락처유형코드';
+COMMENT ON COLUMN JOS.TB_CNTCT_TYPE.CONTACT_TP_NM IS '연락처유형이름';
+COMMENT ON COLUMN JOS.TB_CNTCT_TYPE.USE_YN        IS '사용여부';
+COMMENT ON COLUMN JOS.TB_CNTCT_TYPE.REG_DT        IS '등록일자';
+
+-- SEQUENCE : 없음
+
+-- FK : 없음
+
+
+--------------------------------------------------------------------
+-- 6. TB_ATD_STATUS (근태 상태)
+--------------------------------------------------------------------
+/********************************************************************
+ 프로젝트 : teamJOS 인사관리 프로젝트
+ 테이블ID : TB_ATD_STATUS
+ 테이블명 : 근태 상태
+*********************************************************************/
+-- 테이블 정의
+CREATE TABLE TB_ATD_STATUS (
+    ATD_STATUS_CD   CHAR(2)           NOT NULL,
+    STATUS_NM       VARCHAR2(50)     ,
+    USE_YN          CHAR(1)           DEFAULT 'Y',
+    REG_DT          DATE              DEFAULT SYSDATE
+);
+
+ALTER TABLE TB_ATD_STATUS 
+    ADD CONSTRAINT PK_TB_ATD_STATUS PRIMARY KEY (ATD_STATUS_CD);
+
+-- COMMENT
+COMMENT ON TABLE  JOS.TB_ATD_STATUS               IS '근태 상태';
+COMMENT ON COLUMN JOS.TB_ATD_STATUS.ATD_STATUS_CD IS '근무상태코드';
+COMMENT ON COLUMN JOS.TB_ATD_STATUS.STATUS_NM     IS '근무상태명';
+COMMENT ON COLUMN JOS.TB_ATD_STATUS.USE_YN        IS '사용여부';
+COMMENT ON COLUMN JOS.TB_ATD_STATUS.REG_DT        IS '등록일자';
+
+-- SEQUENCE : 없음
+
+-- FK : 없음
+
+
+--------------------------------------------------------------------
+-- 7. TB_ROLE (권한)
+--------------------------------------------------------------------
+/********************************************************************
+ 프로젝트 : teamJOS 인사관리 프로젝트
+ 테이블ID : TB_ROLE
+ 테이블명 : 권한
+*********************************************************************/
+-- 테이블 정의
+CREATE TABLE TB_ROLE (
+    LEVEL_CODE      CHAR(2)           NOT NULL,
+    LEVEL_NM        VARCHAR2(50)     ,
+    REG_DT          DATE              DEFAULT SYSDATE
+);
+
+ALTER TABLE TB_ROLE 
+    ADD CONSTRAINT PK_TB_ROLE PRIMARY KEY (LEVEL_CODE);
+
+-- COMMENT
+COMMENT ON TABLE  JOS.TB_ROLE            IS '권한';
+COMMENT ON COLUMN JOS.TB_ROLE.LEVEL_CODE IS '권한레벨코드';
+COMMENT ON COLUMN JOS.TB_ROLE.LEVEL_NM   IS '권한레벨명';
+COMMENT ON COLUMN JOS.TB_ROLE.REG_DT     IS '등록일자';
+
+-- SEQUENCE : 없음
+
+-- FK : 없음
+
+
+--------------------------------------------------------------------
+-- 8. TB_EMP (사원)
+--------------------------------------------------------------------
+/********************************************************************
+ 프로젝트 : teamJOS 인사관리 프로젝트
+ 테이블ID : TB_EMP
+ 테이블명 : 사원
+*********************************************************************/
+-- 테이블 정의
+CREATE TABLE TB_EMP (
+    EMP_NO          CHAR(5)             NOT NULL,
+    EMP_NM          VARCHAR2(50)        NOT NULL,
+    RRN             CHAR(13)            NOT NULL,
+    EMP_ADDR        VARCHAR2(100)     ,
+    HIRE_DT         DATE                NOT NULL,
+    DEPT_CD         CHAR(6)             NOT NULL,
+    GRADE_CD        CHAR(2)             NOT NULL,
+    EMP_STAT_CD     CHAR(1)             NOT NULL,
+    CONTRACT_TP_CD  CHAR(1)             NOT NULL,
+    EMAIL           VARCHAR2(50)     ,
+    PWD             VARCHAR2(100)       NOT NULL,
+    REG_DT          DATE                DEFAULT SYSDATE NOT NULL,
+    RETIRE_DT       DATE,
+    USE_YN          CHAR(1)             DEFAULT 'Y',
+    LEVEL_CODE      CHAR(2)             NOT NULL
+);
+
+ALTER TABLE TB_EMP 
+    ADD CONSTRAINT PK_TB_EMP PRIMARY KEY (EMP_NO);
+
+-- COMMENT
+COMMENT ON TABLE  JOS.TB_EMP                IS '사원';
+COMMENT ON COLUMN JOS.TB_EMP.EMP_NO         IS '사원번호';
+COMMENT ON COLUMN JOS.TB_EMP.EMP_NM         IS '사원이름';
+COMMENT ON COLUMN JOS.TB_EMP.RRN            IS '주민번호';
+COMMENT ON COLUMN JOS.TB_EMP.EMP_ADDR       IS '사원주소';
+COMMENT ON COLUMN JOS.TB_EMP.HIRE_DT        IS '입사일자';
+COMMENT ON COLUMN JOS.TB_EMP.DEPT_CD        IS '부서코드';
+COMMENT ON COLUMN JOS.TB_EMP.GRADE_CD       IS '직급코드';
+COMMENT ON COLUMN JOS.TB_EMP.EMP_STAT_CD    IS '재직상태코드';
+COMMENT ON COLUMN JOS.TB_EMP.CONTRACT_TP_CD IS '계약유형코드';
+COMMENT ON COLUMN JOS.TB_EMP.EMAIL          IS '이메일';
+COMMENT ON COLUMN JOS.TB_EMP.PWD            IS '비밀번호';
+COMMENT ON COLUMN JOS.TB_EMP.REG_DT         IS '등록일자';
+COMMENT ON COLUMN JOS.TB_EMP.RETIRE_DT      IS '퇴사일자';
+COMMENT ON COLUMN JOS.TB_EMP.USE_YN         IS '사용여부';
+COMMENT ON COLUMN JOS.TB_EMP.LEVEL_CODE     IS '권한코드';
+
+-- SEQUENCE : 없음
+
+-- FK
+ALTER TABLE TB_EMP ADD CONSTRAINT FK_TB_DEPT_TO_TB_EMP_1 
+    FOREIGN KEY (DEPT_CD) REFERENCES TB_DEPT (DEPT_CD);
+
+ALTER TABLE TB_EMP ADD CONSTRAINT FK_TB_GRADE_TO_TB_EMP_1 
+    FOREIGN KEY (GRADE_CD) REFERENCES TB_GRADE (GRADE_CD);
+
+ALTER TABLE TB_EMP ADD CONSTRAINT FK_TB_EMP_STATUS_TO_TB_EMP_1 
+    FOREIGN KEY (EMP_STAT_CD) REFERENCES TB_EMP_STATUS (EMP_STAT_CD);
+
+ALTER TABLE TB_EMP ADD CONSTRAINT FK_TB_EMP_CNTRT_TYPE_TO_TB_EMP_1 
+    FOREIGN KEY (CONTRACT_TP_CD) REFERENCES TB_EMP_CNTRT_TYPE (CONTRACT_TP_CD);
+
+ALTER TABLE TB_EMP ADD CONSTRAINT FK_TB_ROLE_TO_TB_EMP_1 
+    FOREIGN KEY (LEVEL_CODE) REFERENCES TB_ROLE (LEVEL_CODE);
+
+
+--------------------------------------------------------------------
+-- 9. TB_ATD (근태 기록)
+--------------------------------------------------------------------
+/********************************************************************
+ 프로젝트 : teamJOS 인사관리 프로젝트
+ 테이블ID : TB_ATD
+ 테이블명 : 근태 기록
+*********************************************************************/
+-- 테이블 정의
+CREATE TABLE TB_ATD (
+    ATD_SEQ         NUMBER(10,0)      NOT NULL,
+    EMP_NO          CHAR(5)           NOT NULL,
+    CHECK_IN        TIMESTAMP(6),
+    CHECK_OUT       TIMESTAMP(6),
+    WORK_HOURS      NUMBER(5,2),
+    ATD_STATUS_CD   CHAR(2)           NOT NULL,
+    REG_DT          DATE              DEFAULT SYSDATE NOT NULL
+);
+
+ALTER TABLE TB_ATD 
+    ADD CONSTRAINT PK_TB_ATD PRIMARY KEY (ATD_SEQ, EMP_NO);
+
+-- COMMENT
+COMMENT ON TABLE  JOS.TB_ATD               IS '근태 기록';
+COMMENT ON COLUMN JOS.TB_ATD.ATD_SEQ       IS '근태일련번호';
+COMMENT ON COLUMN JOS.TB_ATD.EMP_NO        IS '사원번호';
+COMMENT ON COLUMN JOS.TB_ATD.CHECK_IN      IS '출근일시';
+COMMENT ON COLUMN JOS.TB_ATD.CHECK_OUT     IS '퇴근일시';
+COMMENT ON COLUMN JOS.TB_ATD.WORK_HOURS    IS '근무시간';
+COMMENT ON COLUMN JOS.TB_ATD.ATD_STATUS_CD IS '근무상태코드';
+COMMENT ON COLUMN JOS.TB_ATD.REG_DT        IS '등록일자';
+
+-- SEQUENCE
+CREATE SEQUENCE SQ_TB_ATD START WITH 1;
+
+-- FK
+ALTER TABLE TB_ATD ADD CONSTRAINT FK_TB_EMP_TO_TB_ATD_1 
+    FOREIGN KEY (EMP_NO) REFERENCES TB_EMP (EMP_NO);
+
+ALTER TABLE TB_ATD ADD CONSTRAINT FK_TB_ATD_STATUS_TO_TB_ATD_1 
+    FOREIGN KEY (ATD_STATUS_CD) REFERENCES TB_ATD_STATUS (ATD_STATUS_CD);
+
+
+--------------------------------------------------------------------
+-- 10. TB_ANNUAL_LEAVE (연차)
+--------------------------------------------------------------------
+/********************************************************************
+ 프로젝트 : teamJOS 인사관리 프로젝트
+ 테이블ID : TB_ANNUAL_LEAVE
+ 테이블명 : 연차
+*********************************************************************/
+-- 테이블 정의
+CREATE TABLE TB_ANNUAL_LEAVE (
+    LEAVE_SEQ       NUMBER(10,0)      NOT NULL,
+    EMP_NO          CHAR(5)           NOT NULL,
+    LEAVE_YEAR      NUMBER(4,0),
+    TOTAL_DAYS      NUMBER(3,1),
+    USED_DAYS       NUMBER(3,1),
+    REMAIN_DAYS     NUMBER(3,1),
+    REG_DT          DATE              DEFAULT SYSDATE,
+    USE_YN          CHAR(1)           DEFAULT 'Y'
+);
+
+ALTER TABLE TB_ANNUAL_LEAVE 
+    ADD CONSTRAINT PK_TB_ANNUAL_LEAVE PRIMARY KEY (LEAVE_SEQ);
+
+-- COMMENT
+COMMENT ON TABLE  JOS.TB_ANNUAL_LEAVE             IS '연차';
+COMMENT ON COLUMN JOS.TB_ANNUAL_LEAVE.LEAVE_SEQ   IS '연차일련번호';
+COMMENT ON COLUMN JOS.TB_ANNUAL_LEAVE.EMP_NO      IS '사원번호';
+COMMENT ON COLUMN JOS.TB_ANNUAL_LEAVE.LEAVE_YEAR  IS '연차발생연도';
+COMMENT ON COLUMN JOS.TB_ANNUAL_LEAVE.TOTAL_DAYS  IS '발생연차';
+COMMENT ON COLUMN JOS.TB_ANNUAL_LEAVE.USED_DAYS   IS '사용연차';
+COMMENT ON COLUMN JOS.TB_ANNUAL_LEAVE.REMAIN_DAYS IS '잔여열차';
+COMMENT ON COLUMN JOS.TB_ANNUAL_LEAVE.REG_DT      IS '등록일자';
+COMMENT ON COLUMN JOS.TB_ANNUAL_LEAVE.USE_YN      IS '연차사용허가';
+
+-- SEQUENCE
+CREATE SEQUENCE SQ_TB_ANNUAL_LEAVE START WITH 1;
+
+-- FK
+ALTER TABLE TB_ANNUAL_LEAVE ADD CONSTRAINT FK_TB_EMP_TO_TB_ANNUAL_LEAVE_1 
+    FOREIGN KEY (EMP_NO) REFERENCES TB_EMP (EMP_NO);
+
+
+--------------------------------------------------------------------
+-- 11. TB_VACATION (휴가)
+--------------------------------------------------------------------
+/********************************************************************
+ 프로젝트 : teamJOS 인사관리 프로젝트
+ 테이블ID : TB_VACATION
+ 테이블명 : 휴가
+*********************************************************************/
+-- 테이블 정의
+CREATE TABLE TB_VACATION (
+    VACATION_SEQ    NUMBER(10,0)      NOT NULL,
+    EMP_NO          CHAR(5)           NOT NULL,
+    START_DT        DATE,
+    END_DT          DATE,
+    APPROVER_YN     CHAR(1)           DEFAULT 'Y',
+    VACTION_MEMO    VARCHAR2(600)     
+);
+
+ALTER TABLE TB_VACATION 
+    ADD CONSTRAINT PK_TB_VACATION PRIMARY KEY (VACATION_SEQ);
+
+-- COMMENT
+COMMENT ON TABLE  JOS.TB_VACATION               IS '휴가';
+COMMENT ON COLUMN JOS.TB_VACATION.VACATION_SEQ  IS '휴가일련번호';
+COMMENT ON COLUMN JOS.TB_VACATION.EMP_NO        IS '사원번호';
+COMMENT ON COLUMN JOS.TB_VACATION.START_DT      IS '휴가시작일자';
+COMMENT ON COLUMN JOS.TB_VACATION.END_DT        IS '휴가종료일자';
+COMMENT ON COLUMN JOS.TB_VACATION.APPROVER_YN   IS '관리자승인여부';
+COMMENT ON COLUMN JOS.TB_VACATION.VACATION_MEMO IS '휴가사유';
+
+-- SEQUENCE
+CREATE SEQUENCE SQ_TB_VACATION START WITH 1;
+
+-- FK : (원본 스크립트 기준 별도 FK 정의 없음)
+
+
+--------------------------------------------------------------------
+-- 12. TB_EMP_RETIRE (퇴직 신청)
+--------------------------------------------------------------------
+/********************************************************************
+ 프로젝트 : teamJOS 인사관리 프로젝트
+ 테이블ID : TB_EMP_RETIRE
+ 테이블명 : 퇴직 신청
+*********************************************************************/
+-- 테이블 정의
+CREATE TABLE TB_EMP_RETIRE (
+    RETIRE_SEQ      NUMBER(10,0)      NOT NULL,
+    EMP_NO          CHAR(5)           NOT NULL,
+    REG_DT          DATE              DEFAULT SYSDATE,
+    APPROVER_YN     CHAR(1)           DEFAULT 'Y',
+    RETIRE_MEMO     VARCHAR2(200)     
+);
+
+ALTER TABLE TB_EMP_RETIRE 
+    ADD CONSTRAINT PK_TB_EMP_RETIRE PRIMARY KEY (RETIRE_SEQ, EMP_NO);
+
+-- COMMENT
+COMMENT ON TABLE  JOS.TB_EMP_RETIRE             IS '퇴직 신청';
+COMMENT ON COLUMN JOS.TB_EMP_RETIRE.RETIRE_SEQ  IS '퇴직신청일련번호';
+COMMENT ON COLUMN JOS.TB_EMP_RETIRE.EMP_NO      IS '사원번호';
+COMMENT ON COLUMN JOS.TB_EMP_RETIRE.REG_DT      IS '퇴직신청일자';
+COMMENT ON COLUMN JOS.TB_EMP_RETIRE.APPROVER_YN IS '관리자승인여부';
+COMMENT ON COLUMN JOS.TB_EMP_RETIRE.RETIRE_MEMO IS '퇴직사유';
+
+-- SEQUENCE
+CREATE SEQUENCE SQ_TB_EMP_RETIRE START WITH 1;
+
+-- FK
+ALTER TABLE TB_EMP_RETIRE ADD CONSTRAINT FK_TB_EMP_TO_TB_EMP_RETIRE_1 
+    FOREIGN KEY (EMP_NO) REFERENCES TB_EMP (EMP_NO);
+
+
+--------------------------------------------------------------------
+-- 13. TB_BOARD (게시판)
+--------------------------------------------------------------------
+/********************************************************************
+ 프로젝트 : teamJOS 인사관리 프로젝트
+ 테이블ID : TB_BOARD
+ 테이블명 : 게시판
+*********************************************************************/
+-- 테이블 정의
+CREATE TABLE TB_BOARD (
+    BOARD_SEQ       NUMBER(10,0)       NOT NULL,
+    EMP_NO          CHAR(5)            NOT NULL,
+    TITLE           VARCHAR2(200)      NOT NULL,
+    CONTENT         VARCHAR2(600)     ,
+    REG_DTM         TIMESTAMP(6),
+    UPDATE_DTM      TIMESTAMP(6)
+);
+
+ALTER TABLE TB_BOARD 
+    ADD CONSTRAINT PK_TB_BOARD PRIMARY KEY (BOARD_SEQ);
+
+-- COMMENT
+COMMENT ON TABLE  JOS.TB_BOARD            IS '게시판';
+COMMENT ON COLUMN JOS.TB_BOARD.BOARD_SEQ  IS '게시글일련번호';
+COMMENT ON COLUMN JOS.TB_BOARD.EMP_NO     IS '작성자';
+COMMENT ON COLUMN JOS.TB_BOARD.TITLE      IS '제목';
+COMMENT ON COLUMN JOS.TB_BOARD.CONTENT    IS '내용';
+COMMENT ON COLUMN JOS.TB_BOARD.REG_DTM    IS '작성일시';
+COMMENT ON COLUMN JOS.TB_BOARD.UPDATE_DTM IS '수정일시';
+
+-- SEQUENCE
+CREATE SEQUENCE SQ_TB_BOARD START WITH 1 CACHE 20;
+
+-- FK
+ALTER TABLE TB_BOARD ADD CONSTRAINT FK_TB_EMP_TO_TB_BOARD_1 
+    FOREIGN KEY (EMP_NO) REFERENCES TB_EMP (EMP_NO);
+
+
+--------------------------------------------------------------------
+-- 14. TB_EMP_CNTCT (사원 연락처)
+--------------------------------------------------------------------
+/********************************************************************
+ 프로젝트 : teamJOS 인사관리 프로젝트
+ 테이블ID : TB_EMP_CNTCT
+ 테이블명 : 사원 연락처
+*********************************************************************/
+-- 테이블 정의
+CREATE TABLE TB_EMP_CNTCT (
+    EMP_NO          CHAR(5)           NOT NULL,
+    CONTACT_TP_CD   CHAR(1)           NOT NULL,
+    CONTACT_NO      VARCHAR2(20)     ,
+    USE_YN          CHAR(1)           DEFAULT 'Y',
+    REG_DT          DATE              DEFAULT SYSDATE NOT NULL
+);
+
+ALTER TABLE TB_EMP_CNTCT 
+    ADD CONSTRAINT PK_TB_EMP_CNTCT PRIMARY KEY (EMP_NO, CONTACT_TP_CD);
+
+-- COMMENT
+COMMENT ON TABLE  JOS.TB_EMP_CNTCT               IS '사원 연락처';
+COMMENT ON COLUMN JOS.TB_EMP_CNTCT.EMP_NO        IS '사원번호';
+COMMENT ON COLUMN JOS.TB_EMP_CNTCT.CONTACT_TP_CD IS '연락처유형코드';
+COMMENT ON COLUMN JOS.TB_EMP_CNTCT.CONTACT_NO    IS '연락처번호';
+COMMENT ON COLUMN JOS.TB_EMP_CNTCT.USE_YN        IS '사용여부';
+COMMENT ON COLUMN JOS.TB_EMP_CNTCT.REG_DT        IS '등록일자';
+
+-- SEQUENCE : 없음
+
+-- FK
+ALTER TABLE TB_EMP_CNTCT ADD CONSTRAINT FK_TB_EMP_TO_TB_EMP_CNTCT_1 
+    FOREIGN KEY (EMP_NO) REFERENCES TB_EMP (EMP_NO);
+
+ALTER TABLE TB_EMP_CNTCT ADD CONSTRAINT FK_TB_CNTCT_TYPE_TO_TB_EMP_CNTCT_1 
+    FOREIGN KEY (CONTACT_TP_CD) REFERENCES TB_CNTCT_TYPE (CONTACT_TP_CD);
+
+
+--------------------------------------------------------------------
+-- 15. TB_EMP_CAREER_HIST (사원 경력)
+--------------------------------------------------------------------
+/********************************************************************
+ 프로젝트 : teamJOS 인사관리 프로젝트
+ 테이블ID : TB_EMP_CAREER_HIST
+ 테이블명 : 사원 경력
+*********************************************************************/
+-- 테이블 정의
+CREATE TABLE TB_EMP_CAREER_HIST (
+    CAREER_SEQ      NUMBER(10,0)      NOT NULL,
+    EMP_NO          CHAR(5)           NOT NULL,
+    PREV_COMP_NM    VARCHAR2(50)      NOT NULL,
+    CAREER_STRT_DT  DATE              NOT NULL,
+    CAREER_END_DT   DATE,
+    DETAILS         VARCHAR2(200)     ,
+    REG_DT          DATE              DEFAULT SYSDATE NOT NULL,
+    APPRV_D         NUMBER(5,1)
+);
+
+ALTER TABLE TB_EMP_CAREER_HIST 
+    ADD CONSTRAINT PK_TB_EMP_CAREER_HIST PRIMARY KEY (CAREER_SEQ, EMP_NO);
+
+-- COMMENT
+COMMENT ON TABLE  JOS.TB_EMP_CAREER_HIST                IS '사원 경력';
+COMMENT ON COLUMN JOS.TB_EMP_CAREER_HIST.CAREER_SEQ     IS '경력일련번호';
+COMMENT ON COLUMN JOS.TB_EMP_CAREER_HIST.EMP_NO         IS '사원번호';
+COMMENT ON COLUMN JOS.TB_EMP_CAREER_HIST.PREV_COMP_NM   IS '이전회사이름';
+COMMENT ON COLUMN JOS.TB_EMP_CAREER_HIST.CAREER_STRT_DT IS '경력시작일자';
+COMMENT ON COLUMN JOS.TB_EMP_CAREER_HIST.CAREER_END_DT  IS '경력종료일자';
+COMMENT ON COLUMN JOS.TB_EMP_CAREER_HIST.DETAILS        IS '상세';
+COMMENT ON COLUMN JOS.TB_EMP_CAREER_HIST.REG_DT         IS '등록일자';
+COMMENT ON COLUMN JOS.TB_EMP_CAREER_HIST.APPRV_D        IS '인정경력';
+
+-- SEQUENCE
+CREATE SEQUENCE SQ_TB_EMP_CAREER_HIST START WITH 1;
+
+-- FK
+ALTER TABLE TB_EMP_CAREER_HIST ADD CONSTRAINT FK_TB_EMP_TO_TB_EMP_CAREER_HIST_1 
+    FOREIGN KEY (EMP_NO) REFERENCES TB_EMP (EMP_NO);
+
+
+--------------------------------------------------------------------
+-- 16. TB_EMP_CERT (사원 자격증)
+--------------------------------------------------------------------
+/********************************************************************
+ 프로젝트 : teamJOS 인사관리 프로젝트
+ 테이블ID : TB_EMP_CERT
+ 테이블명 : 사원 자격증
+*********************************************************************/
+-- 테이블 정의
+CREATE TABLE TB_EMP_CERT (
+    CERT_SEQ        NUMBER(10,0)      NOT NULL,
+    EMP_NO          CHAR(5)           NOT NULL,
+    CERT_NM         VARCHAR2(50)      NOT NULL,
+    ISSUE_ORG_NM    VARCHAR2(50)     ,
+    ISSUE_DT        DATE,
+    REG_DT          DATE              DEFAULT SYSDATE NOT NULL
+);
+
+ALTER TABLE TB_EMP_CERT 
+    ADD CONSTRAINT PK_TB_EMP_CERT PRIMARY KEY (CERT_SEQ);
+
+-- COMMENT
+COMMENT ON TABLE  JOS.TB_EMP_CERT              IS '사원 자격증';
+COMMENT ON COLUMN JOS.TB_EMP_CERT.CERT_SEQ     IS '자격증일련번호';
+COMMENT ON COLUMN JOS.TB_EMP_CERT.EMP_NO       IS '사원번호';
+COMMENT ON COLUMN JOS.TB_EMP_CERT.CERT_NM      IS '자격증이름';
+COMMENT ON COLUMN JOS.TB_EMP_CERT.ISSUE_ORG_NM IS '발급기관이름';
+COMMENT ON COLUMN JOS.TB_EMP_CERT.ISSUE_DT     IS '발급일자';
+COMMENT ON COLUMN JOS.TB_EMP_CERT.REG_DT       IS '등록일자';
+
+-- SEQUENCE
+CREATE SEQUENCE SQ_TB_EMP_CERT START WITH 1;
+
+-- FK
+ALTER TABLE TB_EMP_CERT ADD CONSTRAINT FK_TB_EMP_TO_TB_EMP_CERT_1 
+    FOREIGN KEY (EMP_NO) REFERENCES TB_EMP (EMP_NO);
+
+
+--------------------------------------------------------------------
+-- 17. TB_EMP_GRADE_HIST (사원 직급 이력)
+--------------------------------------------------------------------
+/********************************************************************
+ 프로젝트 : teamJOS 인사관리 프로젝트
+ 테이블ID : TB_EMP_GRADE_HIST
+ 테이블명 : 사원 직급 이력
+*********************************************************************/
+-- 테이블 정의
+CREATE TABLE TB_EMP_GRADE_HIST (
+    EMP_NO          CHAR(5)           NOT NULL,
+    GRADE_CD        CHAR(2)           NOT NULL,
+    VALID_STRT_DT   DATE              NOT NULL,
+    VALID_END_DT    DATE,
+    DETAILS         VARCHAR2(200)     ,
+    REG_DT          DATE              DEFAULT SYSDATE NOT NULL,
+    DEPT_CD         CHAR(6)           NOT NULL
+);
+
+ALTER TABLE TB_EMP_GRADE_HIST 
+    ADD CONSTRAINT PK_TB_EMP_GRADE_HIST PRIMARY KEY (VALID_STRT_DT, EMP_NO, GRADE_CD);
+
+-- COMMENT
+COMMENT ON TABLE  JOS.TB_EMP_GRADE_HIST               IS '사원 직급 이력';
+COMMENT ON COLUMN JOS.TB_EMP_GRADE_HIST.EMP_NO        IS '사원번호';
+COMMENT ON COLUMN JOS.TB_EMP_GRADE_HIST.GRADE_CD      IS '직급코드';
+COMMENT ON COLUMN JOS.TB_EMP_GRADE_HIST.VALID_STRT_DT IS '유효시작일자';
+COMMENT ON COLUMN JOS.TB_EMP_GRADE_HIST.VALID_END_DT  IS '유효종료일자';
+COMMENT ON COLUMN JOS.TB_EMP_GRADE_HIST.DETAILS       IS '상세';
+COMMENT ON COLUMN JOS.TB_EMP_GRADE_HIST.REG_DT        IS '등록일자';
+COMMENT ON COLUMN JOS.TB_EMP_GRADE_HIST.DEPT_CD       IS '부서코드';
+
+-- SEQUENCE : 없음
+
+-- FK
+ALTER TABLE TB_EMP_GRADE_HIST ADD CONSTRAINT FK_TB_EMP_TO_TB_EMP_GRADE_HIST_1 
+    FOREIGN KEY (EMP_NO) REFERENCES TB_EMP (EMP_NO);
+
+ALTER TABLE TB_EMP_GRADE_HIST ADD CONSTRAINT FK_TB_DEPT_TO_TB_EMP_GRADE_HIST_1 
+    FOREIGN KEY (DEPT_CD) REFERENCES TB_DEPT (DEPT_CD);
