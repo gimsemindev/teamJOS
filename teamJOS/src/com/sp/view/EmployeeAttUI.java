@@ -222,24 +222,26 @@ public class EmployeeAttUI {
     	String inputDt;
         
         try {
-            while (true) {
-                printLine(GREEN, "👉 휴가 시작일자 (YYYY-MM-DD) ? ");
+        	while (true) {
+                printLine(GREEN, "👉 휴가 시작일자 (YYYY-MM-DD, 종료:'q') ? ");
                 inputDt = br.readLine();
-                
-               
-                if (InputValidator.isValidDate(inputDt)) { 
+
+                InputValidator.isUserExit(inputDt); 
+                if (InputValidator.isValidDate(inputDt)) {
                     dto.setStartDt(inputDt);
                     break;
                 }
                 printLineln(MAGENTA, "❌ 날짜 형식이 올바르지 않습니다. (YYYY-MM-DD 형식으로 입력하세요)");
             }
             
-            // 2. 휴가 종료일자 입력 및 검증
+       
             while (true) {
-                printLine(GREEN, "👉 휴가 종료일자 (YYYY-MM-DD) ? ");
+                printLine(GREEN, "👉 휴가 종료일자 (YYYY-MM-DD, 종료:'q') ? ");
                 inputDt = br.readLine();
                 
-                // ⚠️ isValidDate()를 호출하여 유효성 검사
+         
+                InputValidator.isUserExit(inputDt);
+
                 if (InputValidator.isValidDate(inputDt)) {
                     dto.setEndDt(inputDt);
                     break;
@@ -247,16 +249,29 @@ public class EmployeeAttUI {
                 printLineln(MAGENTA, "❌ 날짜 형식이 올바르지 않습니다. (YYYY-MM-DD 형식으로 입력하세요)");
             }
             
-            // 3. 휴가 사유 입력
+ 
+            printLine(GREEN, "👉 휴가 사유 (종료:'q') ? ");
+            String memo = br.readLine();
+            
+
+            InputValidator.isUserExit(memo);
+            dto.setVacationMemo(memo);
+            
+            attDao.insertVacation(dto);
+                printLineln(MAGENTA, "❌ 날짜 형식이 올바르지 않습니다. (YYYY-MM-DD 형식으로 입력하세요)");
+            
             printLine(GREEN, "👉 휴가 사유 ? ");
             dto.setVacationMemo(br.readLine());
             
-            // 4. DAO 호출
             attDao.insertVacation(dto);
             
             printLineln(MAGENTA, "📢 휴가 신청 완료!");
+      
         } catch (SQLException e) {
             System.out.println(e.getMessage());
+        } catch (UserQuitException e) {
+			printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
+			return;    
         } catch (IOException e) {
             e.printStackTrace();
         } catch (Exception e) {
