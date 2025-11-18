@@ -366,10 +366,17 @@ public class EmployeeEmpUI {
 		RetireDTO dto = new RetireDTO();
 
 		try {
+			while(true) {
 			printLine(GREEN, "👉 희망하는 퇴직 일자를 입력하세요. [q : 취소] : ");
 			String regDt = br.readLine();
 			InputValidator.isUserExit(regDt);
-			dto.setRegDt(regDt);
+			
+			 if (InputValidator.isValidDate(regDt)) {
+                 dto.setRegDt(regDt);
+                 break;
+             }
+            printLineln(MAGENTA, "❌ 날짜 형식이 올바르지 않습니다. (YYYY-MM-DD 형식으로 입력하세요)");
+			}
 
 			printLine(GREEN, "👉 퇴직 사유를 입력하세요. [q : 취소] : ");
 			String memo = br.readLine();
@@ -381,6 +388,7 @@ public class EmployeeEmpUI {
 			printLineln(MAGENTA, "📢 퇴직 신청이 완료되었습니다.");
 		} catch (UserQuitException e) {
 			printLineln(MAGENTA, "📢 퇴직 신청을 취소했습니다.");
+			return;
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
