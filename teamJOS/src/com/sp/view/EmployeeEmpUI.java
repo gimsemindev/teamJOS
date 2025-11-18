@@ -81,6 +81,8 @@ public class EmployeeEmpUI {
 
 		} catch (UserQuitException e) {
 			printLineln(MAGENTA, "📢 \n사원 - 내 정보 관리 메뉴를 종료합니다.\n");
+		} catch (NumberFormatException e) {
+			printLineln(MAGENTA, "📢 잘못된 입력입니다. 1~5 사이의 숫자를 입력해주세요.");
 			return;
 		} catch (Exception e) {
 			printLineln(MAGENTA, "📢 오류가 발생했습니다. " + e.getMessage());
