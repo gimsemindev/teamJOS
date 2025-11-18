@@ -383,20 +383,21 @@ public class AttDAOImpl implements AttDAO{
 			// 원하는 날짜의 자신의 근태 정보를 조회하는 프로시저 호출
 			sql = "CALL /* ATT_SEL_014 */ SP_SELECT_ATD_BY_DATE(?, ?, ?) ";
 			cstmt = conn.prepareCall(sql);
+			
 			cstmt.setString(1, att.getEmpNo()); // 사원번호
 			cstmt.setString(2, att.getRegDt()); // 날짜
 			cstmt.registerOutParameter(3, OracleTypes.CURSOR);
 			cstmt.execute();
 			
 			rs = (ResultSet) cstmt.getObject(3);
-			
+			att = null;
 			if (rs.next()) {
 				att = new AttendanceDTO();
 				att.setEmpNo(rs.getString("EMP_NO")); // 사원번호
 				att.setAtdNo(rs.getString("EMP_NM")); // 사원이름
-				att.setCheckIn(rs.getString("CHECK_IN")); // 출근일시
-				att.setCheckOut(rs.getString("CHECK_OUT")); // 퇴근일시
-				att.setWorkHours(rs.getString("WORK_HOURS")); // 근무시간
+				att.setCheckIn(rs.getString("CHECK_IN") != null ? rs.getString("CHECK_IN") : ""); // 출근일시
+				att.setCheckOut(rs.getString("CHECK_OUT") != null ? rs.getString("CHECK_OUT") : ""); // 퇴근일시
+				att.setWorkHours(rs.getString("WORK_HOURS") != null ? rs.getString("WORK_HOURS") : ""); // 근무시간
 				att.setAtdStatusCd(rs.getString("STATUS_NM")); // 근태상태
 				att.setRegDt(rs.getString("REG_DT")); // 등록일자
 			}
