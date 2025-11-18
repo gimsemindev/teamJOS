@@ -13,6 +13,27 @@ import com.sp.model.DeptMemberDTO;
 import com.sp.util.LoginInfo;
 import com.sp.util.PrintUtil;
 
+/**
+ * <h2>DeptCommonUI (부서 및 근태 공통 UI)</h2>
+ *
+ * <p>관리자 및 일반 사원 메뉴에서 공통적으로 사용되는 부서 정보 조회, 부서별 인원 현황 조회,
+ * 전체 사원의 연차 현황 조회 기능을 제공하는 콘솔 기반 UI 클래스입니다.</p>
+ *
+ * <h3>주요 기능 (유스케이스 ID)</h3>
+ * <ul>
+ * <li>전체 부서 목록 조회 (DEPT_SEL_003) - 부서 코드, 부서명, 내선번호 목록 출력</li>
+ * <li>부서 인원 현황 조회 (DEPT_SEL_005) - 부서별 소속 사원의 상세 정보 목록 출력 (페이징)</li>
+ * <li>전체 연차 현황 조회 (ATT_SEL_003) - 전 사원의 연차 발생/사용/잔여 현황 목록 출력 (페이징)</li>
+ * </ul>
+ *
+ * <p>이 클래스는 {@code DeptDAO}와 {@code AttDAO}를 통해 데이터를 조회하며,
+ * 목록 조회 시 페이징 처리 기능을 포함합니다.</p>
+ *
+ * <p><b>프로젝트명:</b> teamJOS 인사관리 프로젝트</p>
+ * <p><b>작성자:</b> 김세민, 황선호</p>
+ * <p><b>작성일:</b> 2025-11-17</p>
+ * <p><b>버전:</b> 1.0</p>
+ */
 public class DeptCommonUI {
 	
 	private LoginInfo loginInfo;
@@ -22,11 +43,21 @@ public class DeptCommonUI {
     private AttDAO attDao; 
 	private Scanner sc = new Scanner(System.in);
     
+	/**
+	 * DeptCommonUI 생성자
+	 *
+	 * @param loginInfo 로그인 사용자 정보 객체. {@code AttDAO} 초기화에 사용됩니다.
+	 */
 	public DeptCommonUI(LoginInfo loginInfo){
 		this.loginInfo = loginInfo;
 		this.attDao = new AttDAOImpl(this.loginInfo);
 	}
     
+	/**
+	 * 전체 부서 목록 조회 기능 (DEPT_SEL_003)
+	 *
+	 * <p>DB에 등록된 모든 부서의 부서 코드, 부서명, 내선번호 정보를 조회하고 콘솔에 출력합니다.</p>
+	 */
 	public void selectAllDept() {
 		System.out.println("\n전체 부서 리스트...");
 
@@ -49,6 +80,13 @@ public class DeptCommonUI {
         PrintUtil.printLine('-', 60);
 	}
 
+	/**
+	 * 부서 인원 현황 조회 기능 (DEPT_SEL_005)
+	 *
+	 * <p>전체 사원 정보를 부서 기준으로 조회하고, 페이지당 15명씩 페이징 처리하여 출력합니다.</p>
+	 * <p>사원의 부서, 직급, 계약 유형, 재직 상태, 사번, 이름, 입사일, 연락처, 이메일 등의 상세 정보를 포함합니다.</p>
+	 * <p>사용자는 'n' (다음), 'p' (이전), 'q' (종료) 명령을 통해 페이지를 이동할 수 있습니다.</p>
+	 */
 	public void selectDeptMember() {
 		System.out.println("[부서인원현황]");	
 		
@@ -136,7 +174,14 @@ public class DeptCommonUI {
 		} finally {
 		}
 	}
-	// 202511111628 : 김세민 수정중
+	
+	/**
+	 * 전체 사원 연차 현황 조회 기능 (ATT_SEL_003)
+	 *
+	 * <p>전체 사원의 연차 발생일수, 사용일수, 잔여일수 현황을 페이지당 15명씩 페이징 처리하여 출력합니다.</p>
+	 * <p>사용자는 'n' (다음), 'p' (이전), 'q' (종료) 명령을 통해 페이지를 이동할 수 있습니다.</p>
+	 * // 202511111628 : 김세민 수정중
+	 */
 	public void selectAllAnnualLeave() {
 
 		System.out.println("[연차현황]");	

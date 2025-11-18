@@ -23,8 +23,31 @@ import com.sp.view.common.DeptCommonUI;
 import static com.sp.util.PrintUtil.*;
 
 /**
- * 관리자 - 사원관리 UI 1. 정보등록 2. 정보수정 3. 부서이동 4. 진급관리 5. 정보조회 6. 재직결재 7. 경력등록 8.자격증등록
- * 9. 이력조회 10. 일괄등록(CSV) 11. 상위메뉴
+ * <h2>AdminEmpUI (관리자 사원 관리 UI)</h2>
+ *
+ * <p>관리자 메뉴에서 사원 정보 등록, 수정, 이동, 진급 및 이력 관리 기능을 제어하는 콘솔 기반 UI 클래스입니다.</p>
+ *
+ * <h3>주요 기능 (유스케이스 ID)</h3>
+ * <ul>
+ * <li>사원 정보 등록 (EMP_INS_001) - 기본 정보, 직급, 부서, 계약, 권한 레벨 등록</li>
+ * <li>사원 정보 수정 (EMP_UPD_002) - 이름, 주소, 이메일, 비밀번호, 권한 레벨 수정</li>
+ * <li>부서 이동 처리 (EMP_UPD_003) - 사원의 부서를 변경하고 이력을 기록</li>
+ * <li>진급 관리/처리 (EMP_UPD_004) - 사원의 직급을 변경하고 진급 이력을 기록</li>
+ * <li>사원 정보 조회 (EMP_SEL_005, EMP_SEL_006, EMP_SEL_007) - 사번/이름/전체 조회 및 목록 출력</li>
+ * <li>퇴직 승인 관리 (EMP_UPD_008) - 미승인된 퇴직 신청을 승인 처리</li>
+ * <li>경력 정보 등록 (EMP_INS_009) - 사원의 외부 경력 정보를 등록</li>
+ * <li>자격증 정보 등록 (EMP_INS_010) - 사원의 자격증 정보를 등록</li>
+ * <li>이력 정보 조회 (EMP_SEL_011) - 경력, 자격증, 직급 변동 이력 조회 및 페이징 출력</li>
+ * <li>사원 일괄 등록 (EMP_LOD_012) - CSV 파일을 이용한 대량 사원 정보 등록</li>
+ * </ul>
+ *
+ * <p>사용자 입력 검증, 예외 처리, 콘솔 출력 구조를 관리하며
+ * EmpDAO, DeptCommonUI 를 통해 실제 로직과 연동됩니다.</p>
+ *
+ * <p><b>프로젝트명:</b> teamJOS 인사관리 프로젝트</p>
+ * <p><b>작성자:</b> 이지영,오다은</p>
+ * <p><b>작성일:</b> 2025-11-17</p>
+ * <p><b>버전:</b> 1.0</p>
  */
 public class AdminEmpUI {
 
@@ -32,12 +55,24 @@ public class AdminEmpUI {
 	private final EmpDAO empDao;
 	private final DeptCommonUI deptCommonUI;
 
+	/**
+	 * AdminEmpUI 생성자
+	 *
+	 * @param empDao 사원 DAO (데이터 접근 객체)
+	 * @param loginInfo 로그인 사용자 정보 객체
+	 */
 	public AdminEmpUI(EmpDAO empDao, LoginInfo loginInfo) {
 		this.empDao = empDao;
 		this.deptCommonUI = new DeptCommonUI(loginInfo);
 	}
 
-	/** 메인 메뉴 */
+	/**
+	 * 관리자 사원관리 메인 메뉴 화면을 출력하고 사용자 입력을 처리합니다.
+	 *
+	 * <p>1~10번까지의 기능을 선택하여 사원 정보 등록/수정 및 이력 관리 기능을 실행합니다.</p>
+	 *
+	 * <p>사용자 입력 'q' 또는 'Q' 입력 시 상위 메뉴로 돌아갑니다.</p>
+	 */
 	public void menu() {
 		while (true) {
 			try {
@@ -52,16 +87,16 @@ public class AdminEmpUI {
 				System.out.println();
 
 				switch (ch) {
-				case 1 -> insertEmployeeInfo();
-				case 2 -> updateEmployeeInfo();
-				case 3 -> updateDeptMoveInfo();
-				case 4 -> updatePromotionInfo();
-				case 5 -> manageEmployeeSearch();
-				case 6 -> updateRetireApprovalInfo();
-				case 7 -> insertCareerInfo();
-				case 8 -> insertLicenseInfo();
-				case 9 -> selectHistoryInfo();
-				case 10 -> loadEmployeeInfo();
+				case 1 -> insertEmployeeInfo(); // EMP_INS_001
+				case 2 -> updateEmployeeInfo(); // EMP_UPD_002
+				case 3 -> updateDeptMoveInfo(); // EMP_UPD_003
+				case 4 -> updatePromotionInfo(); // EMP_UPD_004
+				case 5 -> manageEmployeeSearch(); // EMP_SEL_005 , EMP_SEL_006, EMP_SEL_007
+				case 6 -> updateRetireApprovalInfo(); // EMP_UPD_008
+				case 7 -> insertCareerInfo(); // EMP_INS_009
+				case 8 -> insertLicenseInfo(); // EMP_INS_010
+				case 9 -> selectHistoryInfo(); // EMP_SEL_011
+				case 10 -> loadEmployeeInfo(); // EMP_LOD_012
 				default -> System.out.println("잘못된 번호입니다. 1~10 사이의 값을 입력해주세요.");
 				}
 			} catch (UserQuitException e) {
@@ -76,7 +111,15 @@ public class AdminEmpUI {
 		}
 	}
 
-	/** 1. 사원관리 - 사원 정보 등록 */
+	/**
+	 * 사원 정보 등록 기능 (EMP_INS_001)
+	 *
+	 * <p>사원번호, 이름, 주민등록번호, 주소, 부서/직급/계약 구분 코드, 이메일, 비밀번호, 권한 레벨을 입력받아
+	 * 신규 사원 정보를 등록합니다.</p>
+	 *
+	 * <p>사원번호 중복, 주민번호 형식, 이메일 중복 및 형식, 부서/직급/계약 코드 유효성 등
+	 * 철저한 입력 검증 절차를 포함합니다.</p>
+	 */
 	protected void insertEmployeeInfo() {
 		EmployeeDTO dto = new EmployeeDTO();
 
@@ -261,7 +304,14 @@ public class AdminEmpUI {
 		}
 	}
 
-	/** 2. 사원관리 - 정보 수정 */
+	/**
+	 * 사원 정보 수정 기능 (EMP_UPD_002)
+	 *
+	 * <p>대상 사원번호를 입력받은 후, 이름, 주소, 이메일, 비밀번호, 권한 레벨 중
+	 * 하나의 항목을 선택하여 값을 변경합니다.</p>
+	 *
+	 * <p>각 항목은 개별적으로 수정되며, 수정 후 DB에 반영됩니다.</p>
+	 */
 	protected void updateEmployeeInfo() {
 		printTitle("✏️ [관리자 - 사원관리 - 정보수정]");
 		try {
@@ -308,7 +358,14 @@ public class AdminEmpUI {
 		}
 	}
 
-	/** 3. 사원관리 - 부서이동 */
+	/**
+	 * 부서 이동 처리 기능 (EMP_UPD_003)
+	 *
+	 * <p>사원번호를 입력받아 현재 부서 정보를 확인한 후,
+	 * 유효한 새로운 부서코드를 입력받아 사원의 소속 부서를 변경하고 부서 이동 이력을 기록합니다.</p>
+	 *
+	 * <p>이동할 부서코드는 반드시 유효해야 하며, 현재 부서와 동일할 수 없습니다.</p>
+	 */
 	private void updateDeptMoveInfo() {
 		PrintUtil.printTitle("✏️ [관리자 - 사원관리 - 부서이동]");
 		try {
@@ -361,7 +418,14 @@ public class AdminEmpUI {
 		}
 	}
 
-	/** 4. 사원관리 - 진급관리 */
+	/**
+	 * 진급 관리/처리 기능 (EMP_UPD_004)
+	 *
+	 * <p>사원번호를 입력받아 현재 직급 정보를 출력하고,
+	 * 새로운 직급코드와 진급 사유를 입력받아 사원의 직급을 변경하고 진급 이력을 기록합니다.</p>
+	 *
+	 * <p>새로운 직급은 유효해야 하며, 현재 직급과 다르게 선택해야 합니다.</p>
+	 */
 	private void updatePromotionInfo() {
 		PrintUtil.printTitle("✏️ [관리자 - 사원관리 - 진급관리]");
 		try {
@@ -436,7 +500,14 @@ public class AdminEmpUI {
 		}
 	}
 
-	/** 5. 사원관리 - 정보조회 */
+	/**
+	 * 사원 정보 조회 메뉴 (EMP_SEL_005, EMP_SEL_006, EMP_SEL_007)
+	 *
+	 * <p>사번 조회(단건), 이름 조회(목록), 전체 조회(목록) 중 하나를 선택하여 사원 정보를 검색합니다.</p>
+	 *
+	 * <p>목록 조회 결과는 **페이징 처리 (15명/page)**되어 출력되며,
+	 * `n`(다음), `p`(이전), `q`(종료) 명령으로 페이지 이동 및 종료가 가능합니다.</p>
+	 */
 	private void manageEmployeeSearch() {
 	    try {
 	        while (true) {
@@ -540,7 +611,13 @@ public class AdminEmpUI {
 	    }
 	}
 
-	/** 6. 사원관리 - 재직결재 */
+	/**
+	 * 퇴직 승인 관리 기능 (EMP_UPD_008)
+	 *
+	 * <p>현재 미승인 상태인 모든 퇴직 신청 목록을 조회하여 출력합니다.</p>
+	 *
+	 * <p>관리자가 승인할 퇴직 신청 번호를 입력하면, 해당 신청을 승인 처리하고 사원 상태를 '퇴직'으로 변경합니다.</p>
+	 */
 	protected void updateRetireApprovalInfo() {
 		printTitle("🗓️ [관리자 - 사원관리 - 퇴직 승인 관리]");
 
@@ -596,7 +673,12 @@ public class AdminEmpUI {
 		}
 	}
 
-	/** 7. 사원관리 - 경력등록 */
+	/**
+	 * 경력 정보 등록 기능 (EMP_INS_009)
+	 *
+	 * <p>대상 사원번호를 입력받고, 외부 근무지 정보(회사명, 시작일, 종료일, 상세 내용)를 입력받아
+	 * 사원의 경력 정보를 등록합니다.</p>
+	 */
 	protected void insertCareerInfo() {
 		printTitle("✏️ [관리자 - 사원관리 - 경력등록]");
 		try {
@@ -635,7 +717,12 @@ public class AdminEmpUI {
 		}
 	}
 
-	/** 8. 사원관리 - 자격증등록 */
+	/**
+	 * 자격증 정보 등록 기능 (EMP_INS_010)
+	 *
+	 * <p>대상 사원번호를 입력받고, 자격증 정보(자격증명, 발급기관, 취득일)를 입력받아
+	 * 사원의 자격증(Reward) 정보를 등록합니다.</p>
+	 */
 	protected void insertLicenseInfo() {
 		printTitle("✏️ [관리자 - 사원관리 - 자격증등록]");
 		try {
@@ -669,7 +756,13 @@ public class AdminEmpUI {
 		}
 	}
 
-	/** 9. 사원관리 - 이력조회 */
+	/**
+	 * 이력 정보 조회 메뉴 (EMP_SEL_011)
+	 *
+	 * <p>사원의 **경력 이력, 자격증 이력, 직급 이력** 중 하나를 선택하여 전체 목록을 조회합니다.</p>
+	 *
+	 * <p>각 이력 조회 결과는 **페이징 처리 (10건/page)**되어 출력됩니다.</p>
+	 */
 	protected void selectHistoryInfo() {
 		try {
 			while (true) {
@@ -726,7 +819,13 @@ public class AdminEmpUI {
 		}
 	}
 
-	/** 10. 사원관리 - CSV 일괄등록 */
+	/**
+	 * CSV 파일 사원 일괄 등록 기능 (EMP_LOD_012)
+	 *
+	 * <p>미리 정의된 CSV 파일 포맷을 기반으로 사원 정보를 읽어와 대량으로 DB에 등록합니다.</p>
+	 *
+	 * <p>실제 로직은 {@code EmpDAO.loadEmployeeInfo()} 에서 처리됩니다.</p>
+	 */
 	protected void loadEmployeeInfo() {
 		PrintUtil.printSection("CSV 파일 로드");
 		empDao.loadEmployeeInfo();
@@ -734,7 +833,16 @@ public class AdminEmpUI {
 		System.out.println();
 	}
 
-	/** 사원번호 입력 공통 메소드 */
+	/**
+	 * 사원번호 입력 및 존재 여부를 검증하는 공통 모듈.
+	 *
+	 * @param mustExist 사원번호가 DB에 반드시 존재해야 하는지 여부.
+	 * (true: 수정/이동 등 기존 사원 대상, false: 등록 등 신규 사원 대상)
+	 * @return 유효성 검증을 통과한 사원번호 문자열
+	 * @throws IOException 콘솔 입력/출력 중 오류 발생 시
+	 * @throws SQLException DB 접근 오류 발생 시
+	 * @throws UserQuitException 사용자 입력 'q'로 메뉴를 취소했을 경우
+	 */
 	protected String checkEmpNo(boolean mustExist) throws IOException, SQLException, UserQuitException {
 		while (true) {
 			printLine(GREEN, "👉 사원번호(ex.00001) [q: 돌아가기] : ");
@@ -760,6 +868,14 @@ public class AdminEmpUI {
 	}
 
 	// ==================== 공통 : 사원 목록 페이징 ====================
+	/**
+	 * 사원 목록을 페이징 처리하여 콘솔에 출력합니다.
+	 *
+	 * <p>한 페이지당 15개의 사원 정보를 출력하며, `n/p/q` 명령으로 페이지 이동 및 종료를 제어합니다.</p>
+	 *
+	 * @param list 출력할 사원 정보(EmployeeDTO) 목록
+	 * @throws IOException 콘솔 입력/출력 중 오류 발생 시
+	 */
 	private void printEmployeeListPaged(List<EmployeeDTO> list) throws IOException {
 		if (list == null || list.isEmpty()) {
 			printLineln(MAGENTA, "📢 조회 결과가 없습니다.");
@@ -859,8 +975,14 @@ public class AdminEmpUI {
 	}
 
 
-
-	// ==================== 공통 : 경력 이력 페이징 ====================
+	/**
+	 * 경력 이력 목록을 페이징 처리하여 콘솔에 출력합니다.
+	 *
+	 * <p>한 페이지당 10건의 이력 정보를 출력하며, `n/p/q` 명령으로 페이지 이동 및 종료를 제어합니다.</p>
+	 *
+	 * @param list 출력할 이력 정보(HistoryDTO) 목록
+	 * @throws IOException 콘솔 입력/출력 중 오류 발생 시
+	 */
 	private void printCareerHistoryPaged(List<HistoryDTO> list) throws IOException {
 		if (list == null || list.isEmpty()) {
 			printLineln(MAGENTA, "📢 등록된 경력 이력이 없습니다.");
@@ -924,7 +1046,14 @@ public class AdminEmpUI {
 		}
 	}
 
-	// ==================== 공통 : 자격증 이력 페이징 ====================
+	/**
+	 * 자격증 이력 목록을 페이징 처리하여 콘솔에 출력합니다.
+	 *
+	 * <p>한 페이지당 10건의 이력 정보를 출력하며, `n/p/q` 명령으로 페이지 이동 및 종료를 제어합니다.</p>
+	 *
+	 * @param list 출력할 이력 정보(HistoryDTO) 목록
+	 * @throws IOException 콘솔 입력/출력 중 오류 발생 시
+	 */
 	private void printCertHistoryPaged(List<HistoryDTO> list) throws IOException {
 		if (list == null || list.isEmpty()) {
 			printLineln(MAGENTA, "📢 등록된 자격증 이력이 없습니다.");
@@ -986,7 +1115,14 @@ public class AdminEmpUI {
 		}
 	}
 
-	// ==================== 공통 : 직급 이력 페이징 ====================
+	/**
+	 * 직급 이력 목록을 페이징 처리하여 콘솔에 출력합니다.
+	 *
+	 * <p>한 페이지당 10건의 이력 정보를 출력하며, `n/p/q` 명령으로 페이지 이동 및 종료를 제어합니다.</p>
+	 *
+	 * @param list 출력할 이력 정보(HistoryDTO) 목록
+	 * @throws IOException 콘솔 입력/출력 중 오류 발생 시
+	 */
 	private void printGradeHistoryPaged(List<HistoryDTO> list) throws IOException {
 		if (list == null || list.isEmpty()) {
 			printLineln(MAGENTA, "📢 등록된 직급 이력이 없습니다.");

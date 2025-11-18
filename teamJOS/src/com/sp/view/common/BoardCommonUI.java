@@ -9,6 +9,25 @@ import com.sp.model.BoardDTO;
 import com.sp.util.LoginInfo;
 import com.sp.util.PrintUtil;
 
+/**
+ * <h2>BoardCommonUI (게시판 공통 UI)</h2>
+ *
+ * <p>사원 메뉴 및 관리자 메뉴에서 공통적으로 사용되는 게시판(자유게시판 등)의
+ * 글 등록, 수정, 목록 조회, 상세 조회 기능을 제어하는 콘솔 기반 UI 클래스입니다.</p>
+ *
+ * <h3>주요 기능 (유스케이스 ID)</h3>
+ * <ul>
+ * <li>게시글 등록 (BOARD_INS_001) - 제목, 내용을 입력받아 새로운 게시글 등록</li>
+ * <li>게시글 수정 (BOARD_UPD_002) - 글 번호를 입력받아 제목, 내용을 수정 (권한 검증 필요)</li>
+ * <li>게시글 목록 조회 및 페이징 (BOARD_LIS_004) - 전체 게시글을 15개씩 페이징 처리하여 출력</li>
+ * <li>게시글 상세 조회 (BOARD_SEL_005) - 특정 글 번호의 상세 내용을 출력</li>
+ * </ul>
+ *
+ * <p><b>프로젝트명:</b> teamJOS 인사관리 프로젝트</p>
+ * <p><b>작성자:</b> 김세민, 황선호</p>
+ * <p><b>작성일:</b> 2025-11-17</p>
+ * <p><b>버전:</b> 1.0</p>
+ */
 public class BoardCommonUI {
 	
     private BoardDAO boardDao = new BoardDAOImpl();
@@ -16,10 +35,19 @@ public class BoardCommonUI {
 	private static final int PAGE_SIZE = 15;
 	BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 	
+	/**
+	 * BoardCommonUI 생성자
+	 * * @param loginInfo 로그인 사용자 정보 객체. 게시글 작성 시 사원 번호(EmpNo)를 가져오는 데 사용됩니다.
+	 */
 	public BoardCommonUI(LoginInfo loginInfo) {
 		this.loginInfo = loginInfo;
 	}
 	
+	/**
+	 * 게시글 등록 기능 (BOARD_INS_001)
+	 * * <p>사용자로부터 제목과 내용을 입력받아 신규 게시글을 등록합니다.
+	 * 작성자 정보({@code empNo})는 로그인 정보({@code loginInfo})에서 가져옵니다.</p>
+	 */
     public void insert() {
         try {           
             BoardDTO dto = new BoardDTO();
@@ -46,6 +74,11 @@ public class BoardCommonUI {
         }   
     }
 
+	/**
+	 * 게시글 수정 기능 (BOARD_UPD_002)
+	 * * <p>수정할 글 번호, 새 제목, 새 내용을 입력받아 게시글을 수정합니다.
+	 * 수정 전 해당 게시글에 대한 작성자의 권한 검증이 필요합니다.</p>
+	 */
     public void update() {
         try {
            
@@ -83,7 +116,13 @@ public class BoardCommonUI {
             System.out.println("\n[오류] 게시글 수정 중 예외 발생: " + e.getMessage());
         }
     }    
-	/** BOARD_LIS_004  */
+    
+	/** * 게시글 목록 조회 및 페이징 기능 (BOARD_LIS_004)
+	 * * <p>전체 게시글 목록을 조회하여 페이지당 15개씩 페이징 처리하여 출력합니다.</p>
+	 * * <p>사용자는 'n' (다음 페이지), 'p' (이전 페이지), 'q' (종료) 명령을 통해
+	 * 페이지를 이동하거나 목록을 종료할 수 있습니다.
+	 * 또한, 글 번호를 직접 입력하여 {@code viewPostDetail(boardNo)} 함수를 통해 상세 내용을 조회할 수 있습니다.</p>
+	 */
     public void viewPostsList() {
 
         try {
@@ -181,6 +220,11 @@ public class BoardCommonUI {
     }
     
     
+	/**
+	 * 게시글 상세 조회 기능 (BOARD_SEL_005)
+	 * * @param boardNo 상세 조회할 게시글 번호
+	 * <p>특정 글 번호에 해당하는 게시글의 상세 정보(제목, 내용, 작성자, 작성일, 수정일)를 출력합니다.</p>
+	 */
     private void viewPostDetail(int boardNo) {
         try {
             BoardDTO dto = boardDao.getPost(boardNo);

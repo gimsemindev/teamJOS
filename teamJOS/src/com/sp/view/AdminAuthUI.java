@@ -13,24 +13,73 @@ import com.sp.util.LoginInfo;
 
 import static com.sp.util.PrintUtil.*;
 
-
+/**
+ * <h2>AdminAuthUI (관리자 - 권한 관리 UI)</h2>
+ *
+ * <p>관리자 모드에서 사원의 권한 레벨을 수정(승격/강등)하는 기능을 제공하는 UI 클래스입니다.
+ * 주로 일반 사원({@code 01})과 관리자({@code 03}) 간의 권한 변경을 처리합니다.</p>
+ *
+ * <h3>📌 관련 서비스 번호(Service ID)</h3>
+ * <ul>
+ *   <li><b>AUTH_UPD_002</b> — 관리자 정보 수정 (관리자 → 일반사원 강등)</li>
+ *   <li><b>AUTH_INS_001</b> — 관리자 계정 등록 (일반사원 → 관리자 승격)</li>
+ * </ul>
+ *
+ * <h3>주요 기능</h3>
+ * <ul>
+ *   <li>관리자 계정 등록 (일반 사원 → 관리자 승격)</li>
+ *   <li>관리자 계정 수정 (관리자 → 일반 사원 강등)</li>
+ *   <li>현재 로그인한 관리자 본인의 권한 강등 방지 로직 포함</li>
+ * </ul>
+ *
+ * <p><b>프로젝트명:</b> teamJOS 인사관리 프로젝트</p>
+ * <p><b>작성자:</b> 황선호</p>
+ * <p><b>작성일:</b> 2025-11-17</p>
+ * <p><b>버전:</b> 1.0</p>
+ */
 public class AdminAuthUI {
+    /** ANSI 이스케이프 코드: 색상 리셋 */
 	final String RESET  = "\u001B[0m";
+    /** ANSI 이스케이프 코드: 초록색 */
     final String GREEN  = "\u001B[32m";
+    /** ANSI 이스케이프 코드: 노란색 */
     final String YELLOW = "\u001B[33m";
 	
+    /** 콘솔 입력을 위한 {@code BufferedReader} 객체 */
     BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+    /** 권한 관리를 위한 데이터 접근 객체 (DAO) */
     private AuthDAO authDao;
+    /** 현재 로그인 정보를 담는 유틸리티 객체 */
     private LoginInfo loginInfo;
     
+    /** 관리자 권한 레벨 코드 상수 ("03") */
     private static final String ADMIN_LEVEL_CODE = "03";
+    /** 일반 사원 권한 레벨 코드 상수 ("01") */
     private static final String EMPLOYEE_LEVEL_CODE = "01";
     
+    /**
+     * AdminAuthUI의 생성자입니다.
+     *
+     * @param authDao 권한 관리를 위한 DAO 객체
+     * @param loginInfo 로그인 정보를 담는 유틸리티 객체
+     */
     public AdminAuthUI(AuthDAO authDao, LoginInfo loginInfo) {
         this.authDao = authDao;
         this.loginInfo = loginInfo;
     }
     
+    /**
+     * <h3>권한 관리 메인 메뉴 루프</h3>
+     *
+     * <p>관리자에게 '관리자 정보 수정(강등)' 또는 '관리자 계정 등록(승격)' 메뉴를 보여주고
+     * 사용자 입력을 받아 해당 기능으로 분기합니다. 'q' 입력 시 이전 화면으로 돌아갑니다.</p>
+     *
+     * <p><b>관련 Service ID</b></p>
+     * <ul>
+     *   <li>AUTH_UPD_002 — 관리자 강등</li>
+     *   <li>AUTH_INS_001 — 관리자 승격</li>
+     * </ul>
+     */
     public void menu() {
         int ch;
         String input;
@@ -55,7 +104,6 @@ public class AdminAuthUI {
         		switch(ch) {
         		case 1: updateAdmin(); break; // AUTH_UPD_002
         		case 2: insertAdmin(); break; // AUTH_INS_001
-        		//case 3: deleteAdmin(); break; // AUTH_DEL_003
         		}
         		
         	} catch (NumberFormatException e) {
@@ -69,6 +117,14 @@ public class AdminAuthUI {
         }
     }
     
+    /**
+     * <h3>관리자 계정 수정 (권한 강등)</h3>
+     *
+     * <p>특정 사번의 관리자 권한을 일반 사원({@code EMPLOYEE_LEVEL_CODE})으로 강등 처리합니다.
+     * 단, 현재 로그인한 관리자 본인의 권한은 강등할 수 없습니다.</p>
+     *
+     * <p><b>Service ID:</b> AUTH_UPD_002</p>
+     */
     public void updateAdmin() {
     	printTitle("🏢 [관리자 계정 수정]");
     	String empNo = null;
@@ -99,6 +155,14 @@ public class AdminAuthUI {
     		
     }
     
+    /**
+     * <h3>관리자 계정 등록 (권한 승격)</h3>
+     *
+     * <p>특정 사번의 일반 사원 권한을 관리자({@code ADMIN_LEVEL_CODE})로 승격 처리합니다.
+     * 해당 사번이 존재하지 않거나 이미 관리자인 경우 실패 처리됩니다.</p>
+     *
+     * <p><b>Service ID:</b> AUTH_INS_001</p>
+     */
     public void insertAdmin() {
     	printTitle("🏢 [관리자 계정 등록]");
     	String empNo = null;
@@ -121,8 +185,5 @@ public class AdminAuthUI {
             e.printStackTrace();
         }
     }
-    
-  //  public void deleteAdmin() {
-    	
-    //}
+
 }
