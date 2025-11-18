@@ -265,7 +265,11 @@ public class AdminAttUI {
 				printLine(GREEN, " ❓ 조회할 날짜 (ex.2025-10-10) [q:돌아가기] : ");
 				String date = (br.readLine());
 				InputValidator.isUserExit(date);
-				InputValidator.isValidDate(date);
+				
+				if(!InputValidator.isValidDate(date)) {
+					printLineln(MAGENTA, "❌ 날짜 형식이 올바르지 않습니다. (YYYY-MM-DD 형식으로 입력하세요)");
+					continue;
+				}
 
 				List<AttendanceDTO> list = attDao.selectAttendanceAll(date);
 				

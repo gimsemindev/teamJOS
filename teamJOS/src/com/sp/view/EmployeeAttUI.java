@@ -183,10 +183,20 @@ public class EmployeeAttUI {
     	AttendanceDTO att = new AttendanceDTO();
     	String empNo = loginInfo.loginMember().getMemberId();
     	att.setEmpNo(empNo);
+    	String inputDt;
     	try {
-    		printLine(GREEN, "👉 조회할 날짜 ? ex.2025-10-10 ");
-			att.setRegDt(br.readLine());
-			
+    		while(true) {
+    		printLine(GREEN, "👉 조회할 날짜 ? ex.2025-10-10 [종료:'q'] ");
+    		inputDt = br.readLine();
+    		
+    		InputValidator.isUserExit(inputDt); 
+            if (InputValidator.isValidDate(inputDt)) {
+            	att.setRegDt(inputDt);
+                break;
+            }
+            printLineln(MAGENTA, "❌ 날짜 형식이 올바르지 않습니다. (YYYY-MM-DD 형식으로 입력하세요)");
+    		}
+    		
 			att = attDao.selectAttendance(att);
 			
 			if(att == null) {
