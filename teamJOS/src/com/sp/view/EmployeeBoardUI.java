@@ -103,6 +103,7 @@ public class EmployeeBoardUI {
                 printLineln(MAGENTA, "📢 1 ~ 4 사이의 숫자만 입력 가능합니다.");
             } catch (UserQuitException e) {
                 printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
+                return;
             } catch (Exception e) {
                 printLineln(MAGENTA, "📢 [오류] 알 수 없는 예외가 발생했습니다.");
             }
