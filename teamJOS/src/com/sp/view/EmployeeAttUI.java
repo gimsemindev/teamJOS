@@ -241,7 +241,7 @@ public class EmployeeAttUI {
                     dto.setStartDt(inputDt);
                     break;
                 }
-                printLineln(MAGENTA, "❌ 날짜 형식이 올바르지 않습니다. (YYYY-MM-DD 형식으로 입력하세요)");
+                
             }
             
        
@@ -266,12 +266,6 @@ public class EmployeeAttUI {
 
             InputValidator.isUserExit(memo);
             dto.setVacationMemo(memo);
-            
-            attDao.insertVacation(dto);
-                printLineln(MAGENTA, "❌ 날짜 형식이 올바르지 않습니다. (YYYY-MM-DD 형식으로 입력하세요)");
-            
-            printLine(GREEN, "👉 휴가 사유 ? ");
-            dto.setVacationMemo(br.readLine());
             
             attDao.insertVacation(dto);
             
