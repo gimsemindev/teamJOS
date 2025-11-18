@@ -80,13 +80,12 @@ public class EmployeeEmpUI {
 			} while (ch != 5);
 
 		} catch (UserQuitException e) {
-			printLineln(MAGENTA, "📢 \n사원 - 내 정보 관리 메뉴를 종료합니다.\n");
+			printLineln(MAGENTA, "📢 \n사원 - 내 정보 관리 메뉴를 종료합니다.");
 		} catch (NumberFormatException e) {
 			printLineln(MAGENTA, "📢 잘못된 입력입니다. 1~5 사이의 숫자를 입력해주세요.");
 			return;
 		} catch (Exception e) {
-			printLineln(MAGENTA, "📢 오류가 발생했습니다. " + e.getMessage());
-			e.printStackTrace();
+			printLineln(MAGENTA, "📢 오류가 발생했습니다. ");
 		}
 	}
 
@@ -150,7 +149,7 @@ public class EmployeeEmpUI {
 			System.out.println();
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
 		}
 	}
 
@@ -200,11 +199,10 @@ public class EmployeeEmpUI {
 			printLineln(MAGENTA, "📢 수정을 취소하고 상위 메뉴로 돌아갑니다.");
 		} catch (IOException e) {
 			printLineln(MAGENTA, "📢 입력 오류가 발생하였습니다.");
-			e.printStackTrace();
 		} catch (SQLException e) {
-			e.printStackTrace();
+			printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
 		} catch (Exception e) {
-			e.printStackTrace();
+			printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
 		}
 	}
 
@@ -249,8 +247,7 @@ public class EmployeeEmpUI {
 			PrintUtil.printLine('═', 80);
 
 		} catch (Exception e) {
-			printLineln(MAGENTA, "📢 예상치 못한 오류가 발생했습니다.");
-			e.printStackTrace();
+			printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
 		}
 	}
 
@@ -354,7 +351,7 @@ public class EmployeeEmpUI {
 			printLineln(MAGENTA, "📢 이력 조회가 완료되었습니다.");
 
 		} catch (Exception e) {
-			e.printStackTrace();
+			printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
 		}
 	}
 
@@ -392,11 +389,11 @@ public class EmployeeEmpUI {
 			printLineln(MAGENTA, "📢 퇴직 신청을 취소했습니다.");
 			return;
 		} catch (SQLException e) {
-			e.printStackTrace();
+			printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
 		} catch (IOException e) {
-			e.printStackTrace();
+			printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
 		} catch (Exception e) {
-			e.printStackTrace();
+			printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
 		}
 	}
 

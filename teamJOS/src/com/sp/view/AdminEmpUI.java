@@ -769,7 +769,7 @@ public class AdminEmpUI {
 		} catch (SQLException e) {
 			printLineln(MAGENTA, "📢 알맞은 형식의 값을 입력하세요.");
 		} catch (Exception e) {
-			e.printStackTrace();
+			printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
 		}
 	}
 
@@ -888,9 +888,9 @@ public class AdminEmpUI {
 			printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
 			return;
 		} catch (IOException e) {
-			e.printStackTrace();
+			printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
 		} catch (Exception e) {
-			e.printStackTrace();
+			printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
 		}
 	}
 
