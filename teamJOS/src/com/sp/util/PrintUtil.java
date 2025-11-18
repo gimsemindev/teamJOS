@@ -213,7 +213,7 @@ public class PrintUtil {
 	    // 하단 라인
 	    printLine('─', 65, GRAY);
 	    
-	    System.out.print(GREEN + "👉 메뉴 선택 [ q : 돌아가기 ] : " + RESET);
+	    System.out.print(GREEN + "👉 메뉴 선택 [q:돌아가기] : " + RESET);
 	}
 	
 	/**

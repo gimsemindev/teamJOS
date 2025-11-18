@@ -95,7 +95,7 @@ public class AdminAttUI {
 		att.setEmpNo(empNo);
 
 		try {
-			printLine(GREEN, "❓ 출근 시간을 입력하시겠습니까? [ Y | N ] ");
+			printLine(GREEN, "❓ 출근 시간을 입력하시겠습니까? [ Y | N ] : ");
 			String ch = br.readLine();
 			ch = ch.toUpperCase();
 
@@ -125,7 +125,7 @@ public class AdminAttUI {
 		att.setEmpNo(empNo);
 
 		try {
-			printLine(GREEN, "❓ 퇴근 시간을 입력하시겠습니까? [ Y | N ] ");
+			printLine(GREEN, "❓ 퇴근 시간을 입력하시겠습니까? [ Y | N ] : ");
 			String ch = br.readLine().toUpperCase();
 
 			switch (ch) {
@@ -155,16 +155,14 @@ public class AdminAttUI {
 			while(true) {
 				att.setEmpNo(checkEmpNo(true));
 				
-				printLine(PrintUtil.GREEN, null);
-				printLine(GREEN, "❓ 조회할 날짜 (ex.2025-10-10) : ");
+				printLine(GREEN, "👉 수정할 날짜 (ex.2025-10-10) [q:돌아가기] : ");
 				String date = (br.readLine());
 				InputValidator.isUserExit(date);
 				InputValidator.isValidDate(date);
 				
 				att.setRegDt(date);
-
-				printLine(CYAN, "❓ 수정할 항목 ? ");
-				printMenu(YELLOW, " ① 출근일시", " ② 출근일시");
+				printTitle("✏️ 수정 항목");
+				printMenu(YELLOW, " ① 출근일시", " ② 퇴근일시");
 
 				String ch = br.readLine();
 				InputValidator.isUserExit(ch);
@@ -176,7 +174,7 @@ public class AdminAttUI {
 				};
 
 				if (col == null) {
-					printLineln(MAGENTA, "📢 잘못된 입력입니다\n");
+					printLineln(MAGENTA, "📢 잘못된 입력입니다");
 					return;
 				}
 
@@ -189,16 +187,20 @@ public class AdminAttUI {
 					return; // 상위 메뉴로
 				}
 				
-				printLine(GREEN, "❓ 변경할 값 입력(ex.2025-11-11 09:00:00) : ");
-				att.setAtdStatusCd(br.readLine());
+				printLine(GREEN, "👉 변경할 값 입력(ex.2025-11-11 09:00:00) [q:돌아가기] : ");
+				String input = br.readLine();
+				InputValidator.isUserExit(input);
+				att.setAtdStatusCd(input);
+				
 
 				String msg = attDao.updateAttendance(att);
 				msg = "📢 " + msg; 
 				printLineln(MAGENTA, msg);
-				System.out.println();
+				return;
 			}
 		} catch (UserQuitException e) {
 			printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
+			return;
 	    } catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -294,6 +296,7 @@ public class AdminAttUI {
 			}
 		} catch (UserQuitException e) {
 			printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
+			return;
 	    } catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -396,7 +399,7 @@ public class AdminAttUI {
 	protected String checkEmpNo(boolean mustExist) throws IOException, SQLException {
 		String empNo;
 		while (true) {
-			printLine(GREEN, "👉 사원번호(ex. 00001) : ");
+			printLine(GREEN, "👉 사원번호(ex. 00001) [q:돌아가기] : ");
 			empNo = br.readLine();
 			InputValidator.isUserExit(empNo);
 
