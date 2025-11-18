@@ -259,9 +259,9 @@ public class AdminAttUI {
 	 * 결과를 페이지당 10건씩 페이징 처리하여 출력합니다.</p>
 	 */
 	protected void selectAttendanceInfo() {
-		printTitle("🏢 [관리자 - 근태관리 - 근태정보조회]");
 		try {
 			while(true) {
+				printTitle("🏢 [관리자 - 근태관리 - 근태정보조회]");
 				printLine(GREEN, " ❓ 조회할 날짜 (ex.2025-10-10) [q:돌아가기] : ");
 				String date = (br.readLine());
 				InputValidator.isUserExit(date);

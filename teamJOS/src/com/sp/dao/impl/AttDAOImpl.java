@@ -348,7 +348,7 @@ public class AttDAOImpl implements AttDAO{
 					att.setAtdNo(rs.getString("EMP_NM")); // 사원이름
 					att.setCheckIn(rs.getString("CHECK_IN")); // 출근시간
 					att.setCheckOut(rs.getString("CHECK_OUT")); // 퇴근시간
-					att.setWorkHours(rs.getString("WORK_HOURS")); // 근무시간
+					att.setWorkHours(rs.getString("WORK_HOURS")!= null ? rs.getString("WORK_HOURS") : ""); // 근무시간
 					att.setAtdStatusCd(rs.getString("STATUS_NM")); // 근태상태
 					att.setRegDt(rs.getString("REG_DT")); // 등록일자
 
