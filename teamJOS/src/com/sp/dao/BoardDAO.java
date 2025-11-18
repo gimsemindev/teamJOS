@@ -75,6 +75,14 @@ public interface BoardDAO {
      * @throws SQLException DB 접근 오류 발생 시
      */
     int listPostsCount() throws SQLException; 
-     
-
+    /**
+     * BOARD_SEL_008 (신규) : 특정 사원이 작성한 모든 게시글 목록을 조회합니다.
+     * (삭제 시 본인 글 확인용)
+     *
+     * @param empNo 조회할 사원 번호
+     * @return 해당 사원이 작성한 게시글 DTO 리스트
+     * @throws SQLException SQL 실행 실패 시
+     */
+    public List<BoardDTO> listMyPosts(String empNo) throws SQLException;
 }
+

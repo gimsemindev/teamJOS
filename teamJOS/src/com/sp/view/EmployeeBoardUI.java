@@ -2,6 +2,7 @@ package com.sp.view;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.util.List;
 
 import com.sp.dao.BoardDAO;
 import com.sp.exception.UserQuitException;
@@ -173,6 +174,44 @@ public class EmployeeBoardUI {
      */
     private void delete() {
         printTitle("🗑️ [게시글 삭제]");
+        
+        
+        String myEmpNo = loginInfo.loginMember().getMemberId();
+        List<BoardDTO> myList;
+        try {
+            // 1. (신규) DAO를 호출하여 "내 글" 목록만 가져옴
+            myList = boardDao.listMyPosts(myEmpNo); // 2단계에서 만든 DAO 메소드 호출
+
+            if (myList.isEmpty()) {
+                printLineln(MAGENTA, "📢 [정보] 삭제할 수 있는 본인 작성 게시글이 없습니다.");
+                return; // 삭제 작업 종료
+            }
+
+            // 2. (신규) 내 글 목록을 간단히 출력
+            printLineln(YELLOW, "--- 📝 본인이 작성한 글 목록 ---");
+            System.out.println("======================================================================");
+            System.out.printf("  %-5s | %-40s | %-10s%n", "번호", "제목", "작성일");
+            System.out.println("----------------------------------------------------------------------");
+            for (BoardDTO dto : myList) {
+                // 제목이 길 경우 자르기
+                String title = dto.getTitle();
+                if (title.length() > 25) { // 제목 길이 조절
+                    title = title.substring(0, 25) + "...";
+                }
+                System.out.printf("  %-5d | %-40s | %-10s%n",
+                        dto.getBoardNo(),
+                        title,
+                        dto.getRegDtm());
+            }
+            System.out.println("======================================================================");
+
+        } catch (Exception e) {
+            printLineln(MAGENTA, "📢 [오류] 내 글 목록을 불러오는 중 예외 발생: " + e.getMessage());
+            e.printStackTrace(); // 개발자 확인용
+            return; // 삭제 작업 중단
+        }
+        
+        
         BoardDTO dto= new BoardDTO();
         int boardNo;
         try {

@@ -196,7 +196,7 @@ public class BoardDAOImpl implements BoardDAO{
 	 */
 	@Override
 	public int deletePost(BoardDTO board) throws SQLException {
-		// TODO Auto-generated method stub
+	
 		int result = 0;
         String sql;
         
@@ -342,4 +342,49 @@ public class BoardDAOImpl implements BoardDAO{
 		return list;
 	}
 
-}
+
+	@Override
+	public List<BoardDTO> listMyPosts(String empNo) throws SQLException {
+		
+		List<BoardDTO> list = new ArrayList<>();
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String sql;
+
+        // 기존 listPosts 쿼리와 유사하지만, 페이징이 없고 WHERE 조건이 추가됨
+        sql = """
+              SELECT /* BOARD_SEL_008 */
+                     B.BOARD_SEQ
+                   , E.EMP_NM || '[' || B.EMP_NO || ']' AS EMP_NO_WITH_NAME
+                   , B.TITLE
+                   , TO_CHAR(B.REG_DTM, 'YYYY-MM-DD') AS REG_DTM
+                FROM TB_BOARD B
+                LEFT JOIN TB_EMP E ON B.EMP_NO = E.EMP_NO
+               WHERE B.EMP_NO = ?
+               ORDER BY B.BOARD_SEQ DESC
+              """;
+
+        try {
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, empNo); // 로그인한 사원 번호로 필터링
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                BoardDTO dto = new BoardDTO();
+                dto.setBoardNo(rs.getInt("BOARD_SEQ"));
+                dto.setEmpNo(rs.getString("EMP_NO_WITH_NAME")); // 이름[사번] 형식
+                dto.setTitle(rs.getString("TITLE"));
+                dto.setRegDtm(rs.getString("REG_DTM"));
+                list.add(dto);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        } finally {
+            DBUtil.close(rs);
+            DBUtil.close(pstmt);
+        }
+        return list;
+    }
+	}
+
