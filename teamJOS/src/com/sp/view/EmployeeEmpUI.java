@@ -389,6 +389,10 @@ public class EmployeeEmpUI {
 			printLineln(MAGENTA, "📢 퇴직 신청을 취소했습니다.");
 			return;
 		} catch (SQLException e) {
+			if ("INVALID_DATE".equals(e.getMessage())) {
+		        printLineln(MAGENTA, "❌ 존재하지 않는 날짜입니다. 다시 입력해주세요.");
+		        return; // 빨간글씨 없이 종료
+		    }
 			printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
 		} catch (IOException e) {
 			printLineln(MAGENTA, "📢 오류가 발생하였습니다.");

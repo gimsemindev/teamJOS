@@ -1108,6 +1108,10 @@ public class EmpDAOImpl implements EmpDAO{
 			result = pstmt.executeUpdate();
 			
 		} catch (SQLException e) {
+			if (e.getMessage().contains("ORA-018")) {
+	            // 날짜 에러
+	            throw new SQLException("INVALID_DATE");
+	        }
 			throw e;
 		} finally {
 			DBUtil.close(pstmt);

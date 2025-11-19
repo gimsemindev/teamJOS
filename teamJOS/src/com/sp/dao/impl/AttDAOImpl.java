@@ -1,5 +1,8 @@
 package com.sp.dao.impl;
 
+import static com.sp.util.PrintUtil.MAGENTA;
+import static com.sp.util.PrintUtil.printLineln;
+
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -355,6 +358,9 @@ public class AttDAOImpl implements AttDAO{
 					list.add(att);
 				}
 			} catch (SQLException e) {
+				if (e.getMessage().contains("ORA-01861")) {
+			        throw new SQLException("INVALID_DATE_FORMAT");
+			    }
 				throw e;
 			} finally {
 				DBUtil.close(rs);
@@ -402,6 +408,7 @@ public class AttDAOImpl implements AttDAO{
 				att.setRegDt(rs.getString("REG_DT")); // 등록일자
 			}
 		} catch (Exception e) {
+			throw e;
 		}
 		return att;
 	}

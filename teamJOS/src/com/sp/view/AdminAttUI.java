@@ -340,8 +340,13 @@ public class AdminAttUI {
 		} catch (UserQuitException e) {
 			printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
 			return;
-	    } catch (Exception e) {
-			e.printStackTrace();
+	    } catch (SQLException e) {
+	    	if ("INVALID_DATE_FORMAT".equals(e.getMessage())) {
+	            printLineln(MAGENTA, "❌ 날짜 형식이 올바르지 않습니다. 정확한 날짜로 입력해주세요.");
+	            return;
+	        }
+		} catch (Exception e) {
+			printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
 		}
 	}
 

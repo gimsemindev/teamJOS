@@ -25,6 +25,8 @@ import com.sp.util.LoginInfo;
 import com.sp.util.PrintUtil;
 import com.sp.view.common.DeptCommonUI;
 
+import static com.sp.util.PrintUtil.*;
+
 /**
  * <h2>EmployeeAttUI (일반 사원 근태 관리 UI)</h2>
  *
@@ -105,7 +107,7 @@ public class EmployeeAttUI {
     			printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
     			return;
     	    } catch (Exception e) {
-        		e.printStackTrace();
+    	    	printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
         	}
         }
     }
@@ -123,7 +125,7 @@ public class EmployeeAttUI {
     	att.setEmpNo(empNo);
     	
     	try {
-    		printLine(GREEN, "👉 출근 시간을 입력하시겠습니까? [ Y | N ] ");
+    		printLine(GREEN, "👉 출근 시간을 입력하시겠습니까? [ Y | N ] : ");
 			String ch = br.readLine();
 			ch = ch.toUpperCase();
 			
@@ -137,6 +139,7 @@ public class EmployeeAttUI {
 			default: printLineln(MAGENTA, "📢 Y | N 만 입력 가능합니다."); break;
 			}
 		} catch (Exception e) {
+			printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
 		}
 	}
 
@@ -153,7 +156,7 @@ public class EmployeeAttUI {
     	att.setEmpNo(empNo);
     	
     	try {
-    		printLine(GREEN, "👉 퇴근 시간을 입력하시겠습니까? [ Y | N ] ");
+    		printLine(GREEN, "👉 퇴근 시간을 입력하시겠습니까? [ Y | N ] : ");
             String ch = br.readLine().toUpperCase();
 
             switch (ch) {
@@ -170,6 +173,7 @@ public class EmployeeAttUI {
                     break;
             }
 		} catch (Exception e) {
+			printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
 		}
 	}
 	
@@ -186,7 +190,7 @@ public class EmployeeAttUI {
     	String inputDt;
     	try {
     		while(true) {
-    		printLine(GREEN, "👉 조회할 날짜 ? ex.2025-10-10 [종료:'q'] ");
+    		printLine(GREEN, "❓ 조회할 날짜 ex.2025-10-10 [q:돌아가기] : ");
     		inputDt = br.readLine();
     		
     		InputValidator.isUserExit(inputDt); 
@@ -204,19 +208,34 @@ public class EmployeeAttUI {
 				return;
 			}
 			
-			System.out.print(att.getEmpNo() + "\t");
-			System.out.print(att.getAtdNo() + "\t");
-			System.out.print(att.getCheckIn() + "\t");
-			System.out.print(att.getCheckOut() + "\t");
-			System.out.print(att.getWorkHours() + "\t");
-			System.out.print(att.getAtdStatusCd() + "\t");
-			System.out.println(att.getRegDt());
+			printLine('═', 120);
+	        System.out.printf("%s | %s | %s | %s | %s | %s | %s%n",
+	                padCenter("사번", 7),
+	                padCenter("근태번호", 9),
+	                padCenter("출근시간", 21),
+	                padCenter("퇴근시간", 22),
+	                padCenter("근무시간", 10),
+	                padCenter("상태", 6),
+	                padCenter("등록일", 12)
+	        );
+	        printLine('─', 120);
+
+	        System.out.printf("%s | %s | %s | %s | %s | %s | %s%n",
+	                padRight(att.getEmpNo(), 6),
+	                padRight(att.getAtdNo(), 8),
+	                padRight(att.getCheckIn(), 20),
+	                padRight(att.getCheckOut(), 20),
+	                padRight(String.valueOf(att.getWorkHours()), 8),
+	                padRight(att.getAtdStatusCd(), 6),
+	                padRight(att.getRegDt(), 12)
+	        );
+
+	        printLine('═', 120);
 			
 			printLineln(MAGENTA, "📢 조회 완료되었습니다.");
 		} catch (Exception e) {
-			
+			printLineln(MAGENTA, "📢 등록된 날짜가 아닙니다.\n");
 		}
-		
 	}
 
 	/**
@@ -272,14 +291,14 @@ public class EmployeeAttUI {
             printLineln(MAGENTA, "📢 휴가 신청 완료!");
       
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+        	printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
         } catch (UserQuitException e) {
 			printLineln(MAGENTA, "📢 작업을 취소하였습니다.");
 			return;    
         } catch (IOException e) {
-            e.printStackTrace();
+        	printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
         } catch (Exception e) {
-            e.printStackTrace();
+        	printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
         }
     }
 	
@@ -390,11 +409,11 @@ public class EmployeeAttUI {
 	    } catch (UserQuitException e) {
 	        printLineln(MAGENTA, "📢 휴가 수정을 취소하고 메뉴로 돌아갑니다.");	
     	} catch (SQLException e) {
-    		System.out.println(e.getMessage());
+    		printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
     	} catch (IOException e) {
-    		e.printStackTrace();
+    		printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
 		} catch (Exception e) {
-			e.printStackTrace();
+			printLineln(MAGENTA, "📢 오류가 발생하였습니다.");
 		}
 	}
     
