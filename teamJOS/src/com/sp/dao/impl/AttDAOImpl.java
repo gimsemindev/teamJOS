@@ -300,7 +300,7 @@ public class AttDAOImpl implements AttDAO{
 		    String sql;
 		    try {
 		    	// CHECK_IN 또는 CHECK_OUT이 NULL이 맞는지 확인하는 sql
-		    	sql = "SELECT /* ATT_SEL_012 */ COUNT(*) FROM TB_ATD WHERE EMP_NO = ? AND REG_DT = ? AND " + att.getAtdNo() + " IS NULL";
+		    	sql = "SELECT /* ATT_SEL_012 */ COUNT(*) FROM TB_ATD WHERE EMP_NO = ? AND TO_CHAR(REG_DT, 'YYYY-MM-DD') = ? AND " + att.getAtdNo() + " IS NULL";
 		        pstmt = conn.prepareStatement(sql);
 		        pstmt.setString(1, att.getEmpNo()); // 사원번호
 		        pstmt.setString(2, att.getRegDt()); // 수정을 원하는 날짜
